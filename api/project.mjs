@@ -16,8 +16,6 @@ export default class Project {
 
         if (typeof projectID === "string") {
             this.id = projectID
-            this.fetchByID(projectID)
-                .then(project => this.data = project)
             return
         }
 
@@ -31,8 +29,10 @@ export default class Project {
      * @param {String} projectID short hash id for TPEN project
      */
 
-    fetchByID(projectID) {
-        fetch(`/project/${projectID}`)
+    async loadData() {
+        return await fetch(`/project/${this.id}`)
             .then(response => response.json())
+            .then(project => this.data = project)
+            .catch(err=>new Promise.reject(err))
     }
 }
