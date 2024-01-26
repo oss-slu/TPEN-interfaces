@@ -33,6 +33,6 @@ export default class Project {
         return await fetch(`/project/${this.id}`)
             .then(response => response.json())
             .then(project => this.data = project)
-            .catch(err=>new Promise.reject(err))
+            .catch(err => new Promise.reject(err))
     }
 }

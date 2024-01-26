@@ -15,3 +15,6 @@ class TpenTranscriptionElement extends HTMLElement {
     fetchProject(projectID) {
         fetch(`/transcriptions/${projectID}`)
             .then(response => response.json())
+    }
+}
+
