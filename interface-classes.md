@@ -1,9 +1,10 @@
-‑‑‑
+---
 title: Interfaces for TPEN
 author: <cubap@slu.edu>
-‑‑‑
-
-# Interfaces for TPEN
+layout: default
+permalink: /interfaces/
+tags: [tpen, api, javascript, interface]
+---
 
 This page is intended for developers and designers who are building interfaces for
 use with the TPEN services at t‑pen.org. The following classes are available for you
