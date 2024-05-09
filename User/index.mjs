@@ -2,8 +2,8 @@ export class User {
   #authentication
   constructor(userId) {
     this.userId = userId
-    this.baseURL = "https://dev.api.t-pen.org"
-    // this.baseURL = "http://localhost:3009"
+    // this.baseURL = "https://dev.api.t-pen.org"
+    this.baseURL = "http://localhost:3009"
     if (this.#authentication || this.userId) this.getProfile()
   }
 
@@ -46,7 +46,7 @@ export class User {
       return projects
     } catch (error) {
       console.error("Error fetching user projects:", error)
-      throw error
+      // throw error
     }
   }
 
@@ -66,7 +66,7 @@ export class User {
         ? projects.forEach((project) => {
             const projectTemplate = `
             <li > 
-             ${project.creator}, ${project.title}
+            ${project.title}
               <div class="manage">
                 <span>Resume</span>
                 <span>Manage</span>
@@ -78,8 +78,15 @@ export class User {
         : (projectsList.innerHTML =
             "No projects yet. Create one to get started")
     } catch (error) {
-      throw error
-    }
+
+      projectsList.innerHTML = ""
+      const errorTemplate = `
+      <li> 
+      Error 401: Unauthorized User
+      </li>
+    `
+      projectsList.insertAdjacentHTML("beforeend", errorTemplate)
+     }
   }
 
   async updateRecord(data) {
