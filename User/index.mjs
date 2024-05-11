@@ -26,67 +26,80 @@ export class User {
     const headers = this.#authentication
       ? new Headers({Authorization: `Bearer ${this.#authentication}`})
       : new Headers()
-    try {
-      const response = await fetch(serviceAPI, {headers})
-      const data = await response.json()
-      Object.assign(this, data)
-      return data
-    } catch (error) {
-      console.error(error)
-    }
+    fetch(serviceAPI, {headers})
+      .then((response) => {
+        if (!response.ok) Promise.reject(response)
+        const data = response.json()
+        Object.assign(this, data)
+      })
+      .catch((err) => {
+        throw new Error(err)
+      }) 
   }
 
   async getProjects() {
     const headers = new Headers({
       Authorization: `Bearer ${this.#authentication}`
     })
-    try {
-      const response = await fetch(`${this.baseURL}/my/projects`, {headers})
-      const projects = await response.json()
-      return projects
-    } catch (error) {
-      console.error("Error fetching user projects:", error)
-      // throw error
-    }
+
+    return fetch(`${this.baseURL}/my/projects`, {headers})
+      .then((response) => {
+        if (!response.ok) {
+          return Promise.reject(response)
+        }
+        return response.json()
+      })
+      .catch((error) => {
+        throw error
+      })
   }
 
-  async renderProjects(containerId) {
-    const projectsList = document.getElementById(containerId)
-    if (!projectsList) {
-      console.error(`Container element with ID '${containerId}' not found.`)
-      return
+  renderProjects(containerId) {
+    let projectsList = document.getElementById(containerId)
+
+    if (!containerId || !projectsList) {
+      if (!containerId) {
+        alert("Provide id for container to render projects")
+      } else {
+        alert(`Container element with ID '${containerId}' not found.`)
+      }
+
+      throw new Error(
+        "Provide container id and attach id to HTML element where projects should be rendered"
+      )
     }
 
-    try {
-      const projects = await this.getProjects()
+    this.getProjects()
+      .then((projects) => {
+        projectsList.innerHTML = ""
 
-      projectsList.innerHTML = ""
-
-      projects.length
-        ? projects.forEach((project) => {
+        if (projects.length) {
+          projects.forEach((project) => {
             const projectTemplate = `
-            <li > 
-            ${project.title}
+            <li>
+              ${project.title}
               <div class="manage">
                 <span>Resume</span>
                 <span>Manage</span>
               </div>
             </li>
           `
+
             projectsList.insertAdjacentHTML("beforeend", projectTemplate)
           })
-        : (projectsList.innerHTML =
-            "No projects yet. Create one to get started")
-    } catch (error) {
-
-      projectsList.innerHTML = ""
-      const errorTemplate = `
-      <li> 
-      Error 401: Unauthorized User
-      </li>
-    `
-      projectsList.insertAdjacentHTML("beforeend", errorTemplate)
-     }
+        } else {
+          projectsList.innerHTML = "No projects yet. Create one to get started"
+        }
+      })
+      .catch((error) => {
+        const errorTemplate = `
+          <li>
+            Error ${error.status}: ${error.statusText}
+          </li>
+        `
+        projectsList.insertAdjacentHTML("beforeend", errorTemplate)
+        throw error
+      })
   }
 
   async updateRecord(data) {
@@ -105,11 +118,6 @@ export class User {
       console.error("Error updating user record:", error)
       throw error
     }
-  }
-
-  async getDisplayName() {
-    const userInfo = await this.getProfile()
-    return userInfo?.displayName ?? userInfo?.profile?.displayName
   }
 
   async addToPublicProfile(data) {
@@ -133,13 +141,13 @@ export class User {
     return response
   }
 }
+// Sample Usage
+// const currentUser = new User()
+// currentUser.authentication = "User token here"
 
-const currentUser = new User()
-currentUser.authentication =
-  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik9FVTBORFk0T1RVNVJrRXlOREl5TTBFMU1FVXdNMFUyT0RGQk9UaEZSa1JDTXpnek1FSTRNdyJ9.eyJodHRwOi8vc3RvcmUucmVydW0uaW8vYWdlbnQiOiJodHRwczovL3N0b3JlLnJlcnVtLmlvL3YxL2lkLzY1Zjg2MTVlYzQzYmQ2NjU2OGM2NjZmYSIsImh0dHA6Ly9yZXJ1bS5pby9hcHBfZmxhZyI6WyJ0cGVuIiwiZGxhIl0sImh0dHA6Ly9kdW5iYXIucmVydW0uaW8vYXBwX2ZsYWciOlsidHBlbiIsImRsYSJdLCJodHRwOi8vcmVydW0uaW8vdXNlcl9yb2xlcyI6eyJyb2xlcyI6WyJkdW5iYXJfdXNlcl9wdWJsaWMiLCJnbG9zc2luZ191c2VyX3B1YmxpYyIsImxyZGFfdXNlcl9wdWJsaWMiLCJyZXJ1bV91c2VyX3B1YmxpYyIsInRwZW5fdXNlcl9hZG1pbiIsInRwZW5fdXNlcl9pbmFjdGl2ZSJdfSwiaHR0cDovL2R1bmJhci5yZXJ1bS5pby91c2VyX3JvbGVzIjp7InJvbGVzIjpbImR1bmJhcl91c2VyX3B1YmxpYyIsImdsb3NzaW5nX3VzZXJfcHVibGljIiwibHJkYV91c2VyX3B1YmxpYyIsInJlcnVtX3VzZXJfcHVibGljIiwidHBlbl91c2VyX2FkbWluIiwidHBlbl91c2VyX2luYWN0aXZlIl19LCJpc3MiOiJodHRwczovL2N1YmFwLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2NWY4NjE1ZDZjNmJlYjIzMTVjZWY4MjIiLCJhdWQiOlsiaHR0cHM6Ly9jdWJhcC5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vY3ViYXAuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTcxNTE5OTE2NiwiZXhwIjoxNzE1MjA2MzY2LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIHVwZGF0ZTpjdXJyZW50X3VzZXJfbWV0YWRhdGEgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJiQnVnRk1XSFVvMU9oblNaTXBZVVh4aTNZMVVKSTdLbCJ9.dt5qt-fa5AAQU1HbNXuOb6yqoA9pHCzY0kdb4bMBM1skgQcZmLuHfflkqypwvCL90RDcWwyJKrJV81_iPxojdVAnYAC6U2t6o_rut2ND3bh3TtNZMV0lcr6d6BXXRHFF0rR4cNiGROrI7gbtjBKB2QcrahS_uRKP40HkMKxBAsaCps6ORyf-AurKQpFXMOovL5roHZe5eiGQDF5j2LcmRc3pur6jeEwFkt5qnE9RhW3JUPymgG7leCZShAwGjVDnddHTivHIJIK3Ekj3ZsrfNNNPNGtB-dCR2tUkZ_yWKapA9Jo-TbD5_klspk8xWm8cgaUuo_swrfhiQB9xUDwBsA"
-
-currentUser.renderProjects("projects")
-console.log(await currentUser.getProfile())
-console.log( "NickName", currentUser.nickname)
-console.log( "Picture", currentUser.picture)
-console.log(await currentUser.getProjects())
+// currentUser.renderProjects("projects")
+// console.log(await currentUser.getProfile())
+// console.log("NickName", currentUser.nickname)
+// console.log("Picture", currentUser.picture)
+// console.log(await currentUser.getProjects())
+// console.log(currentUser)
