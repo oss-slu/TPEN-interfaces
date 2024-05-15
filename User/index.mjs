@@ -2,8 +2,7 @@ export class User {
   #authentication
   constructor(userId) {
     this.userId = userId
-    // this.baseURL = "https://dev.api.t-pen.org"
-    this.baseURL = "http://localhost:3009"
+    this.baseURL = "https://dev.api.t-pen.org" 
     if (this.#authentication || this.userId) this.getProfile()
   }
 
@@ -94,7 +93,7 @@ export class User {
       .catch((error) => {
         const errorTemplate = `
           <li>
-            Error ${error.status}: ${error.statusText}
+            Error ${error.status??500}: ${error.statusText??"Unknown Server error"}
           </li>
         `
         projectsList.insertAdjacentHTML("beforeend", errorTemplate)
