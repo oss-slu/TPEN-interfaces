@@ -2,7 +2,8 @@ export class User {
   #authentication
   constructor(userId) {
     this.userId = userId
-    this.baseURL = "https://dev.api.t-pen.org" 
+    // this.baseURL = "https://dev.api.t-pen.org" 
+    this.baseURL = "http://localhost:3009" 
     if (this.#authentication || this.userId) this.getProfile()
   }
 
@@ -141,12 +142,12 @@ export class User {
   }
 }
 // Sample Usage
-// const currentUser = new User()
-// currentUser.authentication = "User token here"
+const currentUser = new User()
+currentUser.authentication = "User token here"
 
-// currentUser.renderProjects("projects")
-// console.log(await currentUser.getProfile())
-// console.log("NickName", currentUser.nickname)
-// console.log("Picture", currentUser.picture)
-// console.log(await currentUser.getProjects())
-// console.log(currentUser)
+currentUser.renderProjects("projects")
+console.log(await currentUser.getProfile())
+console.log("NickName", currentUser.nickname)
+console.log("Picture", currentUser.picture)
+console.log(await currentUser.getProjects())
+console.log(currentUser)
