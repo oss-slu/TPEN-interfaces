@@ -66,8 +66,7 @@
 .delete-bg:hover{
  background: rgba(255, 0, 0, 0.3);
  &:after{
-  content: "X";
-  // font-size: 50px; 
+  content: "\1F5D1"; 
   cursor: pointer;
   color: white;
   display: flex;

@@ -99,16 +99,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = event.target
     if (target.classList.contains("rectangle")) {
       imageContainer.removeChild(target)
+      deleteRectangle(target.dataset.id)
     }
   }
 
   function fetchRectangleData() {
-    // Assuming the image has one shape drawn on it. this function will be modified to handle multiple shapes over an image
-    fetch("https://baseURL/shapes")
+     fetch("https://baseURL/rectangle")
       .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          const rect = document.createElement("div")
+      .then((rectData) => {
+
+       if(rectData.length){
+        rectData.map((data)=>{
+         const rect = document.createElement("div")
           rect.classList.add("rectangle")
           rect.style.left = data.left
           rect.style.top = data.top
@@ -116,10 +118,30 @@ document.addEventListener("DOMContentLoaded", () => {
           rect.style.height = data.height
           rect.style.border = "2px solid grey"
           imageContainer.appendChild(rect)
-        }
+        })
+       } 
       })
       .catch((error) => {
         console.error("Error:", error)
       })
   }
+
+  function deleteRectangle(id) {
+   fetch('/rectangle', {
+     method: 'DELETE',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify({ id: id })
+   })
+   .then(response => response.json())
+   .then(data => {
+     if (data.success) {
+       console.log('Rectangle deleted successfully');
+     }
+   })
+   .catch(error => {
+     console.error('Error:', error);
+   });
+ }
 })
