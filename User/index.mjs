@@ -11,14 +11,17 @@ export class User {
    * @param {any} token
    */
   set authentication(token) {
-    if (!token) return Error("Authorization token is required")
+    let isNewToken = false;
+    if(token != this.#authentication){
+      isNewToken = true
+    } 
     this.#authentication = token
-    this.getProfile()
+    if (isNewToken) this.getProfile()
   }
 
   async getProfile() {
     if (!this.#authentication && !this.userId)
-      return new Error("User ID is required")
+      throw Error("User ID is required")
 
     const serviceAPI = `${this.baseURL}/${
       this.#authentication ? "my/profile" : `user/:${this.userId}`
@@ -30,11 +33,11 @@ export class User {
       .then((response) => {
         if (!response.ok) Promise.reject(response)
         const data = response.json()
-        Object.assign(this, data)
+        // Object.assign(this, data) //
+
+        // the public user object has no display_name tag, it has a nme instead, hence the check below
+        this.display_name = this.#authentication?data.display_name:data.name
       })
-      .catch((err) => {
-        throw new Error(err)
-      }) 
   }
 
   async getProjects() {
@@ -50,6 +53,7 @@ export class User {
         return response.json()
       })
       .catch((error) => {
+        // Alert user with error message
         throw error
       })
   }
@@ -143,11 +147,11 @@ export class User {
 }
 // Sample Usage
 const currentUser = new User()
-currentUser.authentication = "User token here"
+// currentUser.authentication = "User token here"
 
-currentUser.renderProjects("projects")
+// currentUser.renderProjects("projects")
 console.log(await currentUser.getProfile())
-console.log("NickName", currentUser.nickname)
-console.log("Picture", currentUser.picture)
-console.log(await currentUser.getProjects())
-console.log(currentUser)
+// console.log("NickName", currentUser.nickname)
+// console.log("Picture", currentUser.picture)
+// console.log(await currentUser.getProjects())
+// console.log(currentUser)

@@ -10,13 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRectangle
 
   imageUpload.addEventListener("change", handleImageUpload)
-  imageContainer.addEventListener("mousedown", handleMouseDown)
-  imageContainer.addEventListener("mousemove", drawRectangle)
+  imageContainer.addEventListener("mousedown", switchOperation) 
   imageContainer.addEventListener("mouseup", endDrawing)
+
   drawTool.addEventListener("change", toggleDrawingMode)
   eraseTool.addEventListener("change", toggleEraseMode)
 
   function handleImageUpload(event) {
+   // this function is just for testing while Services is discnonnected. It will be replaced by one that just places an image on the canvas.
     const file = event.target.files[0]
     if (file) {
       const reader = new FileReader()
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function handleMouseDown(event) {
+  function switchOperation(event) {
     if (eraseTool.checked) {
       handleErase(event)
     } else if (drawTool.checked) {
@@ -36,16 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function startDrawing(event) {
-    if (!drawTool.checked) return
+  function startDrawing(event) { 
     isDrawing = true
     const rect = uploadedImage.getBoundingClientRect()
     startX = ((event.clientX - rect.left) / rect.width) * 100
     startY = ((event.clientY - rect.top) / rect.height) * 100
     currentRectangle = document.createElement("div")
-    currentRectangle.classList.add("rectangle")
-    updateRectangleSize(event)
-    imageContainer.appendChild(currentRectangle)
+    currentRectangle.classList.add("rectangle") 
+    imageContainer.appendChild(currentRectangle) 
+    imageContainer.addEventListener("mousemove", drawRectangle)
   }
 
   function drawRectangle(event) {
@@ -56,9 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function endDrawing() {
     if (!currentRectangle) return
     isDrawing = false
-    currentRectangle.classList.add("drawn-shape")
-    // currentRectangle.style.background = "rgba(0,0,0)"
-    // currentRectangle.style.border = "2px solid black"
+    currentRectangle.classList.add("drawn-shape") 
   }
 
   function updateRectangleSize(event) {
