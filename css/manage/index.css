@@ -83,6 +83,7 @@ body .tagline {
 
 .default-btn {
   border: 1px solid #69acc9;
+  cursor: pointer;
   background: -webkit-linear-gradient(top, rgb(168, 210, 228) 0%, rgb(208, 240, 255) 100%);
   padding: 5px;
   margin-top: 5px;

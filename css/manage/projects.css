@@ -123,28 +123,28 @@
 }
 
 @media (max-width: 768px) {
-  .manage-projects-container {
+  .manage-projects-container, .manage-manuscript-container {
     flex-direction: column;
     gap: 20px;
   }
-  .manage-projects-container section {
-    width: 100%;
+  .manage-projects-container section, .manage-manuscript-container section {
+    width: 100% !important;
     min-height: auto;
   }
-  .manage-projects-container section:first-child, .manage-projects-container section:last-child {
+  .manage-projects-container section:first-child, .manage-projects-container section:last-child, .manage-manuscript-container section:first-child, .manage-manuscript-container section:last-child {
     width: 100%;
   }
-  .manage-projects-container section .segment {
+  .manage-projects-container section .segment, .manage-manuscript-container section .segment {
     padding: 15px;
   }
-  .manage-projects-container section .resume-transcribing select {
+  .manage-projects-container section .resume-transcribing select, .manage-manuscript-container section .resume-transcribing select {
     width: 100%;
   }
-  .manage-projects-container section .projects-list {
+  .manage-projects-container section .projects-list, .manage-manuscript-container section .projects-list {
     height: auto;
     max-height: 300px;
   }
-  .manage-projects-container .all-projects .projects-list {
+  .manage-projects-container .all-projects .projects-list, .manage-manuscript-container .all-projects .projects-list {
     height: 300px;
   }
 }

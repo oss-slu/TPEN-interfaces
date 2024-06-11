@@ -60,7 +60,7 @@
   }
 
   .red {
-    color: #a64129;
+    color: #a64129; 
   }
 
   .all-projects {
@@ -142,12 +142,12 @@
 
 
  @media (max-width: 768px) {
-  .manage-projects-container {
+  .manage-projects-container, .manage-manuscript-container {
     flex-direction: column;
     gap: 20px;
 
     section {
-      width: 100%;
+      width: 100% !important;
       min-height: auto;
 
       &:first-child, 

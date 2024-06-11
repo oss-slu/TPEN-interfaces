@@ -14,5 +14,5 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
-  document.getElementById("manuscripts").click()
+  document.getElementById("collaboration").click()
 })

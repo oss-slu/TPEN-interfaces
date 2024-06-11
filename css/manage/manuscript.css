@@ -128,10 +128,10 @@
     gap: 20px;
   }
   .manage-projects-container section, .manage-manuscript-container section {
-    width: 100%;
+    width: 100% !important;
     min-height: auto;
   }
-  .manage-projects-container section:first-child, .manage-manuscript-container section:first-child, .manage-projects-container section:last-child, .manage-manuscript-container section:last-child {
+  .manage-projects-container section:first-child, .manage-projects-container section:last-child, .manage-manuscript-container section:first-child, .manage-manuscript-container section:last-child {
     width: 100%;
   }
   .manage-projects-container section .segment, .manage-manuscript-container section .segment {
@@ -185,7 +185,6 @@
 }
 .manage-manuscript-container section {
   min-height: 150px;
-  width: 33% !important;
 }
 .manage-manuscript-container section button {
   margin: 5px 0px;
