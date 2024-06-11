@@ -4,9 +4,31 @@
   box-sizing: border-box;
 }
 
+body {
+  font-size: 75%;
+  color: #222;
+  background: #69ACC9 url(https://t-pen.org/TPEN/images/tpen_badgeEmergeClear.png) bottom right no-repeat fixed;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+body .tagline {
+  color: #226683;
+  font-size: 2.5em;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-shadow: 0 0 5px #a8d2e4;
+  text-align: center;
+  margin: 10px 0px;
+}
+
 .manage-interface {
+  background-color: white;
+  padding: 10px;
   margin: 10px;
   margin-bottom: 50px;
+  border-radius: 4px;
+  width: 1000px;
+  margin: auto;
 }
 .manage-interface .title h1 {
   color: #a64129;
@@ -97,4 +119,61 @@
   display: inline-block;
   overflow: hidden;
   background-repeat: no-repeat;
+}
+
+/* For tablets and below (768px and below) */
+@media (max-width: 768px) {
+  .manage-interface {
+    width: 90%;
+    margin: 10px auto;
+    padding: 20px;
+  }
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  header button {
+    width: 100%;
+    margin: 5px 0;
+  }
+  .title h1 {
+    font-size: 1.2em;
+  }
+  .default-btn {
+    width: 100%;
+    padding: 10px;
+  }
+  .return-btn {
+    width: 100%;
+    position: static;
+    margin-top: 20px;
+  }
+}
+/* For mobile devices (480px and below) */
+@media (max-width: 480px) {
+  body {
+    font-size: 60%;
+  }
+  .tagline {
+    font-size: 2em;
+  }
+  .manage-interface {
+    padding: 15px;
+  }
+  header button {
+    padding: 10px;
+  }
+  .default-btn {
+    padding: 8px;
+  }
+  .return-btn {
+    width: 100%;
+    margin-top: 15px;
+  }
+  .title h1 {
+    font-size: 1em;
+  }
+  .body-bg {
+    padding: 10px;
+  }
 }/*# sourceMappingURL=index.css.map */

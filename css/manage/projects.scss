@@ -139,3 +139,93 @@
     }
   }
 }
+
+
+ @media (max-width: 768px) {
+  .manage-projects-container {
+    flex-direction: column;
+    gap: 20px;
+
+    section {
+      width: 100%;
+      min-height: auto;
+
+      &:first-child, 
+      &:last-child {
+        width: 100%;
+      }
+
+      .segment {
+        padding: 15px;
+      }
+
+      .resume-transcribing {
+        select {
+          width: 100%;
+        }
+      }
+
+      .projects-list {
+        height: auto;
+        max-height: 300px;
+      }
+    }
+
+    .all-projects {
+      .projects-list {
+        height: 300px;
+      }
+    }
+  }
+}
+
+ @media (max-width: 480px) {
+  .manage-projects-container {
+    flex-direction: column;
+    gap: 20px;
+
+    section {
+      width: 100%;
+      min-height: auto;
+
+      &:first-child, 
+      &:last-child {
+        width: 100%;
+      }
+
+      .segment {
+        padding: 10px;
+      }
+
+      .resume-transcribing {
+        gap: 10px;
+        select {
+          width: 100%;
+        }
+      }
+
+      .projects-list {
+        height: auto;
+        max-height: 200px;
+      }
+    }
+
+    .all-projects {
+      .projects-list {
+        height: 200px;
+      }
+    }
+
+    .metadata-summary {
+      ul {
+        font-size: 12px;
+
+        li {
+          .title {
+            flex: 0 0 100px; 
+          }
+        }
+      }
+    }
+  }
+}
