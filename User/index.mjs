@@ -1,3 +1,6 @@
+/** Description: to use this class, initialize new class, set authentication token, then call required methods
+ * 
+ */
 export class User {
   #authentication
   constructor(userId) {
@@ -145,13 +148,3 @@ export class User {
     return response
   }
 }
-// Sample Usage
-const currentUser = new User()
-// currentUser.authentication = "User token here"
-
-// currentUser.renderProjects("projects")
-console.log(await currentUser.getProfile())
-// console.log("NickName", currentUser.nickname)
-// console.log("Picture", currentUser.picture)
-// console.log(await currentUser.getProjects())
-// console.log(currentUser)
