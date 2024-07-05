@@ -56,3 +56,13 @@ function test_decodeContentState() {
 }
 
 test_decodeContentState()
+
+function test_integrated_utils() {
+    // Test case 1: Object encoded and decoded matches the original
+    let plainContentState1 = '{"title":"Lorem Ipsum 441", "body":"textual content", "target":"https://example.com/canvas/4#xywh=1,12,50,20"}'
+    let encodedContentState1 = encodeContentState(plainContentState1)
+    let decodedContentState1 = decodeContentState(encodedContentState1)
+    console.assert(decodedContentState1 === plainContentState1, `Test case 1 failed: ${decodedContentState1}`)
+}
+
+test_integrated_utils()
