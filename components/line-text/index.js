@@ -1,4 +1,4 @@
-import decodeContentState from '../iiif-tools/index.js'
+import {decodeContentState} from '../iiif-tools/index.mjs'
 
 const LINE_TEXT_HTML = `<span></span>`
 

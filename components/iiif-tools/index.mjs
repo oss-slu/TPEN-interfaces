@@ -28,4 +28,4 @@ function restorePadding(s) {
     return s + padding;
 }
 
-export default decodeContentState 
+export { encodeContentState, decodeContentState }
