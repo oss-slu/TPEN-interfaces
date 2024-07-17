@@ -2,7 +2,11 @@ import {decodeContentState} from '../iiif-tools/index.mjs'
 
 const LINE_TEXT_HTML = `<span></span>`
 
+<<<<<<< Updated upstream
 class TpenLineText extends HTMLElement {
+=======
+class TpenLineImage extends HTMLElement {
+>>>>>>> Stashed changes
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
@@ -23,10 +27,17 @@ class TpenLineText extends HTMLElement {
     }
 }
 
+<<<<<<< Updated upstream
 customElements.define('tpen-line-text', TpenLineText)
 
 export default {
     TpenLineText
+=======
+customElements.define('tpen-line-text', TpenLineImage)
+
+export default {
+    TpenLineImage: TpenLineText
+>>>>>>> Stashed changes
 }
 
 async function loadText(lineId,elem){
