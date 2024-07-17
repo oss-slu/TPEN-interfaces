@@ -1,12 +1,14 @@
 import {decodeContentState} from '../iiif-tools/index.mjs'
 
-const LINE_TEXT_HTML = `<span></span>`
+const LINE_TEXT_HTML = `
+<script src="https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@latest"></script>
+<canvas-panel
+    canvas-id="https://digirati-co-uk.github.io/wunder/canvases/0"
+    manifest-id="https://digirati-co-uk.github.io/wunder.json">
+</canvas-panel>
+`
 
-<<<<<<< Updated upstream
-class TpenLineText extends HTMLElement {
-=======
 class TpenLineImage extends HTMLElement {
->>>>>>> Stashed changes
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
@@ -27,17 +29,10 @@ class TpenLineImage extends HTMLElement {
     }
 }
 
-<<<<<<< Updated upstream
-customElements.define('tpen-line-text', TpenLineText)
+customElements.define('tpen-line-image', TpenLineImage)
 
 export default {
-    TpenLineText
-=======
-customElements.define('tpen-line-text', TpenLineImage)
-
-export default {
-    TpenLineImage: TpenLineText
->>>>>>> Stashed changes
+    TpenLineImage
 }
 
 async function loadText(lineId,elem){
