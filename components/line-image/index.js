@@ -1,31 +1,65 @@
 import {decodeContentState} from '../iiif-tools/index.mjs'
 
-const LINE_TEXT_HTML = `
-<script src="https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@latest"></script>
-<canvas-panel
-    canvas-id="https://digirati-co-uk.github.io/wunder/canvases/0"
-    manifest-id="https://digirati-co-uk.github.io/wunder.json">
-</canvas-panel>
-`
+const CANVAS_PANEL_SCRIPT = document.createElement('script')
+CANVAS_PANEL_SCRIPT.src = "https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@latest"
+document.head.appendChild(CANVAS_PANEL_SCRIPT)
+
+const LINE_IMG = () => document.createElement('canvas-panel')
 
 class TpenLineImage extends HTMLElement {
+    #manifestId = this.closest('[iiif-manifest]')?.getAttribute('iiif-manifest') 
+    #canvasId = this.closest('[iiif-canvas]')?.getAttribute('iiif-canvas')
+    #canvasPanel = LINE_IMG()
+
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
         this.id = this.getAttribute('tpen-line-id')
-        this.content = this.getAttribute('iiif-content')
+        if ("null" === this.id) {
+            const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
+            validateContent(null,this,"Line ID is required")
+            return
+        }
+        this.shadowRoot.append(this.#canvasPanel)
+        this.#canvasPanel.setAttribute("preset","responsive")
+        this.#canvasPanel.setAttribute("manifest-id",this.#manifestId)
+        this.#canvasPanel.setAttribute("canvas-id",this.#canvasId)
+        fetch(this.id).then(res=>res.json()).then(anno=>{
+            const TARGET = (anno.target ?? anno.on)?.split('#xywh=')
+            // this.#canvasPanel.setAttribute("canvas-id",TARGET[0])
+            this.#canvasPanel.setAttribute("region",TARGET[1])
+            this.#canvasPanel.createAnnotationDisplay(anno)
+        })
+        this.addEventListener('canvas-change',ev=>{
+            this.#canvasId = this.#canvasPanel.closest('[iiif-canvas]') ?? this.closest('[iiif-canvas]')
+            this.#canvasPanel.setCanvas(this.#canvasId)
+        })
     }
 
-    connectedCallback() {
-        this.shadowRoot.innerHTML = LINE_TEXT_HTML
-        const SPAN = this.shadowRoot.querySelector('span')
-        
-        if (!this.id && !this.content) {
-            const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
-            validateContent(null,SPAN,"Line ID is required")
+    connectedCallback() {   
+        if(!this.#canvasPanel.vault) return
+
+    }
+
+    async selectImage(){
+        try {
+            new URL(this.id)
+            const TEXT_CONTENT = await loadAnnotation(lineId)
+            this.#canvasPanel.innerText = validateContent(TEXT_CONTENT,this)
+        } catch (error) {
+            console.error(error)
+            return validateContent(null,this,"Fetching Error")
         }
-        
-        this.content ? loadContent(this.content,SPAN) : loadText(this.id,SPAN)
+    }
+    
+    loadContent(){
+        try {
+            const TEXT_CONTENT = JSON.parse(decodeContentState(this.content))
+            this.innerText = validateContent(TEXT_CONTENT,this)
+        } catch (error) {
+            console.error(error)
+            return validateContent(null,this,"Decoding Error")
+        }
     }
 }
 
@@ -35,26 +69,6 @@ export default {
     TpenLineImage
 }
 
-async function loadText(lineId,elem){
-    try {
-        new URL(lineId)
-        const TEXT_CONTENT = await loadAnnotation(lineId)
-        elem.innerText = validateContent(TEXT_CONTENT,elem)
-    } catch (error) {
-        console.error(error)
-        return validateContent(null,elem,"Fetching Error")
-    }
-}
-
-function loadContent(b64,elem){
-    try {
-        const TEXT_CONTENT = getText(JSON.parse(decodeContentState(b64)))
-        elem.innerText = validateContent(TEXT_CONTENT,elem)
-    } catch (error) {
-        console.error(error)
-        return validateContent(null,elem,"Decoding Error")
-    }
-}
 
 function loadAnnotation(url){   
     return fetch(url)
@@ -62,7 +76,6 @@ function loadAnnotation(url){
             if(!response.ok) throw new Error("failed to fetch")
             return response.json()
         })        
-        .then(anno => getText(anno))
         .catch(error => console.error(error))
 }
 
