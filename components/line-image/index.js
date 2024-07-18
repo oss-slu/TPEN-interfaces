@@ -14,8 +14,8 @@ class TpenLineImage extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
-        this.id = this.getAttribute('tpen-line-id')
-        if ("null" === this.id) {
+        this._id = this.getAttribute('tpen-line-id')
+        if ("null" === this._id) {
             const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
             validateContent(null,this,"Line ID is required")
             return
@@ -24,7 +24,7 @@ class TpenLineImage extends HTMLElement {
         this.#canvasPanel.setAttribute("preset","responsive")
         this.#canvasPanel.setAttribute("manifest-id",this.#manifestId)
         this.#canvasPanel.setAttribute("canvas-id",this.#canvasId)
-        fetch(this.id).then(res=>res.json()).then(anno=>{
+        fetch(this._id).then(res=>res.json()).then(anno=>{
             const TARGET = (anno.target ?? anno.on)?.split('#xywh=')
             // this.#canvasPanel.setAttribute("canvas-id",TARGET[0])
             this.#canvasPanel.setAttribute("region",TARGET[1])
@@ -43,7 +43,7 @@ class TpenLineImage extends HTMLElement {
 
     async selectImage(){
         try {
-            new URL(this.id)
+            new URL(this._id)
             const TEXT_CONTENT = await loadAnnotation(lineId)
             this.#canvasPanel.innerText = validateContent(TEXT_CONTENT,this)
         } catch (error) {
@@ -60,6 +60,17 @@ class TpenLineImage extends HTMLElement {
             console.error(error)
             return validateContent(null,this,"Decoding Error")
         }
+    }
+
+    moveTo(x,y,width,height) {
+        this.#canvasPanel.transition(tm => {
+            tm.goToRegion({ height, width, x, y }, {
+                transition: {
+                easing: this.#canvasPanel.easingFunctions().easeOutExpo,
+                duration: 1000,
+                },
+            })
+        })
     }
 }
 
