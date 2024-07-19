@@ -90,14 +90,6 @@ function loadAnnotation(url){
         .catch(error => console.error(error))
 }
 
-function getText(annotation){
-    // TODO: currently this is a fragile mess
-    let textContent = annotation.body?.value
-    if(annotation.resource) textContent = annotation.resource["cnt:chars"]
-    if(typeof annotation.body === "string") textContent = annotation.body
-    return textContent ?? "weird value"
-}
-
 function validateContent(content,elem,msg) {
     if(content==null){
         elem.setAttribute('aria-invalid',true)
