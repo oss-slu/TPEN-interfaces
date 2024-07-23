@@ -1,4 +1,6 @@
 // custom element named 'tpen-transcription' with a custom template built from the querystring 'projectID' parameter
+import { fetchProject, userMessage } from "../iiif-tools/index.mjs"
+
 class TpenTranscriptionElement extends HTMLElement {
     constructor() {
         super();
@@ -7,14 +9,16 @@ class TpenTranscriptionElement extends HTMLElement {
 
     connectedCallback() {
         const projectID = new URLSearchParams(window.location.search).get('projectID');
-        if (projectID) {
-            this.fetchProject(projectID);
+        if (!projectID) {
+            userMessage('No project ID provided');
+            return
         }
-    }
-
-    fetchProject(projectID) {
-        fetch(`/transcriptions/${projectID}`)
-            .then(response => response.json())
+        fetchProject(projectID);
     }
 }
+
+customElements.define('tpen-transcription', TpenTranscriptionElement)
+
+
+
 
