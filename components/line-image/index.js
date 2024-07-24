@@ -18,8 +18,6 @@ class TpenLineImage extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' })
         this.#canvasPanel.setAttribute("preset","responsive")
-        this.#canvasPanel.setAttribute("manifest-id",this.#manifestId())
-        this.#canvasPanel.setAttribute("canvas-id",this.#canvasId())
         this.shadowRoot.append(this.#canvasPanel)
         this.addEventListener('canvas-change',ev=>{
             this.#canvasPanel.setCanvas(this.#canvasId())
@@ -28,11 +26,18 @@ class TpenLineImage extends HTMLElement {
     }
     
     connectedCallback() {  
+        this.#canvasPanel.setAttribute("manifest-id",this.#manifestId())
+        this.#canvasPanel.setAttribute("canvas-id",this.#canvasId())
         this.#line = decodeContentState((this.#canvasPanel.closest('[iiif-content]') ?? this.closest('[iiif-content]'))?.getAttribute('iiif-content'))
 
         if(this.#line) {
-            this.#canvasPanel.setAttribute("iiif-content",this.#line)
-            return
+            try{
+                let anno = JSON.parse(this.#line)
+                const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)?.split('#xywh=')
+                this.#canvasPanel.setAttribute("region",TARGET[1])
+                this.#canvasPanel.createAnnotationDisplay(anno)
+                return
+            }catch(e){}
         }
 
         this.#id = (this.#canvasPanel.closest('[tpen-line]') ?? this.closest('[tpen-line]'))?.getAttribute('tpen-line')
