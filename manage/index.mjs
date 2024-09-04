@@ -11,8 +11,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(`${componentName}.html`)
       const componentHtml = await response.text()
       content.innerHTML = componentHtml
+
+      if (componentName === "collaboration") {
+        const modifyTeamBtn = document.getElementById("modify-team-btn");
+        if (modifyTeamBtn) {
+          modifyTeamBtn.addEventListener("click", () => {
+            const projectID = modifyTeamBtn.getAttribute("projectID"); 
+            const url = `/collaborators/index.html?projectID=${projectID}`;
+            window.location.href = url;
+          });
+        }
+      }
     })
   })
 
-  document.getElementById("collaboration").click()
+  document.getElementById("projects").click()
 })
