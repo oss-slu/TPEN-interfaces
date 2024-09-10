@@ -5,3 +5,8 @@ collections:
     label: TPEN Cookbook
     output: true
     directory: cookbook
+  classes:
+    label: Class
+    output: true
+    directory: classes
+theme: jekyll-theme-minima
