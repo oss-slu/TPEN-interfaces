@@ -40,14 +40,23 @@
                       If you add an email that is not a current TPEN user, we will invite them to join TPEN and your project
                     </p>
                   
-                    <div class="invite-section">
+                    <!-- <div class="invite-section">
                       <label for="invitee-email">Invitee's Email</label>
                       <input type="email" name="invitee-email" id="invitee-email"  class="invitee-email">
                       <button id="submit" class="submit-btn">Submit</button>
-                    </div>
+                    </div> -->
+
+                    <form id="invite-form">
+                        <label for="invitee-email">Invitee's Email</label>
+                        <input type="email" name="invitee-email" id="invitee-email" required>
+                        <button type="submit" id="submit" class="submit-btn" >Submit</button>
+                        <p id="error" class="error-message"></p>
+                      </form>
+
+
                   </div>
 
-                  <div id="error" class="error"></div>
+                  <div id="errorHTML" class="error"></div>
 
             </main>
 

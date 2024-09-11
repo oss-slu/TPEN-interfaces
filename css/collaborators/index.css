@@ -12,7 +12,6 @@
 }
 .collaborators-container .role {
   color: #B14628;
-  text-transform: lowercase;
   text-transform: capitalize;
 }
 .collaborators-container .pending {
