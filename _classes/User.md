@@ -7,7 +7,16 @@ tags: [tpen, api, javascript, interface]
 
 The User class is used to represent an authenticated TPEN user. Interfaces in TPEN will often need details about the currently authenticated user as well as simple information about the users referenced as contributors, group members, etc.
 
-### Constructor
+1. [Constructor](#constructor)
+2. [Properties](#properties)
+3. [Methods](#methods)
+  - [getProfile()](#getprofile)
+  - [getProjects(withRole)](#getprojectswithrole)
+  - [getPublicProjects()](#getpublicprojects)
+  - [updateProfile(data)](#updateprofiledata)
+4. [Implementation Notes](#implementation-notes)
+
+## Constructor
 
 The constructor for the User class is used to initialize the User object with an identifier unique among users. Instantiating 
 a User with no argument `new User()` will return a container for a User for loading or building. An `idString` can also be used 
@@ -30,7 +39,7 @@ user "https://store.rerum.io/v1/id/1234567890abcdef87654321" may be called forth
 const user = new User(idString?)
 ```
 
-### Properties
+## Properties
 
 The User class may have the following properties:
 
@@ -48,19 +57,19 @@ The User class may have the following properties:
 
 > &#42; Any additional metadata attached to the `currentUser` will also be provided.
 
-### Methods
+## Methods
 
-#### `getProfile()`
+### `getProfile()`
 
 Returns the profile information for the user. This method only returns the publicly available profile 
 and is available on any User.
 
-##### Returns (Promise)
+#### Returns (Promise)
 
 * Resolve(`Object`): An object containing the user's profile information.
 * Reject(`Error`): 404 if the User is not located, 500 if the server has failed.
 
-##### Example
+#### Example
 
 ```js
 const webUser = new User(TPEN.currentUser.id)
@@ -76,18 +85,18 @@ console.log(profile)
 // }
 ```
 
-#### `getProjects(withRole)`
+### `getProjects(withRole)`
 
 Returns a list of all the Projects the user has access to. If a `withRole` is provided, the response will be filtered to 
 include only those Projects where the user has the specified Role (exact match, case-insensitive). 
 Only available on the `currentUser`.
 
-##### Returns (Promise)
+#### Returns (Promise)
 
 * Resolve(`Array<Object>`): An array of Project stubs, with `id` and `title`. With no matches, the array is empty.
 * Reject(`Error`): 500 if the server has failed.
 
-##### Example
+#### Example
 
 ```js
 const webUser = new User(TPEN.currentUser.id)
@@ -103,26 +112,26 @@ console.log(await webUser.getProfile("LEADER"))
 //  {"id": "cdefab0987654321", "title": "My Second Project"}
 // ]
 ```
-#### `getPublicProjects()`
+### `getPublicProjects()`
 
 Returns a list of all the public Projects the user is explicitly a member of.
 This is not the same as the method on [`TPEN`](./TPEN) that returns all public projects.
 
-##### Returns (Promise)
+#### Returns (Promise)
 
 * Resolve(`Array<Object>`): An array of Project stubs, with `id` and `title`. With no matches, the array is empty.
 * Reject(`Error`): 500 if the server has failed.
 
-#### `updateProfile(data)`
+### `updateProfile(data)`
 
 Updates the profile information for the `currentUser`. New keys are added and any keys set to `null` will be removed. Only the authenticated user may modify their profile.
 
-##### Returns (Promise)
+#### Returns (Promise)
 
 * Resolve(`User.profile`): The new `profile` property on this User with all modifications applied.
-* Reject(`Error`): 403 for unauthenticated Users, 405, for malformed requests, 500 for server errors
+* Reject(`Error`): 403 for unauthenticated Users, 405, for malformed requests, 500 for server errors.
 
-##### Example
+#### Example
 
 ```javascript
 const webUser = new User(TPEN.currentUser)
@@ -142,7 +151,16 @@ document.addEventListener("TPEN-user-loaded",ev=>{
   })
 ```
 
-### Implementation Notes
+### `updateMetadata(data)`
+
+Updates the user metadata for the `currentUser`. New keys are added and any keys set to `null` will be removed. Only the authenticated user may modify their metadata. Some properties may be protected and resist modification or removal.
+
+#### Returns (Promise)
+
+* Resolve(`User`): The new JSON entry for this User with all modifications applied.
+* Reject(`Error`): 403 for unauthenticated Users, 405, for malformed requests, 500 for server errors.
+
+## Implementation Notes
 
 The permissions for a User are controlled by the Project. Changing the active Project will update the permissions and reset all the group members. The `currentUser` is only changed by authentication and cannot be programmatically switched in an Interface.
 
