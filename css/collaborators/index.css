@@ -64,4 +64,7 @@
 }
 .collaborators-container .error {
   color: red;
+}
+.collaborators-container .is-hidden {
+  display: none;
 }/*# sourceMappingURL=index.css.map */
