@@ -14,6 +14,7 @@ The User class is used to represent an authenticated TPEN user. Interfaces in TP
   - [getProjects(withRole)](#getprojectswithrole)
   - [getPublicProjects()](#getpublicprojects)
   - [updateProfile(data)](#updateprofiledata)
+  - [updateMetadata(data)](#updatemetadatadata)
 4. [Implementation Notes](#implementation-notes)
 
 ## Constructor
