@@ -49,8 +49,8 @@ Resets the TPEN object to its initial state. This is useful for an interface tha
 
 #### Returns (Promise)
 
-* Resolve(`Array` | undefined): List of pending actions, killed if `force`
-* Reject(`Array` | `Error`): List of pending actions blocking reset or 500 server error.
+* Resolve(`Array` \| undefined): List of pending actions, killed if `force`
+* Reject(`Array` \| `Error`): List of pending actions blocking reset or 500 server error.
 
 ### `getUser()`
 
