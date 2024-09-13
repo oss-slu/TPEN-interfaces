@@ -97,8 +97,7 @@ export class User {
           const manageButtons = document.querySelectorAll(".manage-btn")
           manageButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
-              const projectId = event.target.getAttribute("data-project-id")
-              console.log(projectId)
+              const projectId = event.target.getAttribute("data-project-id") 
               this.navigateToManagePage(projectId)
             })
           })

@@ -1,31 +1,24 @@
-import Project from "../api/project.mjs"
+ import getActiveProject from "../utilities/getActiveProject.mjs"
+ import renderRoles from "../utilities/renderRoles.mjs"
 
 let groupTitle = document.querySelector(".project-title")
 let groupMembersElement = document.querySelector(".group-members")
- let submitButton = document.getElementById("submit")
- let userEmail = document.getElementById("invitee-email")
+let submitButton = document.getElementById("submit")
+let userEmail = document.getElementById("invitee-email")
 
 const inviteForm = document.getElementById("invite-form")
 let errorHTML = document.getElementById("errorHTML")
 
 let isOwnerOrLeader = false
-
-const URLParams = new URLSearchParams(window.location.search)
-let projectID = URLParams.get("projectID")
-let project = new Project(projectID)
-
-
-
-userEmail.addEventListener("input", () => {
-    errorHTML.innerHTML = ""
-})
-
+let project
+ 
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const projectData = await project.loadData()
+        const { projectObj, projectData } = await getActiveProject()
+        project = projectObj
         renderProjectContributors(projectData)
-       
+
     } catch (error) {
         return errorHTML.innerHTML = error.status == 401 ? "Unauthorized request. Please log in to view this resource" : `Error ${error.status ?? ""}: ${error.statusText ?? error.toString()}`
     }
@@ -70,15 +63,7 @@ inviteForm.addEventListener("submit", async (event) => {
 
 
 
-function renderRoles(roles) {
-    if (roles.includes("OWNER")) {
-        return "owner"
-    } else if (roles.includes("LEADER")) {
-        return "leader"
-    } else {
-        return roles.join(", ").toLowerCase().replaceAll("_"," ")
-    }
-}
+
 
 
 function renderProjectContributors(project) {
@@ -164,3 +149,9 @@ function setPermissionBasedVisibility() {
         }
     })
 }
+
+
+
+console.log(
+    document.getElementById("project-owner")
+  )
