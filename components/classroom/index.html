@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
     <title>"TPEN Classroom Interface: Home"</title>
 </head>
-<body>
-    <div class="header">
-        <h1>TPEN Classroom Interface</h1>
-    </div>
-		<div class ="navbar">
-        <!--navigation bar below: we can try making this collapsible on mobile devices?
-        placeholder categories, will be changed as we solidify the pages needed
-        -->
-          <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#annotations">Annotations</a></li>
-            <li><a href="#groups">Groups</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-		</div>
-
-        <div class="main">
-            <h1>Welcome!</h1>
-            <p>text</p>
+    <body>
+        <div class="header">
+            <h1>TPEN Classroom Interface</h1>
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                &#9776 <!-- Hamburger icon -->
+            </div>
         </div>
+            <div class ="navbar" id="navbar">
+            <!--navigation bar below: we can try making this collapsible on mobile devices?
+            placeholder categories, will be changed as we solidify the pages needed
+            -->
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#annotations">Annotations</a></li>
+                <li><a href="#groups">Groups</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            </div>
 
-    <footer>
-        <p>TPEN Classroom Interface</p>
-    </footer>
+            <div class="page-container">
+                <h1>Welcome!</h1>
+                <div class="input-container">
+                    <h2>Sign Up/In</h2>
+                    <div class="label-container">
+                        <form class="input-form">
+                            <label for="username">Username:</label>
+                            <input id="username" name="username" type="text" placeholder="John Smith">
+                        </form>
+                        <form class="input-form">
+                            <label for="password">Password:</label>
+                            <input id="password" name="password" type="password">
+                        </form> 
+                    </div>
+                    <button class="submit-button" type="submit">Submit</button>
+                </div>
+            </div>
 
-</body>
+        <footer>
+            <p>TPEN Classroom Interface</p>
+        </footer>
+
+        <script src="./menutoggle.js"></script>
+    </body>
 </html>
