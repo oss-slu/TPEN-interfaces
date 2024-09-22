@@ -33,7 +33,7 @@ T-PEN provides multiple tools to help with transcribing and annotating manuscrip
 ## User Guide Best Practices
 
 * `index.html`: The default interface to launch,
-* TPEN interface suuports many files e.g. `*js`, `*.css`, `*.html`, etc.,
+* TPEN interface suports many files e.g. `*js`, `*.css`, `*.html`, etc.,
 * Configuration files: `manifest.yml` or `manifest.json`
 
 ## Useful APIs for Classroom Group Interface
