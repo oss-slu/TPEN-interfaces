@@ -2,7 +2,6 @@
 title: Group Class
 author: <cubap@slu.edu>
 layout: default
-permalink: /interfaces/Group/
 tags: [tpen, api, javascript, interface]
 ---
 
