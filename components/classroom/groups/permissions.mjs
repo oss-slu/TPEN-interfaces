@@ -1,61 +1,52 @@
-const perms = {
-    OWNER: {
-        '*': {
-            '*': ['*']
-        }
-    },
-    LEADER: {
+const Permissions = {
+    OWNER: ['*_*_*'],
+    LEADER: [
         /* ACTION_SCOPE_ENTITY */
-        UPDATE: {
-            '*': ['PROJECT']
-        },
-        '*': {
-            '*': ['MEMBER', 'ROLE', 'PERMISSION', 'LAYER', 'PAGE']
-        }
-    },
-    CONTRIBUTOR: {
+        'UPDATE_*_PROJECT',
+        '*_*_MEMBER',
+        '*_*_ROLE',
+        '*_*_PERMISSION',
+        '*_*_LAYER',
+        '*_*_PAGE'
+    ],
+    CONTRIBUTOR: [
         /* ACTION_SCOPE_ENTITY */
-        UPDATE: {
-            'TEXT': ['*'],
-            'ORDER': ['*'],
-            'SELECTOR': ['*'],
-            'DESCRIPTION': ['LAYER']
-        },
-        CREATE: {
-            'SELECTOR': ['*']
-        },
-        READ: {
-            '*': ['MEMBER']
-        },
-        DELETE: {
-            '*': ['LINE']
-        },
-        CREATE: {
-            '*': ['LAYER']
-        }
-    }
-}
+        'READ_*_MEMBER',
+        'UPDATE_TEXT_*',
+        'UPDATE_ORDER_*',
+        'UPDATE_SELECTOR_*',
+        'CREATE_SELECTOR_*',
+        'DELETE_*_LINE',
+        'UPDATE_DESCRIPTION_LAYER',
+        'CREATE_*_LAYER'
+    ]
+};
+
+// Generate possible patterns to match
+function generatePatterns(action, scope, entity) {
+    return [
+        `${action}_${scope}_${entity}`,
+        `${action}_${scope}_*`,
+        `${action}_*_${entity}`,
+        `*_${scope}_${entity}`,
+        `*_*_${entity}`,
+        `*_${scope}_*`,
+        `${action}_*_*`,
+        '*_*_*'
+    ];
+};
 
 /* validate whether a specific role can perform 
 an action on a particular entity and scope. */
-export default function checkPermissions(role, action, scope, entity) {
-    if (!perms[role]) return false; // Role doesn't exist
+function checkPermissions(role, action, scope, entity) {
+    if (!Permissions[role]) return false; // If role doesn't exist
 
-    // Check for role-specific permissions
-    const rolePerms = perms[role];
+    // Get the permissions for the specified role
+    const rolePerms = Permissions[role];
+    const patterns = generatePatterns(action, scope, entity);
 
-    // Check if the action is allowed for that role
-    const actionPerms = rolePerms[action] || rolePerms['*'];
-    if (!actionPerms) return false; // No permission for this action
+    // Check if any pattern matches the role's permissions
+    return patterns.some(pattern => rolePerms.includes(pattern));
+};
 
-    // Check if the scope is allowed for that action
-    const scopePerms = actionPerms[scope] || actionPerms['*'];
-    if (!scopePerms) return false; // No permission for this scope
-
-    // Check if the entity is allowed in that scope
-    if (scopePerms.includes(entity) || scopePerms.includes('*')) {
-        return true;
-    } else {
-        return false;
-    }
-}
+module.exports = checkPermissions;
