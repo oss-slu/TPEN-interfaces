@@ -11,10 +11,6 @@ describe('checkPermissions function', () => {
         expect(checkPermissions('LEADER', 'UPDATE', '*', 'PROJECT')).toBe(true);
     });
 
-    /*test('LEADER cannot UPDATE a MEMBER', () => {
-        expect(checkPermissions('LEADER', 'UPDATE', '*', 'MEMBER')).toBe(false);
-    });*/
-
     test('LEADER can READ a MEMBER', () => {
         expect(checkPermissions('LEADER', 'READ', '*', 'MEMBER')).toBe(true);
     });
