@@ -8,6 +8,20 @@
 <body>
     <h1>Classroom Group Management</h1>
     <p id="project-info">Project ID: </p>
-    <script src="project.js"></script>
+        <script type="module">
+        import { fetchProjectData } from './fetchProjectData.mjs';
+        import { getProjectIDFromURL } from './project.js';
+
+        // Call the functions
+        const projectId = getProjectIDFromURL();
+        if (projectId) {
+            // Fetch and display project data
+            fetchProjectData(projectId).then(data => {
+                document.getElementById('project-info').textContent = `Project Info: ${JSON.stringify(data)}`;
+            });
+        } else {
+            document.getElementById('project-info').textContent = 'Project ID not found in URL';
+        }
+    </script>
 </body>
 </html>
