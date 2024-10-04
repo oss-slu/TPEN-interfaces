@@ -6,7 +6,6 @@ export async function fetchProjectData(projectId) {
     const client = new MongoClient(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
 
     try {
-        // Connect to MongoDB
         await client.connect();
         console.log("Connected to MongoDB");
 

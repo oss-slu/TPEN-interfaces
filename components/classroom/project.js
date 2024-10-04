@@ -14,12 +14,3 @@ export function getProjectIDFromURL() {
         return projectIdQuery;
     }
 }
-
-/* // Call the function to get the ProjectID and display it
-const projectID = getProjectIDFromURL();
-if (projectID) {
-    document.getElementById('project-info').textContent = 'Project ID: ' + projectID;
-}
-else {
-    document.getElementById('project-info').textContent = 'Project ID not found in URL';
-} */

@@ -1,14 +1,12 @@
 import express from 'express';
-import cors from 'cors';  // Import CORS middleware
-import { fetchProjectData } from './fetchProjectData.mjs';  // Import the data fetching function
+import cors from 'cors'; 
+import { fetchProjectData } from './fetchProjectData.mjs';
 
 const app = express();
 const port = 3000;
 
-// Enable CORS for all routes
 app.use(cors());
 
-// Define an API endpoint to fetch project data by ID
 app.get('/project/:id', async (req, res) => {
     const projectId = req.params.id;
 
@@ -16,7 +14,7 @@ app.get('/project/:id', async (req, res) => {
         const project = await fetchProjectData(projectId);
 
         if (project) {
-            res.json(project);  // Send project data as JSON
+            res.json(project);
         } else {
             res.status(404).json({ error: 'Project not found' });
         }
