@@ -27,6 +27,7 @@ class TpenTranscriptionElement extends HTMLElement {
         }
         return fetchProject(this.#projectID)
         .then(async project => {
+            console.log(this.#projectID, project)
             this.#transcriptionContainer.setAttribute('iiif-manifest', project.manifest)
             // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
