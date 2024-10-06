@@ -1,9 +1,9 @@
 {
-  "devDependencies": {
-    "jest": "^29.7.0"
+  "devDependencies":{
+    "jest":"^29.7.0"
   },
   "scripts": {
-    "test": "jest"
+      "test": "jest"
   },
   "jest": {
     "transform": {},
@@ -11,4 +11,5 @@
       "**/__test__.mjs"
     ]
   }
+
 }
