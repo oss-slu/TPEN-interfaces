@@ -2,7 +2,7 @@
 #canvas-container {
    position: relative;
    width: 100%;
-   max-width: 800px; /* Adjust this width as needed */
+   max-width: 800px;
    margin: 0 auto;
 }
 
@@ -10,46 +10,4 @@
    width: 100%;
    height: auto;
    border: 1px solid #ddd;
-}
-
-/* Overlay block for the input and controls */
-#input-block {
-   position: absolute;
-   top: 10px; /* Initial position */
-   left: 0;
-   right: 0;
-   height: 100px; /* Enough space for the input and buttons */
-   display: flex;
-   flex-direction: column;
-   background: rgba(255, 255, 255, 0.9);
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-   border-radius: 8px;
-   padding: 10px;
-   cursor: grab;
-}
-
-/* Style for the input field */
-#transcription-input {
-   width: 100%;
-   padding: 10px;
-   font-size: 16px;
-   margin-bottom: 10px;
-}
-
-/* Style for the controls (buttons and drag handle) */
-.controls {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-}
-
-#prev-line, #next-line {
-   padding: 5px 10px;
-   font-size: 14px;
-   cursor: pointer;
-}
-
-#drag-handle {
-   cursor: grab;
-   user-select: none;
 }
