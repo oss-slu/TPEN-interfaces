@@ -16,11 +16,11 @@
 
     <script type="module">
         import { getProjectIDFromURL } from './groups/utils/project.js';
-
+    
         const projectId = getProjectIDFromURL();
-
+    
         if (projectId) {
-            fetch(`http://localhost:3000/project/${projectId}`)  // Fetch project data from backend
+            fetch(`http://localhost:3000/project/${projectId}`)  // Fetch project data from the backend
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -29,7 +29,6 @@
                 })
                 .then(data => {
                     if (data && data._id && data.name && data.creator) {
-                        // Update the HTML elements with the fetched project data
                         document.getElementById('project-info').textContent = `Project ID: ${data._id}`;
                         document.getElementById('project-name').textContent = `Project Name: ${data.name}`;
                         document.getElementById('project-creator').textContent = `Project Creator: ${data.creator}`;
@@ -45,6 +44,7 @@
             document.getElementById('project-info').textContent = 'Project ID not found in URL';
         }
     </script>
+    
 </body>
 
 </html>
