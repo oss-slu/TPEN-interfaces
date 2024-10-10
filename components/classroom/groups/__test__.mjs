@@ -1,41 +1,41 @@
 const Roles = require('./roles');
 const { Action, Scope, Entity } = require('./permissions_parameters');
-
+const checkPermissions = require('./permissions.mjs');
 
 const testProperties = (obj, properties) => {
     properties.forEach(prop => {
-        expect(obj).toHaveProperty(prop, prop);
+        expect(obj).toHaveProperty(prop);
     });
 };
 
-roleProperties = ['OWNER','LEADER','CONTRIBUTOR'];
-actionProperties = ['READ','UPDATE','DELETE','CREATE','ALL']
-scopeProperties = ['METADATA','TEXT','ORDER','SELECTOR','DESCRIPTION','ALL']
-entityProperties = ['PROJECT','MEMBER','LAYER','PAGE','LINE','ROLE','PERMISSION','ALL']
+const roleProperties = ['OWNER', 'LEADER', 'CONTRIBUTOR'];
+const actionProperties = ['READ', 'UPDATE', 'DELETE', 'CREATE', 'ALL'];
+const scopeProperties = ['METADATA', 'TEXT', 'ORDER', 'SELECTOR', 'DESCRIPTION', 'ALL'];
+const entityProperties = ['PROJECT', 'MEMBER', 'LAYER', 'PAGE', 'LINE', 'ROLE', 'PERMISSION', 'ALL'];
 
-describe('Roles',()=>{
-    test('properties are defined correctly', () =>{
-        testProperties(Roles,roleProperties);
+describe('Roles', () => {
+    test('properties are defined correctly', () => {
+        testProperties(Roles, roleProperties);
     });
 });
 
-describe('Action',()=>{
-    test('properties are defined correctly', () =>{
-        testProperties(Action,actionProperties);
+describe('Action', () => {
+    test('properties are defined correctly', () => {
+        testProperties(Action, actionProperties);
     });
 });
 
-describe('Scope',()=>{
-    test('properties are defined correctly', () =>{
-        testProperties(Scope,scopeProperties);
+describe('Scope', () => {
+    test('properties are defined correctly', () => {
+        testProperties(Scope, scopeProperties);
     });
 });
 
-describe('Entity',()=>{
-    test('properties are defined correctly', () =>{
-        testProperties(Entity,entityProperties);
-      
-const checkPermissions = require('./permissions.mjs');
+describe('Entity', () => {
+    test('properties are defined correctly', () => {
+        testProperties(Entity, entityProperties);
+    });
+});
 
 describe('checkPermissions function', () => {
     test('OWNER can perform any action on any entity', () => {
@@ -74,6 +74,5 @@ describe('checkPermissions function', () => {
 
     test('CONTRIBUTOR can DELETE a LINE', () => {
         expect(checkPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
-
     });
 });

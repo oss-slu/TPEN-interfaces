@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors'; 
-import { fetchProjectData } from './fetchProjectData.mjs';
+import { fetchProjectData } from './groups/api/fetchProjectData.mjs';
 
 const app = express();
 const port = 3000;

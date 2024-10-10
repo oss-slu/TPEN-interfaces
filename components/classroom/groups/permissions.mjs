@@ -1,6 +1,7 @@
+import Roles from "./roles.mjs"
 const Permissions = {
-    OWNER: ['*_*_*'],
-    LEADER: [
+    [Roles.OWNER]: ['*_*_*'],
+    [Roles.LEADER]: [
         /* ACTION_SCOPE_ENTITY */
         'UPDATE_*_PROJECT',
         '*_*_MEMBER',
@@ -9,7 +10,7 @@ const Permissions = {
         '*_*_LAYER',
         '*_*_PAGE'
     ],
-    CONTRIBUTOR: [
+    [Roles.CONTRIBUTOR]: [
         /* ACTION_SCOPE_ENTITY */
         'READ_*_MEMBER',
         'UPDATE_TEXT_*',
