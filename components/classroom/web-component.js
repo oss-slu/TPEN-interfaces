@@ -30,7 +30,14 @@ class ClassroomGroup extends HTMLElement {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                // More specific error message based on the status code
+                if (response.status === 401) {
+                    throw new Error('Unauthorized: Invalid or missing token');
+                } else if (response.status === 404) {
+                    throw new Error('Project not found');
+                } else {
+                    throw new Error(`Network response was not ok (status: ${response.status})`);
+                }
             }
 
             const projectData = await response.json();
