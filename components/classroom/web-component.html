@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Project Automatically</title>
+    <title>Testing Web Component</title>
 </head>
 <body>
     <h1>Create a Project and Display It</h1>
 
-    <!-- The <classroom-group> tag will have the project-id set dynamically -->
     <classroom-group id="classroom-component" project-id=""></classroom-group>
 
-    <!-- Import necessary modules -->
     <script type="module">
         import { createProject } from './create-project.js';
-        import './web-component.js';  // Assuming this is where <classroom-group> is defined
+        import './web-component.js';
 
         // Automatically create the project and set its ID to the classroom-group component
         (async function() {
