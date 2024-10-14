@@ -1,6 +1,7 @@
 const Roles = require('./roles');
 const { Action, Scope, Entity } = require('./permissions_parameters');
 const checkPermissions = require('./permissions.mjs');
+const hasPermissions = require('./checkPermissions.mjs');
 
 const testProperties = (obj, properties) => {
     properties.forEach(prop => {
@@ -74,5 +75,11 @@ describe('checkPermissions function', () => {
 
     test('CONTRIBUTOR can DELETE a LINE', () => {
         expect(checkPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
+    });
+});
+
+describe('hasPermission function',() => {
+    test('CONTRIBUTOR can DELETE a LINE', () => {
+        expect(hasPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
     });
 });
