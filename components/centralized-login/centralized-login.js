@@ -41,14 +41,14 @@ class AuthButton extends HTMLElement {
   logout() {
     const redirect = document.location.origin + document.location.pathname
     // Have to use this logout page if you want to kill the session in Auth0 and truly logout this token.
-    location.href = `${CENTRAL}/logout`
+    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
     
     // UGH if only.  Centralized logout can only returnTo CENTRAL
     //location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
 
     // If we only care that the component/app forgets the token, this is all we need to do here to accomplish that for this interface.
     // Loading the page without the ?idToken makes this forget everything.
-    // location.href = location.pathname
+    //location.href = location.pathname
 
 
     // Can we logout in a new tab, then close that tab somehow, and also do the redirect trick?  Probably thinking too hard.
