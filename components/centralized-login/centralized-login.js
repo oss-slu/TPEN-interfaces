@@ -3,41 +3,47 @@
  * @author thehabes
  */
 
-const CENTRAL = "https://three.t-pen.org"
+const CENTRAL = "http://localhost:3000"
 
-class AuthButton extends HTMLButtonElement {
-
-  login(redirect=location.href) {
-    location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
-  }
-
-  logout(redirect=location.href) {
-    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
-  }
+class AuthButton extends HTMLElement {
 
   constructor() {
     super(); // Always call the superconstructor first
     this.attachShadow({mode: "open"})
-    const returnTo = document.location.href
+    
     const incomingToken = new URLSearchParams(window.location.search).get("idToken")
     const userToken = incomingToken ?? ""
-    this.setAttribute("value", "Login")
+    const button = document.createElement("button")
+    button.innerText = "LOGIN"
     
     // Redirect to login if no userToken
     if(userToken) {
-      this.setAttribute("loggedIn", userToken)
-      this.setAttribute("value", "Logout")
+      button.setAttribute("loggedIn", userToken)
+      button.innerText = "LOGOUT"
     }
     // Add your custom logic here
-    this.addEventListener('click', () => {
-      if(this?.getAttribute("loggedIn")) {
-        logout()
+    button.addEventListener('click', () => {
+      if(button?.getAttribute("loggedIn")) {
+        this.logout()
         return
       }
-      login()
+      this.login()
     });
+    this.shadowRoot.append(button)
+  }
+
+  login() {
+    const redirect = document.location.href
+    location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
+    return
+  }
+
+  logout() {
+    const redirect = document.location.href
+    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
+    return
   }
   
 }
 
-customElements.define('auth-button', AuthButton, { extends: 'button' });
+customElements.define('auth-button', AuthButton);
