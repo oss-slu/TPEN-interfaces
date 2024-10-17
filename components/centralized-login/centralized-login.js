@@ -8,7 +8,7 @@ const CENTRAL = "https://three.t-pen.org"
 class AuthButton extends HTMLElement {
 
   constructor() {
-    super(); // Always call the superconstructor first
+    super() // Always call the superconstructor first
     this.attachShadow({mode: "open"})
     
     const incomingToken = new URLSearchParams(window.location.search).get("idToken")
@@ -28,7 +28,7 @@ class AuthButton extends HTMLElement {
         return
       }
       this.login()
-    });
+    })
     this.shadowRoot.append(button)
   }
 
@@ -53,4 +53,4 @@ class AuthButton extends HTMLElement {
   }
 }
 
-customElements.define('auth-button', AuthButton);
+customElements.define('auth-button', AuthButton)
