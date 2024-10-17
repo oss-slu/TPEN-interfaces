@@ -3,7 +3,7 @@
  * @author thehabes
  */
 
-const CENTRAL = "http://localhost:3000"
+const CENTRAL = "https://three.t-pen.org"
 
 class AuthButton extends HTMLElement {
 
