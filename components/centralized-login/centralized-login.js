@@ -33,7 +33,7 @@ class AuthButton extends HTMLElement {
   }
 
   login() {
-    const redirect = document.location.href
+    const redirect = location.href
     location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
     return
   }
