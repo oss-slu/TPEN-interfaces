@@ -21,7 +21,7 @@ class AuthButton extends HTMLElement {
       button.setAttribute("loggedIn", userToken)
       button.innerText = "LOGOUT"
     }
-    // Add your custom logic here
+    // Button click behavior
     button.addEventListener('click', () => {
       if(button?.getAttribute("loggedIn")) {
         this.logout()
