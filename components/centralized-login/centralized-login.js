@@ -50,6 +50,7 @@ class AuthButton extends HTMLElement {
     const redirect = document.location.origin + document.location.pathname
     // Have to use this logout page if you want to kill the session in Auth0 and truly logout this token.
     location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
+    return
   }
 }
 
