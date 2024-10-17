@@ -42,7 +42,7 @@ class AuthButton extends HTMLElement {
   }
 
   /**
-    * Use the TPEN3 Central Login to retire the current token and redirect back to this page.
+    * Use the TPEN3 Central Logout to retire the current token and redirect back to this page.
     * Make sure to remove the token if you have it stored anywhere, such as in the address bar or in localStorage.
   */
   logout() {
