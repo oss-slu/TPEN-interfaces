@@ -15,8 +15,7 @@ class TpenTranscriptionElement extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' })
         this.#transcriptionContainer = document.createElement('div')
-        this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')       
-        
+        this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
     }
 
