@@ -39,11 +39,21 @@ class AuthButton extends HTMLElement {
   }
 
   logout() {
-    const redirect = document.location.href
-    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
-    return
+    const redirect = document.location.origin + document.location.pathname
+    location.href = `${CENTRAL}/logout`
+    
+    // UGH if only.  Centralized logout can only returnTo CENTRAL
+    //location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
+
+    // We put it on the button as an attribute and the url knows it.  All knowledge of this token is removed with this redirect.
+    //location.href = location.pathname
+
+
+    // Can we logout in a new tab, then close that tab somehow, and also do the redirect trick?  Probably thinking too hard.
+    // const page = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
+    // let logoutWindow = window.open(page, '_blank')
+    // location.href = location.pathname
   }
-  
 }
 
 customElements.define('auth-button', AuthButton);
