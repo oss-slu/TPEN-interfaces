@@ -11,7 +11,7 @@ async function fetchProjects() {
     const TPEN_USER = await checkUserAuthentication()
     let token = TPEN_USER?.authorization
     
-    let userID = getHash(TPEN_USER?.["http://store.rerum.io/agent"] ?? "https://store.rerum.io/v1/id/65f8615ec43bd66568c666fa")
+    let userID = getHash(TPEN_USER.agent)
 
     try {
         const userObj = new User(userID)
@@ -52,12 +52,12 @@ function renderProjects(projects) {
 async function renderActiveProject(){
     const activeProjectContainer = document.getElementById('active-project')
     activeProjectContainer.innerHTML = ''
-
+    
     const {projectData} = await getActiveProject() 
-
+ 
      activeProjectContainer.innerHTML = `   <p>
     Active project is
-    <span class="red"> ${projectData?.name}</span>
+    <span class="red"> "${projectData?.name}"</span>
   </p>
   <p>
     Active project T-PEN I.D.

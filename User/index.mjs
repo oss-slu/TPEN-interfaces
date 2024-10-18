@@ -97,8 +97,8 @@ export class User {
           const manageButtons = document.querySelectorAll(".manage-btn")
           manageButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
-              const projectId = event.target.getAttribute("data-project-id") 
-              this.navigateToManagePage(projectId)
+              const projectId = event.target.getAttribute("data-project-id")
+              window.location.href = `/manage?projectID=${projectId}`
             })
           })
 
@@ -154,12 +154,5 @@ export class User {
   async updatePrivateInformation(data) {
     const response = await this.updateRecord(data)
     return response
-  }
-  navigateToManagePage(projectId) {
-    if (projectId) {
-      window.location.href = `/manage?projectID=${projectId}`
-    } else {
-      console.error("Project ID is missing")
-    }
-  }
+  } 
 }

@@ -13,10 +13,10 @@ let isOwnerOrLeader = false
 let project
  
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => { 
     try {
         const { projectObj, projectData } = await getActiveProject()
-        project = projectObj
+         project = projectObj
         renderProjectContributors(projectData)
 
     } catch (error) {
@@ -66,8 +66,10 @@ inviteForm.addEventListener("submit", async (event) => {
 
 
 
-function renderProjectContributors(project) {
-    const userId = window.TPEN_USER?._id || "65f8615ec43bd66568c666fa"
+async function renderProjectContributors(project) {
+    const TPEN_USER = await checkUserAuthentication()
+  
+    const userId = TPEN_USER?._id
     groupMembersElement.innerHTML = ""
 
     if (project) {
