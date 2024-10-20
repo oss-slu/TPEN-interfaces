@@ -7,30 +7,12 @@
 <body>
     <h1>Create a Project and Display It</h1>
 
-    <classroom-group id="classroom-component" project-id=""></classroom-group>
+    <!-- Just the placeholder component now -->
+    <classroom-group id="classroom-component"></classroom-group>
 
     <script type="module">
-        import { createProject } from './create-project.js';
+        // Import your web component
         import './web-component.js';
-
-        // Automatically create the project and set its ID to the classroom-group component
-        (async function() {
-            try {
-                // Create the project
-                const projectId = await createProject('Test Project', 'This is a test project.');
-
-                if (projectId) {
-                    // Set the project ID in the web component's project-id attribute
-                    const classroomComponent = document.getElementById('classroom-component');
-                    classroomComponent.setAttribute('project-id', projectId);
-                    console.log('Project created and ID set in web component:', projectId);
-                } else {
-                    console.error('Failed to create project');
-                }
-            } catch (error) {
-                console.error('Error creating project:', error);
-            }
-        })();
     </script>
 </body>
 </html>
