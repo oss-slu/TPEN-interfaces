@@ -1,5 +1,5 @@
 import Roles from "./roles.mjs"
-const Permissions = {
+export const Permissions = {
     [Roles.OWNER]: ['*_*_*'],
     [Roles.LEADER]: [
         /* ACTION_SCOPE_ENTITY */
@@ -24,7 +24,7 @@ const Permissions = {
 };
 
 // Generate possible patterns to match
-function generatePatterns(action, scope, entity) {
+export function generatePatterns(action, scope, entity) {
     return [
         `${action}_${scope}_${entity}`,
         `${action}_${scope}_*`,
@@ -39,7 +39,7 @@ function generatePatterns(action, scope, entity) {
 
 /* validate whether a specific role can perform 
 an action on a particular entity and scope. */
-function checkPermissions(role, action, scope, entity) {
+export function checkPermissions(role, action, scope, entity) {
     if (!Permissions[role]) return false; // If role doesn't exist
 
     // Get the permissions for the specified role
@@ -49,5 +49,3 @@ function checkPermissions(role, action, scope, entity) {
     // Check if any pattern matches the role's permissions
     return patterns.some(pattern => rolePerms.includes(pattern));
 };
-
-module.exports = checkPermissions;

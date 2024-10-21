@@ -1,17 +1,15 @@
-import Permissions from "./permissions.mjs"
+import Roles from "./roles.mjs"
+import {Permissions} from "./permissions.mjs"
 
 function hasPermission(role, action, scope, entity){ //function checks if role definition meets permissions
-    if (!Permissions[role]) return false; //if role does not exist, return false
+    if (!Permissions[Roles[role]]) return false; //if role does not exist, return false
 
-    let rolePermissions = Permissions[role];
-
+    let rolePermissions = Permissions[Roles[role]];
     let permsArray = [];
 
     for(let i=0; i<rolePermissions.length; i++){ //building a two-dimensional array (i is number of permissions, j is action-scope-entity)
-        const arr = rolePermissions[numPerms].split("_");
-        for(let j=0; j<arr.length; j++){
-            permsArray[i][j] = arr[j];
-        }
+        const arr = rolePermissions[i].split("_");
+        permsArray[i] = arr;
     }
     
     for(let i=0; i<rolePermissions.length;i++){//now traversing that array
