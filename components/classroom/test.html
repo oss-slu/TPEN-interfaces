@@ -14,37 +14,8 @@
     <p id="project-name">Project Name: </p>
     <p id="project-creator">Project Creator: </p>
 
-    <script type="module">
-        import { getProjectIDFromURL } from './groups/utils/project.js';
+    <script type="module" src="main.js"></script>
 
-        const projectId = getProjectIDFromURL();
-
-        if (projectId) {
-            fetch(`http://localhost:3000/project/${projectId}`)  // Fetch project data from backend
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data._id && data.name && data.creator) {
-                        // Update the HTML elements with the fetched project data
-                        document.getElementById('project-info').textContent = `Project ID: ${data._id}`;
-                        document.getElementById('project-name').textContent = `Project Name: ${data.name}`;
-                        document.getElementById('project-creator').textContent = `Project Creator: ${data.creator}`;
-                    } else {
-                        document.getElementById('project-info').textContent = 'Project data not found';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching project data:', error);
-                    document.getElementById('project-info').textContent = 'Error fetching project data';
-                });
-        } else {
-            document.getElementById('project-info').textContent = 'Project ID not found in URL';
-        }
-    </script>
     
 </body>
 
