@@ -8,14 +8,12 @@ const CENTRAL = "https://three.t-pen.org"
 class AuthButton extends HTMLElement {
 
   constructor() {
-    super() // Always call the superconstructor first
+    super() 
     this.attachShadow({mode: "open"})
-    
     const incomingToken = new URLSearchParams(window.location.search).get("idToken")
     const userToken = incomingToken ?? ""
     const button = document.createElement("button")
     button.innerText = "LOGIN"
-    
     // Redirect to login if no userToken
     if(userToken) {
       button.setAttribute("loggedIn", userToken)
@@ -46,12 +44,11 @@ class AuthButton extends HTMLElement {
     * Make sure to remove the token if you have it stored anywhere, such as in the address bar or in localStorage.
   */
   logout() {
-    // You can tell it where you would like to redirect.  In our case, back to this page without any URL parameters is good.
     const redirect = document.location.origin + document.location.pathname
-    // Have to use this logout page if you want to kill the session in Auth0 and truly logout this token.
     location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
     return
   }
+  
 }
 
 customElements.define('auth-button', AuthButton)
