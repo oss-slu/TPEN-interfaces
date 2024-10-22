@@ -1,6 +1,7 @@
 const Roles = require('./roles');
 const { Action, Scope, Entity } = require('./permissions_parameters');
-const checkPermissions = require('./permissions.mjs');
+const {checkPermissions} = require('./permissions.mjs');
+const hasPermissions = require('./checkPermissions.mjs');
 
 const testProperties = (obj, properties) => {
     properties.forEach(prop => {
@@ -74,5 +75,28 @@ describe('checkPermissions function', () => {
 
     test('CONTRIBUTOR can DELETE a LINE', () => {
         expect(checkPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
+    });
+});
+
+describe('hasPermission function',() => {
+    test('CONTRIBUTOR can DELETE a LINE', () => {
+        expect(hasPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
+    });
+    test('CONTRIBUTOR can UPDATE DESCRIPTION on LAYER', () => {
+        expect(hasPermissions('CONTRIBUTOR', 'UPDATE', 'DESCRIPTION', 'LAYER')).toBe(true);
+    });
+    test('CONTRIBUTOR cannot UPDATE DESCRIPTION on PAGE', () => {
+        expect(hasPermissions('CONTRIBUTOR', 'UPDATE', 'DESCRIPTION', 'PAGE')).toBe(false);
+    });
+    test('LEADER can READ a MEMBER', () => {
+        expect(hasPermissions('LEADER', 'READ', '*', 'MEMBER')).toBe(true);
+    });
+    test('LEADER can perform any action to METADATA of PERMISSION', () => {
+        expect(hasPermissions('LEADER','*','METADATA','PERMISSION')).toBe(true);
+    });
+    test('OWNER can perform any action on any entity', () => {
+        expect(hasPermissions('OWNER', 'UPDATE', '*', '*')).toBe(true);
+        expect(hasPermissions('OWNER', 'DELETE', '*', '*')).toBe(true);
+        expect(hasPermissions('OWNER', 'READ', '*', '*')).toBe(true);
     });
 });
