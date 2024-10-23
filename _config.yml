@@ -9,4 +9,4 @@ collections:
     label: Class
     output: true
     directory: classes
-theme: jekyll-theme-minima
+theme: jekyll-theme-modernist
