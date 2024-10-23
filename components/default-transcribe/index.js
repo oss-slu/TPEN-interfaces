@@ -11,6 +11,21 @@ class TpenTranscriptionElement extends HTMLElement {
     #activeCanvas
     #activeLine
 
+    static get observedAttributes() {
+        return ['tpen-project']
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.#projectID = newValue
+            if(window.TPEN_USER?.authorization) {
+                this.#loadProject()
+            } else {
+                this.addEventListener('tpen-authenticated', this.#loadProject)
+            }
+        }
+    }
+
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
@@ -24,8 +39,12 @@ class TpenTranscriptionElement extends HTMLElement {
             userMessage('No project ID provided')
             return
         }
-        return fetchProject(this.#projectID)
-        .then(async project => {
+        this.setAttribute('tpen-project', this.#projectID)
+    }
+
+    async #loadProject() {
+        try {
+            const project = await fetchProject(this.#projectID)
             console.log(this.#projectID, project)
             this.#transcriptionContainer.setAttribute('iiif-manifest', project.manifest)
             // load project.manifest
@@ -43,8 +62,9 @@ class TpenTranscriptionElement extends HTMLElement {
             const text = document.createElement('tpen-line-text')
             text.setAttribute('id', 'text')
             this.#transcriptionContainer.append(imgTop, text)
-        })
-        .catch(err => userMessage(err))
+        } catch (err) {
+            return userMessage(err)
+        }
     }
 }
 
