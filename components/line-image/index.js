@@ -40,7 +40,7 @@ class TpenLineImage extends HTMLElement {
             }catch(e){}
         }
 
-        this.#id = (this.#canvasPanel.closest('[tpen-line]') ?? this.closest('[tpen-line]'))?.getAttribute('tpen-line')
+        this.#id = (this.#canvasPanel.closest('[tpen-line-id]') ?? this.closest('[tpen-line-id]'))?.getAttribute('tpen-line-id')
 
         if (!this.#id || ("null" === this.#id)) {
             const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
@@ -54,7 +54,15 @@ class TpenLineImage extends HTMLElement {
             this.#canvasPanel.setAttribute("region",TARGET[1])
             this.#canvasPanel.createAnnotationDisplay(anno)
         })
-        console.dir({m:this.#manifestId(),c:this.#canvasId(),l:this.#id}) 
+        this.addEventListener('canvas-change',ev=>{
+            this.#canvasId = this.#canvasPanel.closest('[iiif-canvas]') ?? this.closest('[iiif-canvas]')
+            this.#canvasPanel.setCanvas(this.#canvasId)
+        })
+    }
+
+    connectedCallback() {   
+        if(!this.#canvasPanel.vault) return
+
     }
 
     async selectImage(){

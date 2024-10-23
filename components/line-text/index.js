@@ -3,7 +3,7 @@ import {decodeContentState} from '../iiif-tools/index.mjs'
 const LINE_TEXT_HTML = `<span></span>`
 
 class TpenLineText extends HTMLElement {
-    #id = () => this.closest('[tpen-line]')?.getAttribute('tpen-line')
+    #id = () => this.closest('[tpen-line-id]')?.getAttribute('tpen-line-id')
     #content = () => this.closest('[iiif-content]')?.getAttribute('iiif-content')
 
     constructor() {
