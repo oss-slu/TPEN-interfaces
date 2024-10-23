@@ -28,4 +28,29 @@ function restorePadding(s) {
     return s + padding;
 }
 
-export { encodeContentState, decodeContentState }
+function fetchProject(projectID) {
+    const AUTH_TOKEN = window?.TPEN_USER?.authorization
+    return fetch(`https://dev.api.t-pen.org/project/${projectID}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+        }
+    })
+        .then(response => response.ok ? response : Promise.reject(response))
+        .then(response => response.json())
+        .catch(error => userMessage(`${error.status}: ${error.statusText}`))
+}
+
+/**
+ * Pop up a modal message to the interface for the user to interact with or dismiss.
+ * @param {String} message 
+ */
+function userMessage(message) {
+    const modal = document.createElement('tpen-modal')
+    modal.style = `position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black;`
+    modal.innerText = message
+    document.body.appendChild(modal)
+}
+
+export { encodeContentState, decodeContentState, fetchProject, userMessage }

@@ -12,7 +12,6 @@ let errorHTML = document.getElementById("errorHTML")
 let isOwnerOrLeader = false
 let project
  
-
 document.addEventListener("DOMContentLoaded", async () => { 
     try {
         const { projectObj, projectData } = await getActiveProject()
@@ -26,8 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     removeMember()
 
 })
-
-
 
 inviteForm.addEventListener("submit", async (event) => {
     event.preventDefault()
@@ -60,11 +57,6 @@ inviteForm.addEventListener("submit", async (event) => {
     }
 
 })
-
-
-
-
-
 
 async function renderProjectContributors(project) {
     const TPEN_USER = await checkUserAuthentication()
@@ -105,7 +97,6 @@ async function renderProjectContributors(project) {
     setPermissionBasedVisibility()
 
 }
-
 
 async function removeMember() {
     const removeButtons = document.querySelectorAll('.remove-button')
@@ -151,8 +142,6 @@ function setPermissionBasedVisibility() {
         }
     })
 }
-
-
 
 console.log(
     document.getElementById("project-owner")

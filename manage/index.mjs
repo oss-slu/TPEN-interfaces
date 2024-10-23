@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     })
   })
-
   document.getElementById("projectsHighlight").click()
   // document.getElementById("collaboration").click()
 })

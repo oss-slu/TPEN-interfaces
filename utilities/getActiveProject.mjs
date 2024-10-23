@@ -5,6 +5,5 @@ export default async function getActiveProject() {
     let projectID = URLParams.get("projectID")
     let projectObj = new Project(projectID) 
     const projectData = await projectObj.loadData() 
-
     return { projectObj, projectData }
 }

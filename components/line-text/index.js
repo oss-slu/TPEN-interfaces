@@ -3,23 +3,24 @@ import {decodeContentState} from '../iiif-tools/index.mjs'
 const LINE_TEXT_HTML = `<span></span>`
 
 class TpenLineText extends HTMLElement {
+    #id = () => this.closest('[tpen-line-id]')?.getAttribute('tpen-line-id')
+    #content = () => this.closest('[iiif-content]')?.getAttribute('iiif-content')
+
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
-        this.id = this.getAttribute('tpen-line-id')
-        this.content = this.getAttribute('iiif-content')
     }
 
     connectedCallback() {
         this.shadowRoot.innerHTML = LINE_TEXT_HTML
         const SPAN = this.shadowRoot.querySelector('span')
         
-        if (!this.id && !this.content) {
+        if (!this.#id() && !this.#content()) {
             const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
             validateContent(null,SPAN,"Line ID is required")
         }
         
-        this.content ? loadContent(this.content,SPAN) : loadText(this.id,SPAN)
+        this.#content() ? loadContent(this.#content(),SPAN) : loadText(this.#id(),SPAN)
     }
 }
 
