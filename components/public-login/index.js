@@ -47,7 +47,7 @@ class AuthButton extends HTMLElement {
     * Make sure to remove the token if you have it stored anywhere, such as in the address bar or in localStorage.
   */
   logout() {
-    const redirect = document.location.origin + document.location.pathname
+    const redirect = location.href
     location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
     return
   }
