@@ -2,7 +2,7 @@
  * The TPEN class is the main class for accessing the TPEN services API. It is used to initialize the TPEN module and to make calls to the API.
  * @module TPEN
  * @class
- * @example const tpen = new TPEN(tinyThingsURL?)
+ * @example https://centerfordigitalhumanities.github.io/TPEN-interfaces/classes/TPEN
  * @param {String} tinyThingsURL - The URL of the TinyThings API. Defaults to "https://dev.tiny.t-pen.org"
  * @imports {User, Project, Transcription}
  */
@@ -77,19 +77,19 @@ export class TPEN {
         return localStorage.getItem("userToken") ?? false
     }
 
-    logout(redirect = origin + pathname) {
-        this.#currentUser = null
+    static logout(redirect = origin + pathname) {
+        this.currentUser = null
         localStorage.clear()
         location.href = `https://three.t-pen.org/logout?returnTo=${encodeURIComponent(redirect)}`
         return
     }
 
-    login(redirect = location.href) {
+    static login(redirect = location.href) {
         location.href = `https://three.t-pen.org/login?returnTo=${encodeURIComponent(redirect)}`
         return
     }
 
-    attachAuthentication(element) {
+    static attachAuthentication(element) {
         if(Array.isArray(element)) {
             element.forEach(elem => this.attachAuthentication(elem))
             return
@@ -110,5 +110,5 @@ function updateUser(event) {
     const decodedToken = JSON.parse(atob(this.userToken.split(".")[1]))
     const userId = decodedToken['http://store.rerum.io/agent'].split("/").pop()
     this.setAttribute("tpen-user-id", userId)
-    this.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", userId))
+    this.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", `https://store.rerum.io/v1/id/${userId}`))
 }
