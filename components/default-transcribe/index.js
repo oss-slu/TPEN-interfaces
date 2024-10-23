@@ -3,6 +3,7 @@ import { fetchProject, userMessage, encodeContentState } from "../iiif-tools/ind
 import "https://cdn.jsdelivr.net/npm/manifesto.js"
 import "../line-image/index.js"
 import "../line-text/index.js"
+import tpen from "../TPEN/index.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {
     #projectID = new URLSearchParams(window.location.search).get('projectID')
@@ -17,11 +18,9 @@ class TpenTranscriptionElement extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            this.#projectID = newValue
-            if(window.TPEN_USER?.authorization) {
+            if (name === 'tpen-project') {
+                this.#projectID = newValue
                 this.#loadProject()
-            } else {
-                document.addEventListener('tpen-authenticated', this.#loadProject)
             }
         }
     }
@@ -32,6 +31,8 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer = document.createElement('div')
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
+        this.addEventListener('tpen-authenticated', this.#loadProject)
+        tpen.attachAuthentication(this)
     }
 
     connectedCallback() {
@@ -69,7 +70,3 @@ class TpenTranscriptionElement extends HTMLElement {
 }
 
 customElements.define('tpen-transcription', TpenTranscriptionElement)
-
-
-
-
