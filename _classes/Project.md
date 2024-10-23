@@ -2,7 +2,6 @@
 title: Project Class
 author: <cubap@slu.edu>
 layout: default
-permalink: /interfaces/Project/
 tags: [tpen, api, javascript, interface]
 ---
 

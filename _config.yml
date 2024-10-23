@@ -5,4 +5,8 @@ collections:
     label: TPEN Cookbook
     output: true
     directory: cookbook
-port: 3012
+  classes:
+    label: Class
+    output: true
+    directory: classes
+theme: jekyll-theme-modernist
