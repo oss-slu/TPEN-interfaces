@@ -60,11 +60,6 @@ class TpenLineImage extends HTMLElement {
         })
     }
 
-    connectedCallback() {   
-        if(!this.#canvasPanel.vault) return
-
-    }
-
     async selectImage(){
         try {
             new URL(this.#id)

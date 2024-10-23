@@ -16,7 +16,10 @@ class AuthButton extends HTMLElement {
     button.innerText = "LOGIN"
     // Redirect to login if no userToken
     if(userToken) {
-      button.setAttribute("loggedIn", userToken)
+      localStorage.setItem("userToken", userToken)
+      window.TPEN_USER = {authorization: userToken}
+      this.dispatchEvent(new CustomEvent("tpen-authenticated", {detail: TPEN_USER}))
+      button.setAttribute("loggedIn", true)
       button.innerText = "LOGOUT"
     }
     // Button click behavior

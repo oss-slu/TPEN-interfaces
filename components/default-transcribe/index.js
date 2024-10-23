@@ -54,7 +54,7 @@ class TpenTranscriptionElement extends HTMLElement {
             this.#activeCanvas = this.#manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
             this.#activeLine = this.#activeCanvas?.__jsonld.annotations?.[0]?.items?.[0] ?? this.#activeCanvas?.__jsonld.annotations?.[0] ?? this.#activeCanvas?.getContent()[0]
             this.#transcriptionContainer.setAttribute('iiif-canvas', this.#activeCanvas?.id)
-            this.#transcriptionContainer.setAttribute('tpen-line', this.#activeLine?.id)
+            this.#transcriptionContainer.setAttribute('tpen-line-id', this.#activeLine?.id)
             this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(JSON.stringify(this.#activeLine)))
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
