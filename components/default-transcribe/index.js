@@ -21,7 +21,7 @@ class TpenTranscriptionElement extends HTMLElement {
             if(window.TPEN_USER?.authorization) {
                 this.#loadProject()
             } else {
-                this.addEventListener('tpen-authenticated', this.#loadProject)
+                document.addEventListener('tpen-authenticated', this.#loadProject)
             }
         }
     }
