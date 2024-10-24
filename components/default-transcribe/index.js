@@ -3,7 +3,7 @@ import { fetchProject, userMessage, encodeContentState } from "../iiif-tools/ind
 import "https://cdn.jsdelivr.net/npm/manifesto.js"
 import "../line-image/index.js"
 import "../line-text/index.js"
-import tpen from "../TPEN/index.mjs"
+import TPEN from "../../TPEN/index.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {
     #projectID = new URLSearchParams(window.location.search).get('projectID')
@@ -13,11 +13,14 @@ class TpenTranscriptionElement extends HTMLElement {
     #activeLine
 
     static get observedAttributes() {
-        return ['tpen-project']
+        return ['tpen-project','tpen-user-id']
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
+            if(name === 'tpen-user-id') {
+                this.TPEN = new TPEN()
+            }
             if (name === 'tpen-project') {
                 this.#projectID = newValue
                 this.#loadProject()
@@ -32,15 +35,15 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
         this.addEventListener('tpen-authenticated', this.#loadProject)
-        tpen.attachAuthentication(this)
     }
-
+    
     connectedCallback() {
         if (!this.#projectID) {
             userMessage('No project ID provided')
             return
         }
         this.setAttribute('tpen-project', this.#projectID)
+        TPEN.attachAuthentication(this)
     }
 
     async #loadProject() {

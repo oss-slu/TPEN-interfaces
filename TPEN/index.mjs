@@ -7,10 +7,10 @@
  * @imports {User, Project, Transcription}
  */
 
-import { User } from './User/index.mjs'
+import { User } from '/User/index.mjs'
 // import { Project } from './Project/index.mjs'
 
-export class TPEN {
+export default class TPEN {
     #actionQueue = []
     #currentUser
     #activeProject
@@ -73,7 +73,7 @@ export class TPEN {
             .then(response => response.json())
     }
 
-    getAuthorization() {
+    static getAuthorization() {
         return localStorage.getItem("userToken") ?? false
     }
 
@@ -101,6 +101,7 @@ export class TPEN {
         }
         element.setAttribute("require-auth", true)
         element.addEventListener("tpen-authenticated", updateUser)
+        element.addEventListener("token-expiration", () => this.classList.add("expired"))
         document.dispatchEvent(new CustomEvent("tpen-authenticated", { detail: { authorization: token } }))
     }
 }
@@ -110,5 +111,9 @@ function updateUser(event) {
     const decodedToken = JSON.parse(atob(this.userToken.split(".")[1]))
     const userId = decodedToken['http://store.rerum.io/agent'].split("/").pop()
     this.setAttribute("tpen-user-id", userId)
+    this.setAttribute("tpen-token-expires", decodedToken.exp)
+    this.expiring = setTimeout(() => {        
+        this.dispatchEvent(new CustomEvent("token-expiration"))
+      }, newValue - Date.now())
     this.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", `https://store.rerum.io/v1/id/${userId}`))
 }
