@@ -15,9 +15,12 @@ function decodeContentState(encodedContentState) {
     return uriDecoded
 }
 
+function decodeUserToken(token) {
+    return JSON.parse(atob(restorePadding(token.split('.')[1])))
+}
+
 function getUserFromToken(token) {
-    const decodedUser = JSON.parse(atob(restorePadding(token.split('.')[1])))
-    return decodedUser['http://store.rerum.io/agent'].split("/").pop()
+    return decodeUserToken(token)['http://store.rerum.io/agent'].split("/").pop()
 }
 
 function restorePadding(s) {
@@ -31,6 +34,10 @@ function restorePadding(s) {
     }
     s = s.replace(/-/g, '+').replace(/_/g, '/')
     return s
+}
+
+function checkExpired(token) {
+    return Date.now() >= decodeUserToken(token).exp * 1000
 }
 
 async function fetchProject(projectID, AUTH_TOKEN) {
@@ -60,4 +67,4 @@ function userMessage(message) {
     document.body.appendChild(modal)
 }
 
-export { encodeContentState, decodeContentState, getUserFromToken, fetchProject, userMessage }
+export { encodeContentState, decodeContentState, decodeUserToken, checkExpired, getUserFromToken, fetchProject, userMessage }
