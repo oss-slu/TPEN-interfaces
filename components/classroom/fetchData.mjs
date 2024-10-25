@@ -6,7 +6,7 @@ document.getElementById('projectForm').addEventListener('submit', async function
     const errorMsg = document.getElementById('error-msg');
 
     try {
-        const response = await fetch(`https://api.t-pen.org/project/${projectId}`, {
+        const response = await fetch(`https://dev.api.t-pen.org/project/${projectId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
