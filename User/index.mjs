@@ -3,11 +3,11 @@
  */
 export class User {
   #authentication
-  baseURL = "https://dev.api.t-pen.org" 
-  
-  constructor(_id) {
-    this._id = _id
-    // if (this.#authentication || this._id) this.getProfile()
+  constructor(userId) {
+    this.userId = userId
+    // this.baseURL = "https://dev.api.t-pen.org" 
+    this.baseURL = "http://localhost:3009" 
+    if (this.#authentication || this.userId) this.getProfile()
   }
 
   /**
@@ -23,11 +23,11 @@ export class User {
   }
 
   async getProfile() {
-    if (!this.#authentication && !this._id)
+    if (!this.#authentication && !this.userId)
       throw Error("User ID is required")
 
     const serviceAPI = `${this.baseURL}/${
-      this.#authentication ? "my/profile" : `user/:${this._id}`
+      this.#authentication ? "my/profile" : `user/:${this.userId}`
     }`
     const headers = this.#authentication
       ? new Headers({Authorization: `Bearer ${this.#authentication}`})

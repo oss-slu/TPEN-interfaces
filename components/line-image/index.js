@@ -7,49 +7,25 @@ document.head.appendChild(CANVAS_PANEL_SCRIPT)
 const LINE_IMG = () => document.createElement('canvas-panel')
 
 class TpenLineImage extends HTMLElement {
-    #manifestId = ()=>(this.#canvasPanel.closest('[iiif-manifest]') ?? this.closest('[iiif-manifest]'))?.getAttribute('iiif-manifest') 
-    #canvasId = ()=>(this.#canvasPanel.closest('[iiif-canvas]') ?? this.closest('[iiif-canvas]'))?.getAttribute('iiif-canvas')
+    #manifestId = this.closest('[iiif-manifest]')?.getAttribute('iiif-manifest') 
+    #canvasId = this.closest('[iiif-canvas]')?.getAttribute('iiif-canvas')
     #canvasPanel = LINE_IMG()
-    #manifest
-    #line
-    #id
 
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
-        this.#canvasPanel.setAttribute("preset","responsive")
-        this.shadowRoot.append(this.#canvasPanel)
-        this.addEventListener('canvas-change',ev=>{
-            this.#canvasPanel.setCanvas(this.#canvasId())
-            this.#canvasPanel.setManifest(this.#manifestId())
-        })
-    }
-    
-    connectedCallback() {  
-        this.#canvasPanel.setAttribute("manifest-id",this.#manifestId())
-        this.#canvasPanel.setAttribute("canvas-id",this.#canvasId())
-        this.#line = decodeContentState((this.#canvasPanel.closest('[iiif-content]') ?? this.closest('[iiif-content]'))?.getAttribute('iiif-content'))
-
-        if(this.#line) {
-            try{
-                let anno = JSON.parse(this.#line)
-                const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)?.split('#xywh=')
-                this.#canvasPanel.setAttribute("region",TARGET[1])
-                this.#canvasPanel.createAnnotationDisplay(anno)
-                return
-            }catch(e){}
-        }
-
-        this.#id = (this.#canvasPanel.closest('[tpen-line-id]') ?? this.closest('[tpen-line-id]'))?.getAttribute('tpen-line-id')
-
-        if (!this.#id || ("null" === this.#id)) {
+        this._id = this.getAttribute('tpen-line-id')
+        if ("null" === this._id) {
             const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
             validateContent(null,this,"Line ID is required")
             return
         }
-
-        fetch(this.#id).then(res=>res.json()).then(anno=>{
-            const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)
+        this.shadowRoot.append(this.#canvasPanel)
+        this.#canvasPanel.setAttribute("preset","responsive")
+        this.#canvasPanel.setAttribute("manifest-id",this.#manifestId)
+        this.#canvasPanel.setAttribute("canvas-id",this.#canvasId)
+        fetch(this._id).then(res=>res.json()).then(anno=>{
+            const TARGET = (anno.target ?? anno.on)?.split('#xywh=')
             // this.#canvasPanel.setAttribute("canvas-id",TARGET[0])
             this.#canvasPanel.setAttribute("region",TARGET[1])
             this.#canvasPanel.createAnnotationDisplay(anno)
@@ -60,9 +36,14 @@ class TpenLineImage extends HTMLElement {
         })
     }
 
+    connectedCallback() {   
+        if(!this.#canvasPanel.vault) return
+
+    }
+
     async selectImage(){
         try {
-            new URL(this.#id)
+            new URL(this._id)
             const TEXT_CONTENT = await loadAnnotation(lineId)
             this.#canvasPanel.innerText = validateContent(TEXT_CONTENT,this)
         } catch (error) {

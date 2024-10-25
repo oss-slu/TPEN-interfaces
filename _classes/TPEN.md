@@ -12,7 +12,6 @@ initialize the TPEN module and to make calls to the API.
 - [Properties](#properties)
 - [Methods](#methods)
   - [`reset(force)`](#resetforce)
-    - [Returns (Promise)](#returns-promise)
   - [`getUser()`](#getuser)
   - [`getActiveProject()`](#getactiveproject)
   - [`getActiveCollection()`](#getactivecollection)
@@ -20,7 +19,7 @@ initialize the TPEN module and to make calls to the API.
   - [`getAllPublicProjects()`](#getallpublicprojects)
   - [`logout()`](#logout)
   - [`login()`](#login)
-- [Implementation](#implementation)
+  - [`authenticate()`](#authenticate)
 
 ## Constructor
 
@@ -89,13 +88,6 @@ Logout the `currentUser` of the browser session.
 
 Forces the login/signup interface to appear, even if the user is currently logged in. After the authentication, the current page will attempt to reload with an authenticated User.
 
-## Implementation
+### `authenticate()`
 
-When you have imported `TPEN`, any component that requires authentication with the TPEN services API can be initialized with the following code:
-
-```javascript
-import tpen from 'TPEN'
-tpen.attachAuthentication(myElement)
-```
-
-This sets an attribute on your element `[require-auth]` and attempts to authenticate the user. If the user is not authenticated, the window is redirected to the login page. If the user is authenticated, the attribute `[tpen-user]` is set to the user's id, the token is stored as the `userToken` property, and any children with `[tpen-creator]` are set to the user's agent.
+Attempts to silently log into TPEN and launches the login/signup interface if no User is found. After the authentication, the current page will attempt to reload with an authenticated User.
