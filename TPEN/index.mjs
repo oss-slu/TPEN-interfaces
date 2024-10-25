@@ -13,13 +13,15 @@ import { User } from '/User/index.mjs'
 
 export default class TPEN {
     #actionQueue = []
-    #currentUser
-    #activeProject
+    #currentUser = {}
+    #activeProject = {}
     #activeCollection
 
     constructor(tinyThingsURL = "https://dev.tiny.t-pen.org") {
         this.tinyThingsURL = tinyThingsURL
         this.servicesURL = "https://dev.api.t-pen.org"
+        this.currentUser = TPEN.getAuthorization() ? new User(getUserFromToken(TPEN.getAuthorization())) : {}
+        this.activeProject = { _id: new URLSearchParams(window.location.search).get('projectID') }
     }
 
     async reset(force = false) {
@@ -96,6 +98,7 @@ export default class TPEN {
             return
         }
         const token = new URLSearchParams(location.search).get("idToken") ?? this.getAuthorization()
+        history.replaceState(null, "", location.pathname + location.search.replace(/[\?&]idToken=[^&]+/, ''))
         if (!token || checkExpired(token)) {
             this.login()
             return
