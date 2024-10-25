@@ -10,9 +10,24 @@
 <body>
     <h1>Classroom Group Management</h1>
 
-    <p id="project-info">Project ID: </p>
-    <p id="project-name">Project Name: </p>
-    <p id="project-creator">Project Creator: </p>
+    <form id="createProjectForm">
+        
+        <input type="text" id="projectNameInput" placeholder="Project Name" required/>
+        <input type="text" id="projectCreatorInput" placeholder="Project Creator" required />
+        <input type="text" id="projectDescriptionInput" placeholder="Project Description" required />
+        <input type="text" id="projectKeywordsInput" placeholder="Project Keywords (comma-separated)" required />
+        <input type="text" id="projectLayerNameInput" placeholder="Layer Name" required />
+        <input type="text" id="projectLayerTypeInput" placeholder="Layer Type" required />
+        <input type="text" id="projectManifestInput" placeholder="Manifest URL" required />
+        <input type="text" id="projectContextInput" placeholder="Context URL" required />
+        <button type="submit">Create Project</button>
+    </form>
+    
+    <div id="projectData">
+        <p id="projectId">Project ID: </p>
+        <p id="projectCreator">Project Creator: </p>
+        <p id="projectManifest">Project Manifest url: </p>
+    </div>
 
     <script type="module" src="main.js"></script>
 
