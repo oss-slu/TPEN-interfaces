@@ -9,8 +9,6 @@ import { User } from "../../User/index.mjs"
 class TpenTranscriptionElement extends HTMLElement {
     TPEN = new TPEN()
     #transcriptionContainer
-    #project = this.TPEN.activeProject
-    #manifest = this.TPEN.activeProject?.manifest
     #activeCanvas = {}
     #activeLine = {}
     userToken
@@ -42,35 +40,44 @@ class TpenTranscriptionElement extends HTMLElement {
     }
     
     connectedCallback() {
-        if (!this.#project._id) {
+        if (!this.TPEN.activeProject._id) {
             userMessage('No project ID provided')
             return
         }
-        this.setAttribute('tpen-project', this.#project._id)
+        this.setAttribute('tpen-project', this.TPEN.activeProject._id)
     }
 
     async #loadProject() {
         try {
-            const project = await fetchProject(this.#project._id, this.userToken ?? TPEN.getAuthorization())
-            console.log(this.#project._id, project)
+            const project = await fetchProject(this.TPEN.activeProject._id, this.userToken ?? TPEN.getAuthorization())
+            if(!project) return userMessage('Project not found')
             this.#transcriptionContainer.setAttribute('iiif-manifest', project.manifest)
             // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
-            this.#manifest = new manifesto.Manifest(manifest)
+            this.TPEN.activeProject.manifest = new manifesto.Manifest(manifest)
             // page from URL later
-            this.#activeCanvas = this.#manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
+            this.#activeCanvas = this.TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
             this.#activeLine = this.getFirstLine()
             this.#transcriptionContainer.setAttribute('iiif-canvas', this.#activeCanvas?.id)
             this.#transcriptionContainer.setAttribute('tpen-line-id', this.#activeLine?.id)
             this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(JSON.stringify(this.#activeLine)))
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
-            imgTop.setAttribute('projectID', this.#project._id)
+            imgTop.setAttribute('projectID', this.TPEN.activeProject._id)
             const text = document.createElement('tpen-line-text')
             text.setAttribute('id', 'text')
             this.#transcriptionContainer.append(imgTop, text)
         } catch (err) {
-            return userMessage(err)
+            switch (err.status ?? err.code) {
+                case 401:
+                    return userMessage('Unauthorized')
+                case 403:   
+                    return userMessage('Forbidden')
+                case 404:
+                    return userMessage('Project not found') 
+                default:
+                    return userMessage(err.message ?? err.statusText ?? err.text ?? 'Unknown error')
+            }
         }
     }
 

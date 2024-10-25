@@ -42,15 +42,16 @@ function checkExpired(token) {
 
 async function fetchProject(projectID, AUTH_TOKEN) {
     try {
-        const response = await fetch(`https://dev.api.t-pen.org/project/${projectID}`, {
+        return fetch(`https://dev.api.t-pen.org/project/${projectID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
             }
         })
-        const response_1 = response.ok ? response : Promise.reject(response)
-        return await response_1.json()
+        .then(response => response.ok ? response : Promise.reject(response))
+        .then(response => response.json())
+        .catch(error => { throw error })
     } catch (error) {
         return userMessage(`${error.status}: ${error.statusText}`)
     }
