@@ -18,6 +18,18 @@ function hasPermission(role, action, scope, entity){ //function checks if role d
     if(rolePermissions.includes(`${action}_*_${entity}`)){//if role has a permission with specified action and entity, and any scope
         return true;
     }
+    if(rolePermissions.includes(`${action}_${scope}_*`)){ //if role has a permission with specified action and scope with any entity
+        return true;
+    }
+    if(rolePermissions.includes(`${action}_*_*`)){ 
+        return true;
+    }
+    if(rolePermissions.includes(`*_${scope}_*`)){
+        return true;
+    }
+    if(rolePermissions.includes(`*_*_${entity}`)){ 
+        return true;
+    }
 
     return false; //if none of the if conditions satisfy
 }
