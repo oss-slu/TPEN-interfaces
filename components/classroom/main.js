@@ -1,6 +1,9 @@
 // main.js
 
 import { getProjectIDFromURL } from './groups/utils/project.js';
+import Roles from "./roles.mjs";
+import hasPermission from "./hasPermission";
+
 
 // Function to fetch project data from the TPEN API
 async function fetchProjectData(projectId) {
@@ -42,3 +45,50 @@ window.onload = () => {
         console.log('Project ID not found in URL');
     }
 };
+
+const ROLE_HIERARCHY = [Roles.OWNER, Roles.LEADER, Roles.CONTRIBUTOR];
+
+// identifies the highest privilege role from a list of user roles and returns the top-ranked valid role
+function getHighestPrivilegeRole(userRoles) {
+    const validRoles = [];
+    const invalidRoles = [];
+
+    // Loop through each role in userRoles
+    for (let i = 0; i < userRoles.length; i++) {
+        const role = userRoles[i];
+
+        // Check if the role is in ROLE_HIERARCHY
+        if (ROLE_HIERARCHY.includes(role)) {
+            validRoles.push(role); // Add to validRoles if it's a recognized role
+        } else {
+            invalidRoles.push(role); // Add to invalidRoles if it's unrecognized
+        }
+    }
+
+    // Log unexpected roles if any were found
+    if (invalidRoles.length > 0) {
+        console.error("Unexpected roles found:", invalidRoles);
+    }
+
+    // Find the highest privilege role in validRoles based on ROLE_HIERARCHY
+    for (let i = 0; i < ROLE_HIERARCHY.length; i++) {
+        if (validRoles.includes(ROLE_HIERARCHY[i])) {
+            return ROLE_HIERARCHY[i]; // Return the first (highest privilege) valid role found
+        }
+    }
+
+    // Return null if no valid roles are found
+    return null;
+}
+
+// checks if a user, based on their highest privilege role, has permission to perform a specified action
+function userHasAccess(userRoles, action, scope, entity) {
+    const highestRole = getHighestPrivilegeRole(userRoles);
+
+    if (!highestRole) {
+        console.warn("Access denied: user has no roles or no valid roles.");
+        return false; // No access if no valid roles
+    }
+
+    return hasPermission(highestRole, action, scope, entity);
+}
