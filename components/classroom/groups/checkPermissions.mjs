@@ -1,24 +1,34 @@
 import Roles from "./roles.mjs"
 import {Permissions} from "./permissions.mjs"
 
-function hasPermission(role, action, scope, entity){ //function checks if role definition meets permissions
-    if (!Permissions[Roles[role]]) return false; //if role does not exist, return false
+/**
+ * Checks if a role has permission for a specific action on an entity 
+ * within a given scope, considering various permission patterns.
+ * @param {string} role - The role to be checked.
+ * @param {string} action - The action being requested.
+ * @param {string} scope - The scope being requested.
+ * @param {string} entity - The entity being requested.
+ * @return - boolean value, true if role has permission and false otherwise
+ */
+
+function hasPermission(role, action, scope, entity){
+    if (!Permissions[Roles[role]]) return false; 
 
     let rolePermissions = Permissions[Roles[role]];
     
-    if(rolePermissions.includes(`${action}_${scope}_${entity}`)){ //if role has a permission with all 3 inputs
+    if(rolePermissions.includes(`${action}_${scope}_${entity}`)){ 
         return true;
     }
-    if(rolePermissions.includes('*_*_*')){ //if role has a permission that applies to all inputs
+    if(rolePermissions.includes('*_*_*')){
         return true;
     }
-    if(rolePermissions.includes(`*_${scope}_${entity}`)){ //if role has a permission with specified scope and entity, and any action
+    if(rolePermissions.includes(`*_${scope}_${entity}`)){
         return true;
     }
-    if(rolePermissions.includes(`${action}_*_${entity}`)){//if role has a permission with specified action and entity, and any scope
+    if(rolePermissions.includes(`${action}_*_${entity}`)){
         return true;
     }
-    if(rolePermissions.includes(`${action}_${scope}_*`)){ //if role has a permission with specified action and scope with any entity
+    if(rolePermissions.includes(`${action}_${scope}_*`)){ 
         return true;
     }
     if(rolePermissions.includes(`${action}_*_*`)){ 
@@ -31,7 +41,7 @@ function hasPermission(role, action, scope, entity){ //function checks if role d
         return true;
     }
 
-    return false; //if none of the if conditions satisfy
+    return false;
 }
 
 module.exports = hasPermission;
