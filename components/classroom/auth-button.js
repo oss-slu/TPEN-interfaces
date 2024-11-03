@@ -1,3 +1,5 @@
+const CENTRAL = "https://three.t-pen.org"
+
 class AuthButton extends HTMLElement {
     constructor() {
         super();
@@ -11,7 +13,7 @@ class AuthButton extends HTMLElement {
 
     render() {
         // Retrieve the token from the URL to determine login state
-        const token = this.getTokenFromURL();
+        const token = this.getTokenFromURL() || localStorage.getItem('userToken');
 
         // Render the button with styles and set its label based on the token presence
         this.shadowRoot.innerHTML = `
@@ -32,7 +34,8 @@ class AuthButton extends HTMLElement {
         `;
 
         // If the token exists (logged in), logout on click; otherwise, login
-        this.shadowRoot.querySelector('#auth-btn').addEventListener('click', () => {
+        const button = this.shadowRoot.querySelector('#auth-btn');
+        button.addEventListener('click', () => {
             if (token) {
                 this.logout();
             } else {
@@ -42,23 +45,27 @@ class AuthButton extends HTMLElement {
     }
 
     getTokenFromURL() {
-        // Get URL parameters and return the value of 'idToken' parameter
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('idToken');
+        const token = urlParams.get('idToken');
+        if (token) {
+            localStorage.setItem('userToken', token); // Store token if found
+            return token;
+        }
+        return null;
     }
 
     // Redirect URL with token in the query parameters
     // Redirect to the URL, which will update the token in the URL
     login() {
-        const token = "myToken"; // Replace this with actual token logic
-        const redirectURL = `http://127.0.0.1:5500/TPEN-interfaces/components/classroom/login.html?idToken=${token}`;
-        window.location.href = redirectURL;
+        const redirect = location.href;
+        window.location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`;
     }
 
     // Define the logout URL, which does not include a token, effectively "logging out"
     logout() {
-        const logoutURL = "http://127.0.0.1:5500/TPEN-interfaces/components/classroom/login.html";
-        window.location.href = logoutURL;
+        localStorage.removeItem('userToken'); // Clear token
+        const redirect = location.origin + location.pathname;
+        window.location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`;
     }
 }
 
