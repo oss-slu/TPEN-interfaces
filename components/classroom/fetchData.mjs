@@ -14,7 +14,7 @@ document.getElementById('projectForm').addEventListener('submit', async function
         });
 
         if (!response.ok) {
-            throw new Error('Project not found');
+            throw new Error('Project not found or access denied');
         }
         
         const projectData = await response.json();
