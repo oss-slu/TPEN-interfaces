@@ -3,6 +3,7 @@
 import { getProjectIDFromURL } from './groups/utils/project.js';
 import Roles from "./roles.mjs";
 import hasPermission from "./hasPermission";
+import { Action, Scope, Entity } from './permissions_parameters.mjs';
 
 
 // Function to fetch project data from the TPEN API
@@ -51,7 +52,6 @@ const ROLE_HIERARCHY = [Roles.OWNER, Roles.LEADER, Roles.CONTRIBUTOR];
 // identifies the highest privilege role from a list of user roles and returns the top-ranked valid role
 function getHighestPrivilegeRole(userRoles) {
     const validRoles = [];
-    const invalidRoles = [];
 
     // Loop through each role in userRoles
     for (let i = 0; i < userRoles.length; i++) {
@@ -61,13 +61,13 @@ function getHighestPrivilegeRole(userRoles) {
         if (ROLE_HIERARCHY.includes(role)) {
             validRoles.push(role); // Add to validRoles if it's a recognized role
         } else {
-            invalidRoles.push(role); // Add to invalidRoles if it's unrecognized
+            console.warn(`403 Forbidden: Invalid role "${role}" detected. Access denied.`);
+            // Display the error message if the role is invalid
+            const errorMsgElement = document.getElementById('error-msg');
+            errorMsgElement.textContent = `403 Forbidden: Invalid role "${role}" detected. Access denied.`;
+            errorMsgElement.style.display = 'block';
+            return null; // Exit the function early if an invalid role is found
         }
-    }
-
-    // Log unexpected roles if any were found
-    if (invalidRoles.length > 0) {
-        console.error("Unexpected roles found:", invalidRoles);
     }
 
     // Find the highest privilege role in validRoles based on ROLE_HIERARCHY
@@ -81,14 +81,27 @@ function getHighestPrivilegeRole(userRoles) {
     return null;
 }
 
-// checks if a user, based on their highest privilege role, has permission to perform a specified action
-function userHasAccess(userRoles, action, scope, entity) {
-    const highestRole = getHighestPrivilegeRole(userRoles);
 
-    if (!highestRole) {
-        console.warn("Access denied: user has no roles or no valid roles.");
-        return false; // No access if no valid roles
+// checks if a user, based on their multiple roles, has permission to perform a specified action
+function userHasMultipleRoles(userRoles, action, scope, entity) {
+    const errorMsgElement = document.getElementById('error-msg');
+    
+    // Loop through all roles to check if any role has permission
+    for (let i = 0; i < userRoles.length; i++) {
+        try {
+            if (hasPermission(userRoles[i], action, scope, entity)) {
+                return true; // Allow access if any role has permission
+            }
+        } catch (error) {
+            // If an error is thrown (invalid role or no permission), log it and display it
+            console.warn(error.message);
+            errorMsgElement.textContent = error.message;
+            errorMsgElement.style.display = 'block';
+        }
     }
 
-    return hasPermission(highestRole, action, scope, entity);
+    // If none of the roles allowed access, display a 403 error message
+    errorMsgElement.textContent = "403 Forbidden: None of the user's roles permit this action.";
+    errorMsgElement.style.display = 'block';
+    return false; // Indicate that access was not granted
 }
