@@ -77,7 +77,14 @@ export default class TPEN {
     }
 
     static getAuthorization() {
-        return localStorage.getItem("userToken") ?? false
+        const storedToken = localStorage.getItem("userToken")
+        try {
+            if (!checkExpired(storedToken)) {
+                return storedToken
+            }
+        } catch (error) {}
+        localStorage.removeItem("userToken")
+        return false
     }
 
     static logout(redirect = origin + pathname) {
@@ -99,7 +106,7 @@ export default class TPEN {
         }
         const token = new URLSearchParams(location.search).get("idToken") ?? this.getAuthorization()
         history.replaceState(null, "", location.pathname + location.search.replace(/[\?&]idToken=[^&]+/, ''))
-        if (!token || checkExpired(token)) {
+        if (!token) {
             this.login()
             return
         }
@@ -121,4 +128,11 @@ function updateUser(event) {
         this.dispatchEvent(new CustomEvent("token-expiration"))
     }, expires * 1000 - Date.now())
     this.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", `https://store.rerum.io/v1/id/${userId}`))
+}
+
+// Notify page of module loading if not being imported
+if(window?.location){
+    console.log("TPEN module loaded")
+    window.TPEN = TPEN
+    document?.dispatchEvent(new CustomEvent("tpen-loaded"))
 }
