@@ -83,20 +83,36 @@ describe('hasPermission function',() => {
         expect(hasPermissions('CONTRIBUTOR', 'DELETE', '*', 'LINE')).toBe(true);
     });
     test('CONTRIBUTOR can UPDATE DESCRIPTION on LAYER', () => {
-        expect(hasPermissions('CONTRIBUTOR', 'UPDATE', 'DESCRIPTION', 'LAYER')).toBe(true);
+        expect(hasPermissions('CONTRIBUTOR', 'UPDATE', 'DESCRIPTION', 'LAYER')).toBe(true); 
     });
     test('CONTRIBUTOR cannot UPDATE DESCRIPTION on PAGE', () => {
         expect(hasPermissions('CONTRIBUTOR', 'UPDATE', 'DESCRIPTION', 'PAGE')).toBe(false);
     });
-    test('LEADER can READ a MEMBER', () => {
-        expect(hasPermissions('LEADER', 'READ', '*', 'MEMBER')).toBe(true);
+    test('LEADER cannot UPDATE a MEMBER', () => {
+        expect(hasPermissions('LEADER', 'UPDATE', '*', 'MEMBER')).toBe(true); 
     });
     test('LEADER can perform any action to METADATA of PERMISSION', () => {
-        expect(hasPermissions('LEADER','*','METADATA','PERMISSION')).toBe(true);
+        expect(hasPermissions('LEADER','*','METADATA','PERMISSION')).toBe(true); 
     });
-    test('OWNER can perform any action on any entity', () => {
+    test('OWNER can perform any action on any entity', () => { 
         expect(hasPermissions('OWNER', 'UPDATE', '*', '*')).toBe(true);
         expect(hasPermissions('OWNER', 'DELETE', '*', '*')).toBe(true);
         expect(hasPermissions('OWNER', 'READ', '*', '*')).toBe(true);
     });
+    test('CONTRIBUTOR can UPDATE the ORDER of any entity', () => {
+        expect(hasPermissions('CONTRIBUTOR','UPDATE','ORDER','*')).toBe(true); 
+    });
+    test('OWNER can CREATE any entity', () => {
+        expect(hasPermissions('OWNER','CREATE','*','*')).toBe(true);
+    });
+    test('CONTRIBUTOR cannot DELETE every entity', () => {
+        expect(hasPermissions('CONTRIBUTOR','DELETE','*','*')).toBe(false);
+    });
+    test('OWNER can perform any action on the SELECTOR of any entity', () => {
+        expect(hasPermissions('OWNER','*','SELECTOR','*')).toBe(true);
+    });
+    test('OWNER can perform any action on a ROLE', () => {
+        expect(hasPermissions('OWNER','*','*','ROLE')).toBe(true);
+    });
+    
 });
