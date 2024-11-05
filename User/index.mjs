@@ -32,15 +32,17 @@ export class User {
     const headers = this.#authentication
       ? new Headers({Authorization: `Bearer ${this.#authentication}`})
       : new Headers()
-    fetch(serviceAPI, {headers})
+    await fetch(serviceAPI, {headers})
       .then((response) => {
         if (!response.ok) Promise.reject(response)
-        const data = response.json()
-        // Object.assign(this, data) //
-
-        // the public user object has no display_name tag, it has a nme instead, hence the check below
+        return response.json()
+      })
+      .then((data) => {
+        Object.assign(this, data)
+        // the public user object has no display_name tag, it has a name instead, hence the check below
         this.display_name = this.#authentication?data.display_name:data.name
       })
+      return this
   }
 
   async getProjects() {
