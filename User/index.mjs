@@ -1,10 +1,11 @@
+import { eventDispatcher } from "../TPEN/events.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */
-export class User {
+export default class User {
   #authentication
-  baseURL = "https://dev.api.t-pen.org" 
-  
+  baseURL = "https://dev.api.t-pen.org"
+
   constructor(_id) {
     this._id = _id
     // if (this.#authentication || this._id) this.getProfile()
@@ -15,9 +16,9 @@ export class User {
    */
   set authentication(token) {
     let isNewToken = false;
-    if(token != this.#authentication){
+    if (token != this.#authentication) {
       isNewToken = true
-    } 
+    }
     this.#authentication = token
     if (isNewToken) this.getProfile()
   }
@@ -26,23 +27,25 @@ export class User {
     if (!this.#authentication && !this._id)
       throw Error("User ID is required")
 
-    const serviceAPI = `${this.baseURL}/${
-      this.#authentication ? "my/profile" : `user/:${this._id}`
-    }`
+    const serviceAPI = `${this.baseURL}/${this.#authentication ? "my/profile" : `user/:${this._id}`
+      }`
     const headers = this.#authentication
-      ? new Headers({Authorization: `Bearer ${this.#authentication}`})
+      ? new Headers({ Authorization: `Bearer ${this.#authentication}` })
       : new Headers()
-    await fetch(serviceAPI, {headers})
+    await fetch(serviceAPI, { headers })
       .then((response) => {
         if (!response.ok) Promise.reject(response)
         return response.json()
       })
       .then((data) => {
         Object.assign(this, data)
-        // the public user object has no display_name tag, it has a name instead, hence the check below
-        this.display_name = this.#authentication?data.display_name:data.name
+        // the public user object has no displayName tag, it has a name instead, hence the check below
+        this.displayName = data.profile.displayName ?? data.name ?? "Anonymous"
+        if (data._sub) {
+          eventDispatcher.dispatch(new CustomEvent("tpen-user-loaded", this))
+        }
       })
-      return this
+    return this
   }
 
   async getProjects() {
@@ -50,7 +53,7 @@ export class User {
       Authorization: `Bearer ${this.#authentication}`
     })
 
-    return fetch(`${this.baseURL}/my/projects`, {headers})
+    return fetch(`${this.baseURL}/my/projects`, { headers })
       .then((response) => {
         if (!response.ok) {
           return Promise.reject(response)
@@ -103,7 +106,7 @@ export class User {
       .catch((error) => {
         const errorTemplate = `
           <li>
-            Error ${error.status??500}: ${error.statusText??"Unknown Server error"}
+            Error ${error.status ?? 500}: ${error.statusText ?? "Unknown Server error"}
           </li>
         `
         projectsList.insertAdjacentHTML("beforeend", errorTemplate)
@@ -132,8 +135,8 @@ export class User {
   async addToPublicProfile(data) {
     try {
       const userRecord = await this.getProfile()
-      const publicInfo = {...userRecord?.profile, ...data}
-      const payload = {...userRecord, profile: publicInfo}
+      const publicInfo = { ...userRecord?.profile, ...data }
+      const payload = { ...userRecord, profile: publicInfo }
       const response = await this.updateRecord(payload)
       return response
       // We can either manipulate the data this way and use the the same route to handle all updates or,
