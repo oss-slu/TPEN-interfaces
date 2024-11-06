@@ -36,13 +36,11 @@ export default class ProjectsList extends HTMLElement {
     render() {
         if(!this.#TPEN.currentUser._id) return
 
-        const list = document.createElement("ul")
-        this.#projects.forEach(project => {
-            const item = document.createElement("li")
-            item.innerText = project.name
-            list.append(item)
-        })
-        this.append(list)
+        this.innerHTML = `<ul>${this.#projects.reduce((a, project) => 
+            a + `<li tpen-project-id="${project._id}">${project.title}
+            <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
+              </li>`, 
+        ``)}</ul>`
     }
 
     async getProjects() {
@@ -61,7 +59,10 @@ export default class ProjectsList extends HTMLElement {
         if(this.#TPEN.currentUser?._id !== user._id) {
             this.#TPEN.currentUser = user
         }
-        this.#TPEN.currentUser.getProjects().then(() => this.render())
+        this.#TPEN.currentUser.getProjects().then((projects) => {
+            this.projects = projects
+            this.render()
+        })
         return this
     }
 

@@ -7,31 +7,39 @@
     <link href="favicon.ico" rel="icon" type="image/x-icon" />
     <script src="TPEN/index.mjs" type="module"></script>
     <script src="components/projects-list/index.mjs" type="module"></script>
+    <script src="components/public-login/index.js" type="module"></script>
+    <script src="components/user-profile/index.mjs" type="module"></script>
+    <script src="TPEN/events.mjs" type="module"></script>
 </head>
 
 <body>
     <h1>TPEN Interfaces</h1>
     <p>No style, no flash, just proof-of-life.</p>
 
-    <button type="button" id="login">Login</button>
+    <auth-button></auth-button>
+    <small>/components/public-login</small>
 
-    <tpen-projects-list></tpen-projects-list>
+    <h2>User Content</h2>
     
-    <div id="profile" require-auth="true"></div>
+    <small>/components/projects-list</small>
+    <h3>Projects (roles)</h3>
+    <style scoped>
+        .badge::before {
+            content: '(';
+        }
+        .badge::after {
+            content: ')';
+        }
+        li::after {
+            content: '<'attr(tpen-project-id)'>';
+        }
+    </style>
+    <tpen-projects-list></tpen-projects-list>
 
-    <script>
-        document.addEventListener('tpen-loaded', function () {
-            if (TPEN.getAuthorization()) {
-                login.TPEN = new TPEN()
-                TPEN.attachAuthentication(login)
-                login.addEventListener('tpen-authenticated', function () {
-                    login.innerText = login.TPEN.currentUser.profile.displayName
-                })
-            } else {
-                login.addEventListener('click', TPEN.login)
-            }
-        })
-    </script>
+    <small>/components/tpen-user-profile</small>
+    <h3>Profile</h3>
+    <tpen-user-profile></tpen-user-profile>
+
 </body>
 
 </html>

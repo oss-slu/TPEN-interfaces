@@ -88,7 +88,7 @@ export default class TPEN {
         return false
     }
 
-    static logout(redirect = origin + pathname) {
+    static logout(redirect = origin + location.pathname) {
         this.currentUser = null
         localStorage.clear()
         location.href = `https://three.t-pen.org/logout?returnTo=${encodeURIComponent(redirect)}`
@@ -126,7 +126,7 @@ function updateUser(element, token) {
     const expires = decodeUserToken(element.userToken)?.exp
     element.setAttribute("tpen-token-expires", expires)
     element.expiring = setTimeout(() => {
-        element.dispatchEvent(new CustomEvent("token-expiration"))
+        eventDispatcher.dispatchEvent("token-expiration")
     }, expires * 1000 - Date.now())
     element.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", `https://store.rerum.io/v1/id/${userId}`))
 }
@@ -136,6 +136,4 @@ if(window?.location){
     console.log("TPEN module loaded")
     window.TPEN = TPEN
     document?.dispatchEvent(new CustomEvent("tpen-loaded"))
-    // eventDispatcher.on("tpen-authenticated", document.dispatchEvent)
-    // eventDispatcher.on("tpen-user-loaded", document.dispatchEvent)
 }

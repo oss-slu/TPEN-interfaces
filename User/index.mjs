@@ -42,7 +42,7 @@ export default class User {
         // the public user object has no displayName tag, it has a name instead, hence the check below
         this.displayName = data.profile.displayName ?? data.name ?? "Anonymous"
         if (data._sub) {
-          eventDispatcher.dispatch(new CustomEvent("tpen-user-loaded", this))
+          eventDispatcher.dispatch("tpen-user-loaded", this)
         }
       })
     return this
