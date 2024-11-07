@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>TPEN Interfaces</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <script src="../../TPEN/index.mjs" type="module"></script>
+    <script src="index.mjs" type="module"></script>
+    <script src="../../TPEN/events.mjs" type="module"></script>
+</head>
+
+<body>
+    <h2>User Content</h2>
+
+    <small>/components/projects-list</small>
+    <h3>Projects (roles)</h3>
+    <style scoped>
+        .badge::before {
+            content: '(';
+        }
+
+        .badge::after {
+            content: ')';
+        }
+
+        li::after {
+            content: '<' attr(tpen-project-id)'>';
+        }
+    </style>
+    <tpen-projects-list></tpen-projects-list>
+
+
+</body>
+
+</html>
