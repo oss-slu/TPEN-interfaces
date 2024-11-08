@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <title>TPEN Classroom Interface</title>
+</head>
+    <body>
+        <div class="header">
+            <h1>TPEN Classroom Interface</h1>
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                &#9776 <!-- Hamburger icon -->
+            </div>
+        </div>
+            <div class ="navbar" id="navbar">
+            <ul>
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./index.html">Annotations</a></li>
+                <li><a href="./index.html">Groups</a></li>
+                <li><a href="./index.html">Contact</a></li>
+            </ul>
+            </div>
+
+            <div class="page-container">
+                <h1>Welcome!</h1>
+                <div class="input-container">
+                    <div class="label-container">
+                        <form id="projectForm" class="input-form">
+                            <label for="projectId">Project ID:</label>
+                            <input id="projectId" name="projectId" type="text" required>
+                            <button class="submit-button" type="submit">Submit</button>
+                        </form>
+                        <!--<form class="input-form">
+                            <label for="password">Password:</label>
+                            <input id="password" name="password" type="password">
+                        </form>-->
+                        <p id="error-msg" style="color: red; display: none;">Project not Found</p>
+                    </div>
+                </div>
+            </div>
+
+        <footer>
+            <p>TPEN Classroom Interface</p>
+        </footer>
+
+        <script src="./menutoggle.js"></script>
+        <script type="module" src="./fetchData.mjs"></script>
+    </body>
+</html>
