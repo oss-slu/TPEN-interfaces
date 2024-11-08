@@ -1,57 +1,31 @@
 /**
  * @module AuthButton Adds custom element for login/logout of TPEN3 Centralized Login
- * @author thehabes
+ * @author thehabes, cubap
  */
 
-const CENTRAL = "https://three.t-pen.org"
+import TPEN from "../../TPEN/index.mjs"
+import { eventDispatcher } from "../../TPEN/events.mjs"
 
 class AuthButton extends HTMLElement {
+  #TPEN = new TPEN()
 
   constructor() {
-    super() 
-    this.attachShadow({mode: "open"})
-    const incomingToken = new URLSearchParams(window.location.search).get("idToken")
-    const userToken = incomingToken ?? ""
+    super()
+    this.attachShadow({ mode: "open" })
     const button = document.createElement("button")
     button.innerText = "LOGIN"
-    // Redirect to login if no userToken
-    if(userToken) {
-      localStorage.setItem("userToken", userToken)
-      window.TPEN_USER = {authorization: userToken}
-      this.dispatchEvent(new CustomEvent("tpen-authenticated", {detail: TPEN_USER}))
+    eventDispatcher.on("tpen-authenticated", ev => {
       button.setAttribute("loggedIn", true)
       button.innerText = "LOGOUT"
-    }
-    // Button click behavior
-    button.addEventListener('click', () => {
-      if(button?.getAttribute("loggedIn")) {
-        this.logout()
-        return
-      }
-      this.login()
     })
+    button.addEventListener('click', () => this[button.getAttribute("loggedIn") ? 'logout' : 'login']())
+    TPEN.attachAuthentication(this)
     this.shadowRoot.append(button)
   }
 
-  /**
-    * Use the TPEN3 Central Login to redirect back to this page with a valid ID Token.
-  */
-  login() {
-    const redirect = location.href
-    location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
-    return
-  }
+  login = TPEN.login
 
-  /**
-    * Use the TPEN3 Central Logout to retire the current token and redirect back to this page.
-    * Make sure to remove the token if you have it stored anywhere, such as in the address bar or in localStorage.
-  */
-  logout() {
-    const redirect = document.location.origin + document.location.pathname
-    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
-    return
-  }
-  
+  logout = TPEN.logout
 }
 
 customElements.define('auth-button', AuthButton)
