@@ -23,6 +23,7 @@ export default class TPEN {
         this.activeProject = { _id: new URLSearchParams(window.location.search).get('projectID') }
 
         eventDispatcher.on("tpen-user-loaded", ev=> this.currentUser = ev.detail)
+        eventDispatcher.on("tpen-project-loaded", ev=> this.activeProject = ev.detail)
     }
 
     async reset(force = false) {
