@@ -19,9 +19,8 @@ export default class User {
     if (!this._id)
       throw Error("User ID is required")
 
-    const serviceAPI = `${this.TPEN.servicesURL}/${
-      this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
-    }`
+    const serviceAPI = `${this.TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
+      }`
     const headers = this.#isTheAuthenticatedUser()
       ? new Headers({ Authorization: `Bearer ${TPEN.getAuthorization()}` })
       : new Headers()
@@ -34,7 +33,7 @@ export default class User {
       .then((data) => {
         // the public user object has no display_name tag, it has a nme instead, hence the check below
         this.display_name ??= TPEN.getAuthorization() ? data.display_name : data.name
-        if(data.profile) this.profile = data.profile
+        if (data.profile) this.profile = data.profile
         else Object.assign(this, data)
         return this
       })
@@ -81,7 +80,7 @@ export default class User {
           projects.forEach((project) => {
             const projectTemplate = `
             <li>
-              ${project.name}
+              ${project.title}
               <div class="manage">
                 <span class="resume-btn">Resume</span>
                 <span class="manage-btn" data-project-id="${project._id}">Manage</span>
@@ -95,8 +94,10 @@ export default class User {
           const manageButtons = document.querySelectorAll(".manage-btn")
           manageButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
+              
               const projectId = event.target.getAttribute("data-project-id")
-              window.location.href = `/manage?projectID=${projectId}`
+              
+              window.location.href = `/manage/?projectID=${projectId}`
             })
           })
 
@@ -152,7 +153,7 @@ export default class User {
   async updatePrivateInformation(data) {
     const response = await this.updateRecord(data)
     return response
-  } 
+  }
 
   static fromToken(token) {
     return new User(getUserFromToken(token))
