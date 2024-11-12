@@ -1,6 +1,4 @@
-import TPEN from '../TPEN/index.mjs'
-import { getUserFromToken } from '../components/iiif-tools/index.mjs'
-
+import { eventDispatcher } from "../TPEN/events.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */
@@ -27,16 +25,16 @@ export default class User {
     fetch(serviceAPI, { headers })
       .then((response) => {
         if (!response.ok) Promise.reject(response)
-        return response
+        return response.json()
       })
-      .then((response) => response.json())
       .then((data) => {
-        // the public user object has no display_name tag, it has a nme instead, hence the check below
-        this.display_name ??= TPEN.getAuthorization() ? data.display_name : data.name
-        if (data.profile) this.profile = data.profile
-        else Object.assign(this, data)
-        return this
+        Object.assign(this, data)
+        this.displayName = data.profile.displayName ?? data.name ?? "Anonymous"
+        if (data._sub) {
+          eventDispatcher.dispatch("tpen-user-loaded", this)
+        }
       })
+    return this
   }
 
   async getProjects() {
