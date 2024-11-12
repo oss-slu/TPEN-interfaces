@@ -3,5 +3,3 @@ export const Roles = {
     LEADER: 'LEADER',
     CONTRIBUTOR:'CONTRIBUTOR',
 };
-
-//export default Roles;

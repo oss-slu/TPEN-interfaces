@@ -25,9 +25,3 @@ export const Entity = {
     PERMISSION: 'PERMISSION',
     ALL: 'ALL'
 };
-
-/*module.exports = {
-    Action,
-    Scope,
-    Entity
-};*/
