@@ -1,4 +1,6 @@
+import { getUserFromToken } from "../components/iiif-tools/index.mjs"
 import { eventDispatcher } from "../TPEN/events.mjs"
+import TPEN from "../TPEN/index.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */

@@ -1,12 +1,11 @@
 // I'm copying this to Project/index.mjs and updating it there.
 
 import checkUserAuthentication from "../utilities/checkUserAuthentication.mjs"
-
-const baseURL = "http://localhost:3009"
-
+import TPEN from "../TPEN/index.mjs"
+const baseURL = TPEN.servicesURL
 export default class Project {
     constructor(projectID) {
-        this.id = projectID
+        this._id = projectID
     }
 
     /**
@@ -27,7 +26,7 @@ export default class Project {
     async loadData() {
         try {
             const token = await this.getToken()
-            const response = await fetch(`${baseURL}/project/${this.id}`, {
+            const response = await fetch(`${baseURL}/project/${this._id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -52,7 +51,7 @@ export default class Project {
     async addMember(email) {
         try {
             const token = await this.getToken()
-            const response = await fetch(`${baseURL}/project/${this.id}/invite-member`, {
+            const response = await fetch(`${baseURL}/project/${this._id}/invite-member`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -80,7 +79,7 @@ export default class Project {
     async removeMember(userId) {
         try {
             const token = await this.getToken()
-            const response = await fetch(`${baseURL}/project/${this.id}/remove-member`, {
+            const response = await fetch(`${baseURL}/project/${this._id}/remove-member`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
