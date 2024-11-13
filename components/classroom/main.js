@@ -1,9 +1,9 @@
 // main.js
 
 import { getProjectIDFromURL } from './groups/utils/project.js';
-import Roles from "./roles.mjs";
-import hasPermission from "./hasPermission";
-import { Action, Scope, Entity } from './permissions_parameters.mjs';
+import { Roles } from "./groups/roles.mjs";
+import { Permissions } from "./groups/permissions.mjs";
+import { Action, Scope, Entity } from './groups/permissions_parameters.mjs';
 
 
 // Function to fetch project data from the TPEN API
@@ -89,7 +89,7 @@ function userHasMultipleRoles(userRoles, action, scope, entity) {
     // Loop through all roles to check if any role has permission
     for (let i = 0; i < userRoles.length; i++) {
         try {
-            if (hasPermission(userRoles[i], action, scope, entity)) {
+            if (Permissions(userRoles[i], action, scope, entity)) {
                 return true; // Allow access if any role has permission
             }
         } catch (error) {
