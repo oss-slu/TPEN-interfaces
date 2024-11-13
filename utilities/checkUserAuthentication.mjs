@@ -3,7 +3,7 @@
 export default function checkUserAuthentication() {
  try {
   return new Promise((resolve, reject) => {
-    const authButton = document.querySelector('button[is="auth-button"]')
+    const authButton = document.querySelector('auth-button')
 
     if (authButton) {
       authButton.addEventListener("tpen-authenticated", (event) => {
