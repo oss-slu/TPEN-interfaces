@@ -1,27 +1,33 @@
 // projects.mjs
 
+import { eventDispatcher } from "../TPEN/events.mjs"
 import TPEN from "../TPEN/index.mjs"
-import  User  from "../User/index.mjs"
-import checkUserAuthentication from "../utilities/checkUserAuthentication.mjs"
+import User from "../User/index.mjs"
 import getActiveProject from "../utilities/getActiveProject.mjs"
-import getHash from "../utilities/getHash.mjs"
+const elem = document.getElementById("manage-class")
 
+let activeUser;
+document.addEventListener("DOMContentLoaded", async () => {
+    loadProjects()
+})
 async function fetchProjects() {
-    const TPEN_USER = await checkUserAuthentication()
-    let token = TPEN_USER?.authorization
-    let userID = getHash(TPEN_USER.agent)
+
+    TPEN.attachAuthentication(elem)
+    let token = elem.userToken
+    let userID = elem.getAttribute("tpen-user-id")
     try {
         const userObj = new User(userID)
         userObj.authentication = token
         const projects = await userObj.getProjects()
+         await userObj.getProfile()
+         activeUser = userObj
         return projects
     } catch (error) {
         throw error
     }
 }
-
 function renderProjects(projects) {
-    const projectsList = document.getElementById('projects-list') 
+    const projectsList = document.getElementById('projects-list')
     projectsList.innerHTML = ''
 
     projects.forEach(project => {
@@ -45,10 +51,15 @@ function renderProjects(projects) {
 }
 
 
-async function renderActiveProject(){
+async function renderActiveProject() {
     const activeProjectContainer = document.getElementById('active-project')
-    activeProjectContainer.innerHTML = ''    
-    const {projectData} = await getActiveProject() 
+    activeProjectContainer.innerHTML = ''
+   
+    const TPENObj = new TPEN()
+    TPENObj.currentUser = activeUser
+    let projectData = TPENObj.activeProject
+    
+    // const { projectData } = await getActiveProject()
     activeProjectContainer.innerHTML = `   <p>
     Active project is
     <span class="red"> "${projectData?.name}"</span>
@@ -86,8 +97,8 @@ async function deleteProject(projectID) {
 async function loadProjects() {
     const projects = await fetchProjects()
     renderActiveProject()
-    renderProjects(projects) 
- }
+    renderProjects(projects)
+}
 
 
 export { loadProjects }
