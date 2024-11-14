@@ -136,5 +136,6 @@ function updateUser(element, token) {
 if(window?.location){
     console.log("TPEN module loaded")
     window.TPEN = TPEN
+    window.TPEN.eventDispatcher = eventDispatcher
     document?.dispatchEvent(new CustomEvent("tpen-loaded"))
 }

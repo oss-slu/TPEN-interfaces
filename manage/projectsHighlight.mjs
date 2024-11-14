@@ -1,31 +1,18 @@
 // projects.mjs
-
-import { eventDispatcher } from "../TPEN/events.mjs"
-import TPEN from "../TPEN/index.mjs"
 import User from "../User/index.mjs"
-import getActiveProject from "../utilities/getActiveProject.mjs"
+import Project from "../Project/index.mjs"
+
 const elem = document.getElementById("manage-class")
+TPEN.attachAuthentication(elem)
 
-let activeUser;
-document.addEventListener("DOMContentLoaded", async () => {
-    loadProjects()
-})
+TPEN.eventDispatcher.on("tpen-authenticated", loadProjects)
+
 async function fetchProjects() {
-
-    TPEN.attachAuthentication(elem)
-    let token = elem.userToken
-    let userID = elem.getAttribute("tpen-user-id")
-    try {
-        const userObj = new User(userID)
-        userObj.authentication = token
-        const projects = await userObj.getProjects()
-         await userObj.getProfile()
-         activeUser = userObj
-        return projects
-    } catch (error) {
-        throw error
-    }
+    const token = elem.userToken
+    const userObj = User.fromToken(token)
+    return await userObj.getProjects()
 }
+
 function renderProjects(projects) {
     const projectsList = document.getElementById('projects-list')
     projectsList.innerHTML = ''
@@ -51,23 +38,22 @@ function renderProjects(projects) {
 }
 
 
-async function renderActiveProject() {
+async function renderActiveProject(fallbackProjectId) {
     const activeProjectContainer = document.getElementById('active-project')
     activeProjectContainer.innerHTML = ''
    
-    const TPENObj = new TPEN()
-    TPENObj.currentUser = activeUser
-    let projectData = TPENObj.activeProject
-    
-    // const { projectData } = await getActiveProject()
+    let projectId = new TPEN().activeProject?._id ?? fallbackProjectId
+    let project = new Project(projectId)
+    let projectData = await project.fetch()
+
     activeProjectContainer.innerHTML = `   <p>
     Active project is
-    <span class="red"> "${projectData?.name}"</span>
+    <span class="red"> "${projectData?.name ?? projectData?.title ?? '[ untitled ]' }"</span>
 
   </p>
   <p>
     Active project T-PEN I.D.
-    <span class="red">${projectData._id}</span>
+    <span class="red">${projectData._id ?? 'ERR!'}</span>
   </p>`
 }
 
@@ -96,7 +82,7 @@ async function deleteProject(projectID) {
 // This function is called after the "projects" component is loaded
 async function loadProjects() {
     const projects = await fetchProjects()
-    renderActiveProject()
+    renderActiveProject(projects[0]?._id)
     renderProjects(projects)
 }
 
