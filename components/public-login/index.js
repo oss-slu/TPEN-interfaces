@@ -32,19 +32,7 @@ class AuthButton extends HTMLElement {
     return
   }
 
-  /**
-    * Use the TPEN3 Central Logout to retire the current token and redirect back to this page.
-    * Make sure to remove the token if you have it stored anywhere, such as in the address bar or in localStorage.
-  */
-  logout() {
-    const where = location.href
-    let link = new URL(where)
-    link.searchParams.delete("idToken")
-    const redirect = link.toString()
-    location.href = `${CENTRAL}/logout?returnTo=${encodeURIComponent(redirect)}`
-    return
-  }
-  
+  logout = TPEN.logout
 }
 
 customElements.define('auth-button', AuthButton)
