@@ -41,8 +41,14 @@ function renderProjects(projects) {
 async function renderActiveProject(fallbackProjectId) {
     const activeProjectContainer = document.getElementById('active-project')
     activeProjectContainer.innerHTML = ''
-   
-    let projectId = new TPEN().activeProject?._id ?? fallbackProjectId
+
+    let projectId = new TPEN().activeProject?._id // ?? fallbackProjectId
+    if(!projectId) {
+        // cheat to help other tabs for now
+        location.href = `?projectID=${fallbackProjectId ?? 'DEV_ERROR'}`
+        return
+    }
+    
     let project = new Project(projectId)
     let projectData = await project.fetch()
 
