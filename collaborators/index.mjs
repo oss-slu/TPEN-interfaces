@@ -67,7 +67,7 @@ async function renderProjectCollaborators() {
         if (collaborators[userId]?.roles.roles) collaborators[userId].roles = collaborators[userId]?.roles.roles
         if (collaborators[userId]?.roles.includes("OWNER") || collaborators[userId]?.roles.includes("LEADER")) {
             isOwnerOrLeader = true
-        };
+        }
         for (const collaboratorId in collaborators) {
             // datafix to remove
             if (collaborators[collaboratorId]?.roles.roles) collaborators[collaboratorId].roles = collaborators[collaboratorId]?.roles.roles
@@ -77,9 +77,9 @@ async function renderProjectCollaborators() {
             const memberHTML = `
                 <li class="member" data-member-id=${collaboratorId}> 
                   <span class="role">${renderRoles(memberData.roles)}</span>
-                  ${memberData.profile.displayName }
+                  ${memberData.profile?.displayName ?? collaboratorId}
  
-                 <button class="remove-button allow-invite is-hidden" id="remove-btn" data-member-id=${collaboratorId} data-member-name=${memberData.profile.displayName } >Remove</button>
+                 <button class="remove-button allow-invite is-hidden" id="remove-btn" data-member-id=${collaboratorId} data-member-name=${memberData.profile?.displayName ?? collaboratorId } >Remove</button>
  
                 </li>
               `
