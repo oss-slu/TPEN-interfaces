@@ -27,10 +27,10 @@ export default class Project {
     #isLoaded
     #TPEN = new TPEN()
 
-        if (typeof projectID !== "string") {
+    constructor(_id) {
+        if (typeof _id !== "string") {
             throw new Error("Project ID must be a string")
         }
-    constructor(_id) {
         this._id = _id
     }
 
@@ -46,14 +46,20 @@ export default class Project {
             })
             .then(response => response.ok ? response : Promise.reject(response))
             .then(response => response.json())
-            .then(data => Object.assign(this, data))
-            .catch(error => { throw error })
+            .then(data => {
+                Object.assign(this, data)
+                this.#isLoaded = true
+                eventDispatcher.dispatch("tpen-project-loaded", this)
+            })
+            .catch(error => { 
+                eventDispatcher.dispatch("tpen-project-load-failed", error)
+             })
         } catch (error) {
             return userMessage(`${error.status}: ${error.statusText}`)
         }
     }
 
-    save() {
+    async save() {
         if (!this.#authentication) {
             throw new Error("Authentication is required to save a project")
         }
@@ -64,6 +70,13 @@ export default class Project {
                 "Content-Type": "application/json"
             }),
             body: JSON.stringify(this)
+        })
+        .then(response => response.ok ? response.json() : Promise.reject(response))
+        .then(data => {
+            eventDispatcher.dispatch("tpen-project-saved", this)
+        })
+        .catch(error => { 
+            eventDispatcher.dispatch("tpen-project-save-failed", error)
         })
     }
 
@@ -176,6 +189,8 @@ export default class Project {
             }),
             body: JSON.stringify(roles)
         }).catch(err => Promise.reject(err))
+    }
+
     getLabel() {
         return this.label ?? this.data?.label ?? this.metadata?.find(m=>m.label === "title")?.value ?? "Untitled"
     }
