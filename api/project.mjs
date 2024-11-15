@@ -19,48 +19,37 @@
  */
 import TPEN from './TPEN.mjs'
 import { eventDispatcher } from './events.mjs'
+import { userMessage } from "../components/iiif-tools/index.mjs"
+
 export default class Project {
 
     #authentication
     #isLoaded
     #TPEN = new TPEN()
 
-    /**
-     * The constructor for the Project class.
-     * @param {String} projectID The new Project() will always load from Services.
-     * @returns 
-     */
-    constructor(projectID) {
         if (typeof projectID !== "string") {
             throw new Error("Project ID must be a string")
         }
-        this._id = projectID
-        this.#isLoaded = false
-        this.#loadFromService().then(() => {
-            this.#isLoaded = true
-            this.#TPEN.activeProject = this
-            eventDispatcher.dispatch("tpen-project-loaded", this)
-        })
-        eventDispatcher.on("tpen-authenticated", ev => this.#authentication = ev.detail)
+    constructor(_id) {
+        this._id = _id
     }
 
-    // new private function getById()
-    /**
-     * Load project information from TPEN Services about the project 
-     * for rendering user interface.
-     * @param {String} projectID short hash id for TPEN project
-     */
-
-    async #loadFromService(reload = false) {
-        if(!reload && this.#isLoaded) {
-            return Promise.resolve(this)
-        }
+    async fetch() {
+        const AUTH_TOKEN = TPEN.getAuthorization() ?? TPEN.login()
         try {
-            const response = await fetch(`${this.#TPEN.servicesURL}/project/${this._id}`)
-            const project = await (response.ok ? response.json() : Promise.reject(response))
-            return Object.assign(this, project)
-        } catch (err) {
-            return new Promise.reject(err)
+            return await fetch(`${this.TPEN.servicesURL}/project/${this._id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${AUTH_TOKEN}`
+                }
+            })
+            .then(response => response.ok ? response : Promise.reject(response))
+            .then(response => response.json())
+            .then(data => Object.assign(this, data))
+            .catch(error => { throw error })
+        } catch (error) {
+            return userMessage(`${error.status}: ${error.statusText}`)
         }
     }
 
@@ -187,6 +176,7 @@ export default class Project {
             }),
             body: JSON.stringify(roles)
         }).catch(err => Promise.reject(err))
+    getLabel() {
+        return this.label ?? this.data?.label ?? this.metadata?.find(m=>m.label === "title")?.value ?? "Untitled"
     }
-
 }
