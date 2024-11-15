@@ -1,5 +1,5 @@
  import renderRoles from "../utilities/renderRoles.mjs"
- import TPEN from "../TPEN/index.mjs"
+ import TPEN from "../api/TPEN.mjs"
  TPEN.getAuthorization() ?? TPEN.login()
  import User from "../User/index.mjs"
  window.TPEN_USER = User.fromToken(TPEN.getAuthorization())

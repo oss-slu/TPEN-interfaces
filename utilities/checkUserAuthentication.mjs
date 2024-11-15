@@ -1,6 +1,6 @@
 //@deprecated - use TPEN.getAuthorization() instead
 
-import { eventDispatcher } from "../TPEN/events.mjs"
+import { eventDispatcher } from "../api/events.mjs"
 
 export default function checkUserAuthentication() {
   try {
