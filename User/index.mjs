@@ -31,7 +31,7 @@ export default class User {
       })
       .then((data) => {
         Object.assign(this, data)
-        this.displayName = data.profile.displayName ?? data.name ?? "Anonymous"
+        this.displayName = data.profile?.displayName ?? data.name ?? "Anonymous"
         if (data._sub) {
           eventDispatcher.dispatch("tpen-user-loaded", this)
         }
