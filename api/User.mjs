@@ -1,4 +1,4 @@
-import { eventDispatcher } from "../TPEN/events.mjs"
+import { eventDispatcher } from "./events.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */

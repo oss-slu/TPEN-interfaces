@@ -3,7 +3,7 @@ import { fetchProject, userMessage, encodeContentState } from "../iiif-tools/ind
 import "https://cdn.jsdelivr.net/npm/manifesto.js"
 import "../line-image/index.js"
 import "../line-text/index.js"
-import TPEN from "../../TPEN/index.mjs"
+import TPEN from "../../api/TPEN.mjs"
 import User from "../../User/index.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {

@@ -1,6 +1,6 @@
 import User from "../../User/index.mjs"
-import TPEN from "../../TPEN/index.mjs"
-import { eventDispatcher } from "../../TPEN/events.mjs"
+import TPEN from "../../api/TPEN.mjs"
+import { eventDispatcher } from "../../api/events.mjs"
 
 export default class ProjectsList extends HTMLElement {
     static get observedAttributes() {

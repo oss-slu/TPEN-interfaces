@@ -7,6 +7,7 @@
  * @param {String} tinyThingsURL - The URL of the TinyThings API. Defaults to "https://dev.tiny.t-pen.org"
  * @imports { EventDispatcher }
  */
+console.warn('Deprecated: use and update the file in /api instead')
 
-import TPEN from './api/TPEN.mjs'
+import TPEN from '../api/TPEN.mjs'
 export default TPEN
