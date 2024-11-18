@@ -1,8 +1,10 @@
 // main.js
 
 import { getProjectIDFromURL } from './groups/utils/project.js';
+
 import Roles from "./roles.mjs";
 import hasPermission from "./hasPermission";
+
 
 // Function to display project data in the HTML
 function displayProjectData(data) {
@@ -63,7 +65,7 @@ function userHasMultipleRoles(userRoles, action, scope, entity) {
     // Loop through all roles to check if any role has permission
     for (let i = 0; i < userRoles.length; i++) {
         try {
-            if (hasPermission(userRoles[i], action, scope, entity)) {
+            if (Permissions(userRoles[i], action, scope, entity)) {
                 return true; // Allow access if any role has permission
             }
         } catch (error) {

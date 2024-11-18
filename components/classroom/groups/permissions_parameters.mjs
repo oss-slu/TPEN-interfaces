@@ -1,4 +1,4 @@
-const Action = {
+export const Action = {
     READ: 'READ',
     UPDATE: 'UPDATE',
     DELETE: 'DELETE',
@@ -6,7 +6,7 @@ const Action = {
     ALL:'ALL'
 };
 
-const Scope = {
+export const Scope = {
     METADATA: 'METADATA',
     TEXT: 'TEXT',
     ORDER: 'ORDER',
@@ -15,7 +15,7 @@ const Scope = {
     ALL: 'ALL'
 };
 
-const Entity = {
+export const Entity = {
     PROJECT: 'PROJECT',
     MEMBER: 'MEMBER',
     LAYER: 'LAYER',
@@ -24,10 +24,4 @@ const Entity = {
     ROLE: 'ROLE',
     PERMISSION: 'PERMISSION',
     ALL: 'ALL'
-};
-
-module.exports = {
-    Action,
-    Scope,
-    Entity
 };
