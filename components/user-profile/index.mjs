@@ -1,7 +1,12 @@
 import { eventDispatcher } from '../../TPEN/events.mjs'
 import TPEN from '../../TPEN/index.mjs'
+import User from '../../User/index.mjs'
 
 class UserProfile extends HTMLElement {
+    static get observedAttributes() {
+        return ['tpen-user-id']
+    }
+
     #TPEN = new TPEN()
 
     user = this.#TPEN.currentUser
@@ -17,6 +22,17 @@ class UserProfile extends HTMLElement {
     connectedCallback() {
         this.render()
         TPEN.attachAuthentication(this)
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'tpen-user-id') {
+            if (oldValue !== newValue) {
+                if(newValue === this.user._id) return // already loaded
+                const loadedUser = new User(newValue)
+                loadedUser.authentication = TPEN.getAuthorization()
+                loadedUser.getProfile()
+            }
+        }
     }
 
     updateProfile(profile) {
