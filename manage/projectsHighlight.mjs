@@ -16,7 +16,10 @@ async function fetchProjects() {
 function renderProjects(projects) {
     const projectsList = document.getElementById('projects-list')
     projectsList.innerHTML = ''
-
+    if(!projects || !projects.length) {
+        console.log("There are no projects for this user")
+        return
+    }
     projects.forEach(project => {
         const projectItem = document.createElement('li')
         projectItem.classList.add('project')
@@ -59,7 +62,7 @@ async function renderActiveProject(fallbackProjectId) {
   </p>
   <p>
     Active project T-PEN I.D.
-    <span class="red">${projectData._id ?? 'ERR!'}</span>
+    <span class="red">${projectData?._id ?? 'ERR!'}</span>
   </p>`
 }
 

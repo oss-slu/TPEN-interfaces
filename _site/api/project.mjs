@@ -8,7 +8,7 @@ import checkUserAuthentication from "../utilities/checkUserAuthentication.mjs"
  * @type module
  * @version 0.0.1
  */
-const baseURL = "http://localhost:3009"
+const baseURL = "https://dev.api.t-pen.org"
 
 export default class Project {
     constructor(projectID) {
