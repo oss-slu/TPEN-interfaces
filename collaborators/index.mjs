@@ -1,8 +1,6 @@
  import renderRoles from "../utilities/renderRoles.mjs"
  import TPEN from "../api/TPEN.mjs"
  TPEN.getAuthorization() ?? TPEN.login()
- import User from "../api/User.mjs"
- window.TPEN_USER = User.fromToken(TPEN.getAuthorization())
  import Project from "../api/Project.mjs"
 
 let groupTitle = document.querySelector(".project-title")
@@ -57,7 +55,7 @@ async function renderProjectCollaborators() {
         return errorHTML.innerHTML = "No project"
     }
   
-    const userId = TPEN_USER?._id
+    const userId = thisTPEN.currentUser?._id
     groupMembersElement.innerHTML = ""
 
        const collaborators = thisTPEN.activeProject.collaborators
