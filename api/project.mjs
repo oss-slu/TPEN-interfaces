@@ -44,16 +44,16 @@ export default class Project {
                     'Authorization': `Bearer ${AUTH_TOKEN}`
                 }
             })
-            .then(response => response.ok ? response : Promise.reject(response))
-            .then(response => response.json())
-            .then(data => {
-                Object.assign(this, data)
-                this.#isLoaded = true
-                eventDispatcher.dispatch("tpen-project-loaded", this)
-            })
-            .catch(error => { 
-                eventDispatcher.dispatch("tpen-project-load-failed", error)
-             })
+                .then(response => response.ok ? response : Promise.reject(response))
+                .then(response => response.json())
+                .then(data => {
+                    Object.assign(this, data)
+                    this.#isLoaded = true
+                    eventDispatcher.dispatch("tpen-project-loaded", this)
+                })
+                .catch(error => {
+                    eventDispatcher.dispatch("tpen-project-load-failed", error)
+                })
         } catch (error) {
             return userMessage(`${error.status}: ${error.statusText}`)
         }
@@ -71,13 +71,13 @@ export default class Project {
             }),
             body: JSON.stringify(this)
         })
-        .then(response => response.ok ? response.json() : Promise.reject(response))
-        .then(data => {
-            eventDispatcher.dispatch("tpen-project-saved", this)
-        })
-        .catch(error => { 
-            eventDispatcher.dispatch("tpen-project-save-failed", error)
-        })
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(data => {
+                eventDispatcher.dispatch("tpen-project-saved", this)
+            })
+            .catch(error => {
+                eventDispatcher.dispatch("tpen-project-save-failed", error)
+            })
     }
 
     setMetadata(metadata) {
@@ -118,7 +118,7 @@ export default class Project {
 
     async removeCollaborator(userID) {
         // userID is the _id (Hexstring) of the user to remove from the project
-        if(!this.collaborators?.[userID]) {
+        if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
         return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/remove-member`, {
@@ -140,7 +140,7 @@ export default class Project {
      */
     async addCollaboratorRole(userID, roles) {
         // role is a string value of the role to add to the user
-        if(!this.collaborators?.[userID]) {
+        if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
         return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/addRoles`, {
@@ -163,7 +163,7 @@ export default class Project {
      */
     async removeCollaboratorRole(userID, roles) {
         // role is a string value of the role to remove from the user
-        if(!this.collaborators?.[userID]) {
+        if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
         return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/removeRoles`, {
@@ -178,7 +178,7 @@ export default class Project {
 
     async setCollaboratorRoles(userID, roles) {
         // role is a string value of the role to set for the user
-        if(!this.collaborators?.[userID]) {
+        if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
         return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/setRoles`, {
@@ -192,6 +192,6 @@ export default class Project {
     }
 
     getLabel() {
-        return this.label ?? this.data?.label ?? this.metadata?.find(m=>m.label === "title")?.value ?? "Untitled"
+        return this.label ?? this.data?.label ?? this.metadata?.find(m => m.label === "title")?.value ?? "Untitled"
     }
 }

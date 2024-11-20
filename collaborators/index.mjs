@@ -63,13 +63,13 @@ async function renderProjectCollaborators() {
        const collaborators = thisTPEN.activeProject.collaborators
         groupTitle.innerHTML = thisTPEN.activeProject.getLabel()
         
-        // datafix to remove
+        // data fix to remove
         if (collaborators[userId]?.roles.roles) collaborators[userId].roles = collaborators[userId]?.roles.roles
         if (collaborators[userId]?.roles.includes("OWNER") || collaborators[userId]?.roles.includes("LEADER")) {
             isOwnerOrLeader = true
         }
         for (const collaboratorId in collaborators) {
-            // datafix to remove
+            // data fix to remove
             if (collaborators[collaboratorId]?.roles.roles) collaborators[collaboratorId].roles = collaborators[collaboratorId]?.roles.roles
             
             const memberData = collaborators[collaboratorId]
