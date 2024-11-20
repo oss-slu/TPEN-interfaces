@@ -18,7 +18,7 @@ let isOwnerOrLeader = false
 const thisTPEN = new TPEN()
 await (thisTPEN.activeProject=new Project(thisTPEN.activeProject?._id)).fetch()
 
-renderProjectContributors()
+renderProjectCollaborators()
    
 inviteForm.addEventListener("submit", async (event) => {
     event.preventDefault()
@@ -31,7 +31,7 @@ inviteForm.addEventListener("submit", async (event) => {
 
         submitButton.textContent = "Submit"
         submitButton.disabled = false
-        renderProjectContributors()
+        renderProjectCollaborators()
         userEmail.value = ""
 
         // Display a success message
@@ -52,7 +52,7 @@ inviteForm.addEventListener("submit", async (event) => {
 
 })
 
-async function renderProjectContributors() {
+async function renderProjectCollaborators() {
     if(!thisTPEN.activeProject) {
         return errorHTML.innerHTML = "No project"
     }
@@ -60,26 +60,26 @@ async function renderProjectContributors() {
     const userId = TPEN_USER?._id
     groupMembersElement.innerHTML = ""
 
-       const contributors = thisTPEN.activeProject.contributors
+       const collaborators = thisTPEN.activeProject.collaborators
         groupTitle.innerHTML = thisTPEN.activeProject.getLabel()
         
         // datafix to remove
-        if (contributors[userId]?.roles.roles) contributors[userId].roles = contributors[userId]?.roles.roles
-        if (contributors[userId]?.roles.includes("OWNER") || contributors[userId]?.roles.includes("LEADER")) {
+        if (collaborators[userId]?.roles.roles) collaborators[userId].roles = collaborators[userId]?.roles.roles
+        if (collaborators[userId]?.roles.includes("OWNER") || collaborators[userId]?.roles.includes("LEADER")) {
             isOwnerOrLeader = true
-        };
-        for (const contributorId in contributors) {
+        }
+        for (const collaboratorId in collaborators) {
             // datafix to remove
-            if (contributors[contributorId]?.roles.roles) contributors[contributorId].roles = contributors[contributorId]?.roles.roles
+            if (collaborators[collaboratorId]?.roles.roles) collaborators[collaboratorId].roles = collaborators[collaboratorId]?.roles.roles
             
-            const memberData = contributors[contributorId]
+            const memberData = collaborators[collaboratorId]
 
             const memberHTML = `
-                <li class="member" data-member-id=${contributorId}> 
+                <li class="member" data-member-id=${collaboratorId}> 
                   <span class="role">${renderRoles(memberData.roles)}</span>
-                  ${memberData.profile.displayName }
+                  ${memberData.profile?.displayName ?? collaboratorId}
  
-                 <button class="remove-button allow-invite is-hidden" id="remove-btn" data-member-id=${contributorId} data-member-name=${memberData.profile.displayName } >Remove</button>
+                 <button class="remove-button allow-invite is-hidden" id="remove-btn" data-member-id=${collaboratorId} data-member-name=${memberData.profile?.displayName ?? collaboratorId } >Remove</button>
  
                 </li>
               `

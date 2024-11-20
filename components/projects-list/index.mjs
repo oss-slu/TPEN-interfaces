@@ -28,7 +28,7 @@ export default class ProjectsList extends HTMLElement {
             if (oldValue !== newValue) {
                 const loadedUser = new User(newValue)
                 loadedUser.authentication = TPEN.getAuthorization()
-                loadedUser.getProfile().then(user => this.currentUser = user)
+                loadedUser.getProfile()
             }
         }
     }
