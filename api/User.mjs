@@ -1,4 +1,5 @@
 import { eventDispatcher } from "./events.mjs"
+import TPEN from "./TPEN.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */
@@ -6,6 +7,7 @@ export default class User {
   #isTheAuthenticatedUser() {
     return this._id === getUserFromToken(TPEN.getAuthorization())
   }
+  #TPEN = new TPEN()
   constructor(_id) {
     this._id = _id
   }
@@ -14,12 +16,12 @@ export default class User {
     if (!this._id)
       throw Error("User ID is required")
 
-    const serviceAPI = `${this.TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
+    const serviceAPI = `${this.#TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
       }`
     const headers = this.#isTheAuthenticatedUser()
       ? new Headers({ Authorization: `Bearer ${TPEN.getAuthorization()}` })
       : new Headers()
-    fetch(serviceAPI, { headers })
+    await fetch(serviceAPI, { headers })
       .then((response) => {
         if (!response.ok) Promise.reject(response)
         return response.json()
@@ -39,7 +41,7 @@ export default class User {
       Authorization: `Bearer ${TPEN.getAuthorization()}`
     })
 
-    return fetch(`${this.TPEN.servicesURL}/my/projects`, { headers })
+    return await fetch(`${this.#TPEN.servicesURL}/my/projects`, { headers })
       .then((response) => {
         if (!response.ok) {
           return Promise.reject(response)
@@ -109,7 +111,7 @@ export default class User {
 
   async updateRecord(data) {
     try {
-      const response = await fetch(`${this.TPEN.servicesURL}/my/profile/update`, {
+      const response = await fetch(`${this.#TPEN.servicesURL}/my/profile/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
