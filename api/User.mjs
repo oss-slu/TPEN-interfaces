@@ -8,7 +8,6 @@ export default class User {
   }
   constructor(_id) {
     this._id = _id
-    // if (this.#authentication || this._id) this.getProfile()
   }
 
   async getProfile() {
@@ -71,7 +70,6 @@ export default class User {
     this.getProjects()
       .then((projects) => {
         projectsList.innerHTML = ""
-
         if (projects.length) {
           projects.forEach((project) => {
             const projectTemplate = `
@@ -83,10 +81,8 @@ export default class User {
               </div>
             </li>
           `
-
             projectsList.insertAdjacentHTML("beforeend", projectTemplate)
           })
-
           const manageButtons = document.querySelectorAll(".manage-btn")
           manageButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
@@ -96,7 +92,6 @@ export default class User {
               window.location.href = `/manage/?projectID=${projectId}`
             })
           })
-
         } else {
           projectsList.innerHTML = "No projects yet. Create one to get started"
         }
@@ -104,7 +99,6 @@ export default class User {
       .catch((error) => {
         const errorTemplate = `
           <li>
-            Error ${error.status ?? 500}: ${error.statusText ?? "Unknown Server error"}
             Error ${error.status ?? 500}: ${error.statusText ?? "Unknown Server error"}
           </li>
         `
@@ -139,7 +133,7 @@ export default class User {
       const response = await this.updateRecord(payload)
       return response
       // We can either manipulate the data this way and use the the same route to handle all updates or,
-      // we can create a new route in Services and move these manipuations there.
+      // we can create a new route in Services and move these manipulations there.
       // A third option would be to add a tag in the payload or via query strings
     } catch (error) {
       console.error("Error updating user record:", error)
