@@ -1,6 +1,6 @@
 // projects.mjs
-import User from "../User/index.mjs"
-import Project from "../Project/index.mjs"
+import User from "../api/User.mjs"
+import Project from "../api/Project.mjs"
 
 const elem = document.getElementById("manage-class")
 TPEN.attachAuthentication(elem)

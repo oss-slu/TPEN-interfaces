@@ -1,4 +1,4 @@
-import User from "../../User/index.mjs"
+import User from "../../api/User.mjs"
 import TPEN from "../../api/TPEN.mjs"
 import { eventDispatcher } from "../../api/events.mjs"
 

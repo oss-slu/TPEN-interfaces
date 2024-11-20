@@ -1,9 +1,9 @@
  import renderRoles from "../utilities/renderRoles.mjs"
  import TPEN from "../api/TPEN.mjs"
  TPEN.getAuthorization() ?? TPEN.login()
- import User from "../User/index.mjs"
+ import User from "../api/User.mjs"
  window.TPEN_USER = User.fromToken(TPEN.getAuthorization())
- import Project from "../Project/index.mjs"
+ import Project from "../api/Project.mjs"
 
 let groupTitle = document.querySelector(".project-title")
 let groupMembersElement = document.querySelector(".group-members")
