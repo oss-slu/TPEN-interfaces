@@ -192,6 +192,6 @@ export default class Project {
     }
 
     getLabel() {
-        return this.label ?? this.data?.label ?? this.metadata?.find(m => m.label === "title")?.value ?? "Untitled"
+        return this.label ?? this.title ?? this.metadata?.find(m => m.label === "title")?.value ?? "Untitled"
     }
 }
