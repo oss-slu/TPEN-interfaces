@@ -75,7 +75,7 @@ export default class Project {
                 throw new Error(`Error removing member: ${response.status}`)
             }
 
-            return await response.json()
+            return await response.text()
         } catch (error) {
             userMessage(error.message)
         }
