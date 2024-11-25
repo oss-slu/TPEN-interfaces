@@ -4,7 +4,7 @@ import { checkPermissions } from './permissions.mjs';
 import hasPermissions from './checkPermissions.mjs';
 import { updateUIBasedOnRoles } from '../roleBasedDisplay.mjs';
 
-/*const testProperties = (obj, properties) => {
+const testProperties = (obj, properties) => {
     properties.forEach(prop => {
         expect(obj).toHaveProperty(prop);
     });
@@ -115,7 +115,7 @@ describe('hasPermission function',() => {
     test('OWNER can perform any action on a ROLE', () => {
         expect(hasPermissions('OWNER','*','*','ROLE')).toBe(true);
     });
-});*/
+});
 
 describe('updateUIBasedOnRoles function', () => {
     let managementOptions;

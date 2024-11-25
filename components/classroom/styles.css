@@ -33,7 +33,7 @@ h3 {
 }
 
 .header h1 {
-    font-size: 30px;
+    font-size: 24px;
 }
 
 .navbar {
@@ -52,16 +52,26 @@ h3 {
 }
 
 li a {
-    display: block;
+    display: block;;
     color: #fff;
-    padding: 10px 10px;
     text-decoration: none;
+    position: relative;
+    overflow: hidden;
 }
 
-li a:hover {
+li a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
     background-color: #ffffff;
-    color: #516059;
-    border-radius: 10px;
+    transition: width 0.3s ease-in-out;
+}
+
+li a:hover::after {
+    width: 100%;
 }
 
 .page-container {
@@ -74,6 +84,7 @@ li a:hover {
 }
 
 .input-container {
+    text-align: center;
     padding-top: 1rem;
 }
 
@@ -149,6 +160,12 @@ footer {
 
     .role-based-options {
         padding-inline: 5rem;
+    }
+
+    #msg pre {
+        height: 340px;
+        width: auto;
+        margin-inline: 1rem;
     }
 }
 
