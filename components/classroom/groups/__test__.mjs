@@ -116,3 +116,47 @@ describe('hasPermission function',() => {
     });
     
 });
+
+describe('createCustomRole function',() => {
+    let mockRoles;
+    let mockPermissions;
+    
+    beforeEach(() => {
+        mockRoles = {};
+        mockPermissions = {};
+    });
+
+    test('Successfully add custom role GUEST', () => {
+        Object.assign(Roles, mockRoles);
+        Object.assign(Permissions, mockPermissions);
+        createCustomRole('GUEST');
+        expect(mockRoles.GUEST).toBe('GUEST');
+        expect(mockPermissions.admin).toBeNull();
+    });
+
+    test('Unsuccessfully adds LEADER role', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        Object.assign(Roles, mockRoles);
+        Object.assign(Permissions, mockPermissions);
+        createCustomRole('LEADER');
+        expect(logSpy).toHaveBeenCalledWith('Role already exists.');
+        logSpy.mockRestore();
+    
+    });
+    
+    test('Unsuccessfully adds non-string role', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        Object.assign(Roles, mockRoles);
+        Object.assign(Permissions, mockPermissions);
+        let role = 123;
+        createCustomRole(role);
+        expect(logSpy).toHaveBeenCalledWith('Input needs to be of type string.');
+        logSpy.mockRestore();
+
+    });
+
+    afterEach(() => {
+        Object.keys(mockRoles).forEach(key => delete Roles[key]);
+        Object.keys(mockPermissions).forEach(key => delete Permissions[key]);
+    });
+});
