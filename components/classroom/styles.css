@@ -161,12 +161,6 @@ footer {
     .role-based-options {
         padding-inline: 5rem;
     }
-
-    #msg pre {
-        height: 340px;
-        width: auto;
-        margin-inline: 1rem;
-    }
 }
 
 /* Tablet (Portrait and Landscape) */
