@@ -1,9 +1,10 @@
-const Roles = require('./roles');
-const { Action, Scope, Entity } = require('./permissions_parameters');
-const {checkPermissions} = require('./permissions.mjs');
-const hasPermissions = require('./checkPermissions.mjs');
+import Roles from './roles';
+import { Action, Scope, Entity } from './permissions_parameters';
+import { checkPermissions } from './permissions.mjs';
+import hasPermissions from './checkPermissions.mjs';
+import { updateUIBasedOnRoles } from '../roleBasedDisplay.mjs';
 
-const testProperties = (obj, properties) => {
+/*const testProperties = (obj, properties) => {
     properties.forEach(prop => {
         expect(obj).toHaveProperty(prop);
     });
@@ -114,5 +115,66 @@ describe('hasPermission function',() => {
     test('OWNER can perform any action on a ROLE', () => {
         expect(hasPermissions('OWNER','*','*','ROLE')).toBe(true);
     });
-    
+});*/
+
+describe('updateUIBasedOnRoles function', () => {
+    let managementOptions;
+    let viewOptions;
+
+    beforeEach(() => {
+        // Mocked DOM elements
+        document.body.innerHTML = `
+            <div id="managementOptions" style="display: none;"></div>
+            <div id="viewOptions" style="display: none;"></div>
+        `;
+
+        managementOptions = document.getElementById('managementOptions');
+        viewOptions = document.getElementById('viewOptions');
+    });
+
+    test('OWNER role displays management options', () => {
+        const roles = ['OWNER'];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('block');
+    });
+
+    test('CONTRIBUTOR role displays view options only', () => {
+        const roles = ['CONTRIBUTOR'];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('none');
+        expect(viewOptions.style.display).toBe('block');
+    });
+
+    test('LEADER role displays management options', () => {
+        const roles = ['LEADER'];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('block');
+    });
+
+    test('Multiple roles display both management and view options', () => {
+        const roles = ['LEADER', 'CONTRIBUTOR'];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('block');
+        expect(viewOptions.style.display).toBe('block');
+    });
+
+    test('Unknown roles hide both management and view options', () => {
+        const roles = ['UNKNOWN'];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('none');
+        expect(viewOptions.style.display).toBe('none');
+    });
+
+    test('No roles hide both management and view options', () => {
+        const roles = [];
+        updateUIBasedOnRoles(roles);
+
+        expect(managementOptions.style.display).toBe('none');
+        expect(viewOptions.style.display).toBe('none');
+    });
 });

@@ -1,7 +1,8 @@
 import TPEN from '../../TPEN/index.mjs';
 
+const PROJECT_FORM = document.getElementById("projectId");
+
 async function fetchProjectData(projectId) {
-    const PROJECT_FORM = document.getElementById(projectId);
     PROJECT_FORM.TPEN = new TPEN();
     TPEN.attachAuthentication(PROJECT_FORM);
 
@@ -32,3 +33,5 @@ async function fetchProjectData(projectId) {
         }
     });
 }
+
+fetchProjectData(PROJECT_FORM);
