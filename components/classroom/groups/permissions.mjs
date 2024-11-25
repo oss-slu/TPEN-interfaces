@@ -1,6 +1,6 @@
 import { Roles } from "./roles.mjs"
 import {Action,Scope,Entity} from "./permissions_parameters.mjs"
-import {hasPermission} from "./checkPermissions.mjs"
+const hasPermission = require('./checkPermissions.mjs');
 
 export const Permissions = {
     [Roles.OWNER]: ['*_*_*'],
@@ -61,12 +61,12 @@ export function createCustomRole(role){
         console.log("Input needs to be of type string.");
         return;
     }
-    if (Permissions[role]){
+    if (Roles[role]){
         console.log("Role already exists.");
         return;
     }
-    Object.defineProperty(Roles,role,{value:role}); //adding role to role object in roles.mjs
-    Object.defineProperty(Permissions,role,{value:null});
+    Object.defineProperty(Roles,role,{value:role,writable:true,enumerable:true,configurable:true}); //adding role to role object in roles.mjs
+    Object.defineProperty(Permissions,role,{value:[],writable:true,enumerable:true,configurable:true}); //adding role to Permissions const
     }
 
 export function addPermission(role,action,scope,entity){
@@ -110,5 +110,5 @@ export function addPermission(role,action,scope,entity){
         return;
     }
 
-    Object.defineProperty(Permissions,[Roles.role],{value:`${action}_${scope}_${entity}`});
+    Object.defineProperty(Permissions,Roles[role],{value:`${action}_${scope}_${entity}`,writable:true,enumerable:true,configurable:true});
 }
