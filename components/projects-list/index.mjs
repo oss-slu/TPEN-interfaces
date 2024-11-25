@@ -34,21 +34,70 @@ export default class ProjectsList extends HTMLElement {
     }
 
     render() {
-        if(!this.#TPEN.currentUser._id) return
+        if (!this.currentUser || !this.projects) {
+            this.innerHTML = "No user or projects available";
+            return;
+        }
+    
+        // Render projects with contributors
+        this.innerHTML = `
+            <h2>Welcome, ${this.currentUser.name}</h2>
+            <ul>
+                ${this.projects.map(project => `
+                    <li>
+                        <strong>${project.title}</strong> (${project.roles.join(", ")})
+                        <ul>
+                            ${project.contributors.map(contributor => `
+                                <li>
+                                    ${contributor.name} - ${contributor.role}
+                                    <button onclick="managePermissions('${contributor.id}')">Manage Permissions</button>
+                                </li>
+                            `).join("")}
+                        </ul>
+                    </li>
+                `).join("")}
+            </ul>
+        `;
 
-        this.innerHTML = `<ul>${this.#projects.reduce((a, project) => 
-            a + `<li tpen-project-id="${project._id}">${project.title}
-            <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
-              </li>`, 
-        ``)}</ul>`
+        // Attach event listeners after rendering
+        this.querySelectorAll('.manage-permissions').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const contributorId = event.target.getAttribute('data-id');
+                this.managePermissions(contributorId);
+            });
+        });
+    }
+
+    managePermissions(contributorId) {
+        alert(`Managing permissions for contributor ID: ${contributorId}`);
     }
 
     async getProjects() {
         return this.#TPEN.currentUser.getProjects()
-            .then((projects) => {
-                this.#projects = projects
-                return projects
-            })
+            .then(async (projects) => {
+                // Fetch contributors for each project
+                const projectsWithContributors = await Promise.all(
+                    projects.map(async (project) => {
+                        const contributors = await this.fetchContributors(project._id); // Fetch contributors
+                        return { ...project, contributors }; // Add contributors to project object
+                    })
+                );
+                this.projects = projectsWithContributors;
+                return projectsWithContributors;
+            });
+    }
+    
+    // Helper method to fetch contributors for a project
+    async fetchContributors(projectId) {
+        const token = TPEN.getAuthorization();
+        const response = await fetch(`${this.#TPEN.servicesURL}/project/${projectId}/contributors`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) throw new Error(`Failed to fetch contributors for project ${projectId}`);
+        return response.json(); // Return the contributors
     }
 
     get currentUser() {
