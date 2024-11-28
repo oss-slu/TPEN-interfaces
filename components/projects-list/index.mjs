@@ -39,38 +39,43 @@ export default class ProjectsList extends HTMLElement {
             return;
         }
     
-        // Render projects with contributors
         this.innerHTML = `
             <h2>Welcome, ${this.currentUser.name}</h2>
             <ul>
                 ${this.projects.map(project => `
-                    <li>
+                    <li data-id="${project._id}" class="project-item">
                         <strong>${project.title}</strong> (${project.roles.join(", ")})
-                        <ul>
-                            ${project.contributors.map(contributor => `
-                                <li>
-                                    ${contributor.name} - ${contributor.role}
-                                    <button onclick="managePermissions('${contributor.id}')">Manage Permissions</button>
-                                </li>
-                            `).join("")}
-                        </ul>
+                        <button class="details-button">Details</button>
                     </li>
                 `).join("")}
             </ul>
         `;
-
-        // Attach event listeners after rendering
-        this.querySelectorAll('.manage-permissions').forEach(button => {
+    
+        this.querySelectorAll('.details-button').forEach(button => {
             button.addEventListener('click', (event) => {
-                const contributorId = event.target.getAttribute('data-id');
-                this.managePermissions(contributorId);
+                const projectId = event.target.closest('li').getAttribute('data-id');
+                this.loadContributors(projectId);
             });
         });
     }
 
-    managePermissions(contributorId) {
-        alert(`Managing permissions for contributor ID: ${contributorId}`);
+    async loadContributors(projectId) {
+        try {
+            const contributors = await this.fetchContributors(projectId);
+            const contributorsList = document.getElementById('contributorsList');
+            contributorsList.innerHTML = contributors.map(contributor => `
+                <li>
+                    <strong>${contributor.name}</strong>
+                    <p>Email: ${contributor.email}</p>
+                    <p>Role: ${contributor.role}</p>
+                    <button onclick="managePermissions('${contributor.id}')">Manage Permissions</button>
+                </li>
+            `).join("");
+        } catch (error) {
+            console.error(`Error fetching contributors for project ${projectId}:`, error);
+        }
     }
+    
 
     async getProjects() {
         return this.#TPEN.currentUser.getProjects()
@@ -117,7 +122,7 @@ export default class ProjectsList extends HTMLElement {
 
     get projects() {
         return this.#projects
-    }
+    } 
 
     set projects(projects) {
         this.#projects = projects
