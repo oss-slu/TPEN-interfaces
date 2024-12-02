@@ -16,9 +16,21 @@ async function fetchProjectData(projectId) {
                 'Authorization': `Bearer ${token}`
             }
         })
-            .then(res => res.ok ? res.json() : Promise.reject(res.status))
-            .then(data => msg.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`)
-            .catch(err => msg.innerHTML = `<pre>${JSON.stringify(err, null, 2)}</pre>`);
+        .then(res => res.ok ? res.json() : Promise.reject(res.status))
+        .then(data => {
+            // Extract all collaborators without filtering
+            const collaborators = Object.entries(data.collaborators || {}).map(([key, value]) => ({
+                id: key,
+                name: value.profile.displayName,
+                roles: value.roles
+            }));
+        
+            // Display all collaborators in msg
+            msg.innerHTML = `<pre>${JSON.stringify(collaborators, null, 2)}</pre>`;
+        })
+        .catch(err => msg.innerHTML = `<pre>${JSON.stringify(err, null, 2)}</pre>`);
+        
+        
     }
 
     PROJECT_FORM.addEventListener('submit', async function (event) {
@@ -34,4 +46,9 @@ async function fetchProjectData(projectId) {
     });
 }
 
+
 fetchProjectData(PROJECT_FORM);
+
+
+
+
