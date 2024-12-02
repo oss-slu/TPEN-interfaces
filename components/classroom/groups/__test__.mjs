@@ -1,6 +1,6 @@
-const Roles = require('./roles');
+const {Roles} = require('./roles');
 const { Action, Scope, Entity } = require('./permissions_parameters');
-const {checkPermissions} = require('./permissions.mjs');
+const {Permissions,checkPermissions,createCustomRole,addPermission} = require('./permissions.mjs');
 const hasPermissions = require('./checkPermissions.mjs');
 
 const testProperties = (obj, properties) => {
@@ -115,4 +115,65 @@ describe('hasPermission function',() => {
         expect(hasPermissions('OWNER','*','*','ROLE')).toBe(true);
     });
     
+});
+
+describe('createCustomRole function',() => {
+
+    test('Successfully add custom role GUEST', () => {
+        createCustomRole('GUEST');
+        expect(Roles.GUEST).toBe('GUEST');
+        expect(Permissions[[Roles.GUEST]]).toEqual([]);
+    });
+
+    test('Unsuccessfully adds LEADER role', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        createCustomRole('LEADER');
+        expect(logSpy).toHaveBeenCalledWith('Role already exists.');
+        logSpy.mockRestore();
+    });
+    
+    test('Unsuccessfully adds non-string role', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        let role = 123;
+        createCustomRole(role);
+        expect(logSpy).toHaveBeenCalledWith('Input needs to be of type string.');
+        logSpy.mockRestore();
+    });
+
+});
+
+describe('addPermission function',() => {
+
+    test('Add permission to existing role', () => {
+        addPermission('CONTRIBUTOR','CREATE','TEXT','ROLE');
+        expect(Permissions[[Roles.CONTRIBUTOR]]).toContain('CREATE_TEXT_ROLE');
+    });
+
+    test('Add permission to custom role', () => {
+        createCustomRole('GUEST');
+        addPermission('GUEST','READ','ALL','ALL');
+        expect(Permissions[[Roles.GUEST]]).toContain('READ_*_*');
+    });
+
+    test('Unsuccessfully adds to non-existing role', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        addPermission('TEST','READ','ALL','ALL')
+        expect(logSpy).toHaveBeenCalledWith('Cannot find role.');
+        logSpy.mockRestore();
+    });
+    
+    test('Unsuccessfully adds non-string permission', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        let scope = 123;
+        addPermission('CONTRIBUTOR','READ',scope,'ALL')
+        expect(logSpy).toHaveBeenCalledWith('All inputs are required to be of type string.');
+        logSpy.mockRestore();
+    });
+
+    test('Unsuccessfully adds already existing permission', () => {
+        const logSpy = jest.spyOn(global.console, 'log');
+        addPermission('OWNER','READ','ALL','ALL')
+        expect(logSpy).toHaveBeenCalledWith('Role already encompasses specified permission.');
+        logSpy.mockRestore();
+    });
 });

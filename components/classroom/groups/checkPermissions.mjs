@@ -1,4 +1,4 @@
-import Roles from "./roles.mjs"
+import {Roles} from "./roles.mjs"
 import {Permissions} from "./permissions.mjs"
 
 /**
