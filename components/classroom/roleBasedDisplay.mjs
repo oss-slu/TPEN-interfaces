@@ -1,7 +1,6 @@
 import { Roles } from './groups/roles.mjs';
 
 const userRoles = localStorage.getItem('userRole');
-console.log(userRoles);
 
 export function updateUIBasedOnRoles(roles) {
     const managementOptions = document.getElementById('managementOptions');
