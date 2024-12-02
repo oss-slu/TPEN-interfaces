@@ -54,9 +54,51 @@ inviteForm.addEventListener("submit", async (event) => {
 
 })
 
+groupMembersElement.addEventListener("click", async (e) => {
+    const button = e.target
+    const memberID = button.dataset.memberId
+    const memberName = button.dataset.memberName
+
+    if (!memberID) return // Ignore clicks that are not on relevant buttons
+
+    try {
+        switch (true) {
+            case button.classList.contains("remove-button"):
+                await removeMember(memberID, memberName)
+                break
+
+            case button.classList.contains("set-role-button"):
+                await handleSetRoleButton(memberID)
+                break
+
+            case button.classList.contains("set-to-viewer-button"):
+                await handleSetToViewerButton(memberID)
+                break
+
+            case button.classList.contains("make-leader-button"):
+                await handleMakeLeaderButton(memberID)
+                break
+
+            case button.classList.contains("make-owner-button"):
+                await handleMakeOwnerButton(memberID)
+                break
+
+            case button.classList.contains("demote-leader-button"):
+                await handleDemoteLeaderButton(memberID)
+                break
+
+            default:
+                console.warn("Unhandled button action")
+        }
+    } catch (error) {
+        console.error("Error handling button action:", error)
+        alert("An error occurred. Please try again.")
+    }
+})
+
 async function renderProjectCollaborators() {
     if (!thisTPEN.activeProject) {
-        return errorHTML.innerHTML = "No project"
+        return (errorHTML.innerHTML = "No project")
     }
 
     const userId = TPEN_USER?._id
@@ -65,37 +107,129 @@ async function renderProjectCollaborators() {
     const collaborators = thisTPEN.activeProject.collaborators
     groupTitle.innerHTML = thisTPEN.activeProject.getLabel()
 
-    // datafix to remove
+    // Data fix to remove
     if (collaborators[userId]?.roles.roles) collaborators[userId].roles = collaborators[userId]?.roles.roles
     if (collaborators[userId]?.roles.includes("OWNER") || collaborators[userId]?.roles.includes("LEADER")) {
         isOwnerOrLeader = true
     }
+
     for (const collaboratorId in collaborators) {
-        // datafix to remove
+        // Data fix to remove
         if (collaborators[collaboratorId]?.roles.roles) collaborators[collaboratorId].roles = collaborators[collaboratorId]?.roles.roles
 
         const memberData = collaborators[collaboratorId]
 
+        // Single "Manage Roles" button
         const memberHTML = `
-                <li class="member" data-member-id=${collaboratorId}> 
-                  <span class="role">${renderRoles(memberData.roles)}</span>
-                  ${memberData.profile?.displayName ?? collaboratorId}
- 
-                 <button class="remove-button allow-invite is-hidden" id="remove-btn" data-member-id=${collaboratorId} data-member-name=${memberData.profile?.displayName ?? collaboratorId} >Remove</button>
- 
-                </li>
-              `
+<li class="member" data-member-id=${collaboratorId}>
+  <div class="member-info">
+    <span class="role">${renderRoles(memberData.roles)}</span>
+    ${memberData.profile?.displayName ?? collaboratorId}
+  </div>
+
+  <div class="actions">
+    <button class="manage-roles-button" data-member-id=${collaboratorId}>
+      Manage Roles <i class="fas fa-caret-down"></i>
+    </button>
+  </div>
+</li>
+
+        `
 
         const memberElement = document.createElement("div")
         memberElement.innerHTML = memberHTML
 
         groupMembersElement.appendChild(memberElement)
-
     }
 
-    setPermissionBasedVisibility()
+    // Add event listener for "Manage Roles" button
+    groupMembersElement.addEventListener("click", (e) => {
+        const button = e.target
+        const memberID = button.dataset.memberId
 
+        if (button.classList.contains("manage-roles-button")) {
+            toggleRoleManagementButtons(button, memberID)
+        }
+    })
+
+    setPermissionBasedVisibility()
 }
+
+
+function toggleRoleManagementButtons(button, memberID) {
+    const parentElement = button.closest(".member")
+    const actionsDiv = parentElement.querySelector(".actions")
+
+    // Get the roles of the collaborator
+    const collaborator = thisTPEN.activeProject.collaborators[memberID]
+    const collaboratorRoles = collaborator.roles
+
+    // Check if the current user is the owner
+    const currentUserIsOwner = thisTPEN.activeProject.collaborators[TPEN_USER?._id]?.roles.includes("OWNER")
+
+    // Clear existing management buttons if they exist
+    if (actionsDiv.querySelector(".role-management-buttons")) {
+        actionsDiv.querySelector(".role-management-buttons").remove()
+        return // Toggle off
+    }
+
+    // Determine which buttons to render
+    const buttons = []
+
+    if (!collaboratorRoles.includes("OWNER")) {
+        // "Make Owner" button appears only for the current owner and under users who aren't owners
+        if (currentUserIsOwner) {
+            buttons.push(`<button class="make-owner-button" data-member-id=${memberID}><i class="fa fa-crown"></i> Make Owner</button>`)
+        }
+    }
+
+    if (!collaboratorRoles.includes("LEADER")) {
+        buttons.push(`<button class="make-leader-button" data-member-id=${memberID}>Promote to Leader</button>`)
+    }
+
+    if (collaboratorRoles.includes("LEADER")) {
+        buttons.push(`<button class="demote-leader-button" data-member-id=${memberID}>Demote from Leader</button>`)
+    }
+
+    if (!collaboratorRoles.includes("VIEWER")) {
+        buttons.push(`<button class="set-to-viewer-button" data-member-id=${memberID}>Revoke Write Access</button>`)
+    }
+
+    // "Set Role" and "Remove" buttons are always available
+    buttons.push(
+        `<button class="set-role-button" data-member-id=${memberID}>Set Role</button>`,
+        `<button class="remove-button" data-member-id=${memberID}>Remove User</button>`
+    )
+
+    // Render management buttons
+    const roleManagementButtonsHTML = `
+        <div class="role-management-buttons">
+            ${buttons.join("")}
+        </div>
+    `
+
+    const roleManagementDiv = document.createElement("div")
+    roleManagementDiv.innerHTML = roleManagementButtonsHTML
+
+    actionsDiv.appendChild(roleManagementDiv)
+}
+
+
+function renderRolesList(rolesObject, container) {
+    container.innerHTML = "" // Clear existing content
+    Object.keys(rolesObject).forEach((role) => {
+        const roleCheckbox = document.createElement("div")
+        roleCheckbox.classList.add("role-checkbox")
+        roleCheckbox.innerHTML = `
+            <label>
+                <input type="checkbox" value="${role}" />
+                ${role}
+            </label>
+        `
+        container.appendChild(roleCheckbox)
+    })
+}
+
 
 async function removeMember(memberID, memberName) {
     const confirmed = confirm(`This action will remove ${memberName} from your project. Click 'OK' to continue?`)
@@ -113,15 +247,6 @@ async function removeMember(memberID, memberName) {
     }
 }
 
-groupMembersElement.addEventListener("click", async (e) => {
-    const button = e.target
-    const memberID = button.dataset.memberId
-    const memberName = button.dataset.memberName
-
-    if (button.classList.contains('remove-button')) {
-        removeMember(memberID, memberName)
-    }
-})
 
 function setPermissionBasedVisibility() {
     const inviteElements = document.querySelectorAll('.allow-invite')
@@ -134,3 +259,105 @@ function setPermissionBasedVisibility() {
         }
     })
 }
+
+
+function openRoleModal(title, description, confirmCallback) {
+    const modal = document.getElementById("roleModal")
+    const modalTitle = document.getElementById("modalTitle")
+    const modalDescription = document.getElementById("modalDescription")
+    const rolesListContainer = document.getElementById("rolesListContainer")
+    const confirmButton = document.getElementById("modalConfirmButton")
+    const cancelButton = document.getElementById("modalCancelButton")
+
+    modalTitle.textContent = title
+    modalDescription.textContent = description
+
+    // Render roles dynamically
+    renderRolesList(thisTPEN.activeProject.roles, rolesListContainer)
+
+    const handleConfirm = () => {
+        // Collect selected roles
+        const selectedRoles = Array.from(
+            rolesListContainer.querySelectorAll("input[type=checkbox]:checked")
+        ).map((checkbox) => checkbox.value)
+
+        confirmCallback(selectedRoles)
+        closeRoleModal()
+    }
+
+    confirmButton.onclick = handleConfirm
+    cancelButton.onclick = closeRoleModal
+
+    modal.classList.remove("hidden")
+}
+
+function closeRoleModal() {
+    const modal = document.getElementById("roleModal")
+    modal.classList.add("hidden")
+}
+
+async function handleSetRoleButton(memberID) {
+    openRoleModal(
+        "Manage Roles",
+        `Add or remove roles for collaborator ${memberID}`,
+        async (selectedRoles) => {
+            if (selectedRoles.length > 0) {
+                const response = await thisTPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
+                if (response) {
+                    alert("Roles updated successfully.")
+                    await renderProjectCollaborators()
+                }
+            }
+        }
+    )
+}
+
+
+async function handleSetToViewerButton(memberID) {
+    const confirm = window.confirm(
+        `Are you sure you want to remove all write access for ${memberID}? The user will become a VIEWER.`
+    )
+    if (confirm) {
+        const response = await thisTPEN.activeProject.setToViewer(memberID)
+        if (response) {
+            alert("User role updated to VIEWER.")
+            await renderProjectCollaborators()
+        }
+    }
+}
+
+
+async function handleMakeLeaderButton(memberID) {
+    const confirm = window.confirm(`Are you sure you want to promote collaborator ${memberID} to LEADER?`)
+    if (confirm) {
+        const response = await thisTPEN.activeProject.makeLeader(memberID)
+        if (response) {
+            alert("User promoted to LEADER.")
+            await renderProjectCollaborators()
+        }
+    }
+}
+
+async function handleDemoteLeaderButton(memberID) {
+    const confirm = window.confirm(`Are you sure you want to demote collaborator ${memberID} from LEADER?`)
+    if (confirm) {
+        const response = await thisTPEN.activeProject.demoteLeader(memberID)
+        if (response) {
+            alert("User demoted from LEADER.")
+            await renderProjectCollaborators()
+        }
+    }
+}
+
+
+async function handleMakeOwnerButton(memberID) {
+    const confirm = window.confirm(`Are you sure you want to make collaborator ${memberID} the owner?`)
+    if (confirm) {
+        const response = await thisTPEN.activeProject.transferOwnership(memberID)
+        if (response) {
+            alert("Ownership transferred successfully.")
+            await renderProjectCollaborators()
+        }
+    }
+}
+
