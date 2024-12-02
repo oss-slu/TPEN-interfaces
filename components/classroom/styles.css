@@ -97,10 +97,6 @@ li a:hover::after {
     gap: 0.5rem;
 }
 
-.role-based-options button {
-    width: 10%;
-}
-
 footer {
     padding: 10px;
     text-align: center;
