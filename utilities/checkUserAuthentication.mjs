@@ -1,13 +1,17 @@
+//@deprecated - use TPEN.getAuthorization() instead
+
+import { eventDispatcher } from "../TPEN/events.mjs"
+
 export default function checkUserAuthentication() {
+  try {
     return new Promise((resolve, reject) => {
-      function check() {
-        if (window.TPEN_USER) {
-          const TPEN_USER = window.TPEN_USER;
-          resolve(TPEN_USER);   
-        } else { 
-          setTimeout(check, 100);
-        }
-      }
-      check();
-    });
+      eventDispatcher.on("tpen-user-loaded", event => {
+        const TPEN_USER = event.detail
+        resolve(TPEN_USER)
+      })
+    })
+  } catch (error) {
+    console.error("Authentication Check Error")
+    console.error(error)
   }
+}

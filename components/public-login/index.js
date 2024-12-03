@@ -23,7 +23,14 @@ class AuthButton extends HTMLElement {
     this.shadowRoot.append(button)
   }
 
-  login = TPEN.login
+  /**
+    * Use the TPEN3 Central Login to redirect back to this page with a valid ID Token.
+  */
+  login() {
+    const redirect = location.href
+    location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
+    return
+  }
 
   logout = TPEN.logout
 }

@@ -1,46 +1,37 @@
+import { getUserFromToken } from "../components/iiif-tools/index.mjs"
 import { eventDispatcher } from "../TPEN/events.mjs"
+import TPEN from "../TPEN/index.mjs"
 /** Description: to use this class, initialize new class, set authentication token, then call required methods
  * 
  */
 export default class User {
-  #authentication
-  baseURL = "https://dev.api.t-pen.org"
+  TPEN = new TPEN()
 
+  #isTheAuthenticatedUser() {
+    return this._id === getUserFromToken(TPEN.getAuthorization())
+  }
   constructor(_id) {
     this._id = _id
     // if (this.#authentication || this._id) this.getProfile()
   }
 
-  /**
-   * @param {any} token
-   */
-  set authentication(token) {
-    let isNewToken = false;
-    if (token != this.#authentication) {
-      isNewToken = true
-    }
-    this.#authentication = token
-    if (isNewToken) this.getProfile()
-  }
-
   async getProfile() {
-    if (!this.#authentication && !this._id)
+    if (!this._id)
       throw Error("User ID is required")
 
-    const serviceAPI = `${this.baseURL}/${this.#authentication ? "my/profile" : `user/:${this._id}`
+    const serviceAPI = `${this.TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
       }`
-    const headers = this.#authentication
-      ? new Headers({ Authorization: `Bearer ${this.#authentication}` })
+    const headers = this.#isTheAuthenticatedUser()
+      ? new Headers({ Authorization: `Bearer ${TPEN.getAuthorization()}` })
       : new Headers()
-    await fetch(serviceAPI, { headers })
+    fetch(serviceAPI, { headers })
       .then((response) => {
         if (!response.ok) Promise.reject(response)
         return response.json()
       })
       .then((data) => {
         Object.assign(this, data)
-        // the public user object has no displayName tag, it has a name instead, hence the check below
-        this.displayName = data.profile.displayName ?? data.name ?? "Anonymous"
+        this.displayName = data.profile?.displayName ?? data.name ?? "Anonymous"
         if (data._sub) {
           eventDispatcher.dispatch("tpen-user-loaded", this)
         }
@@ -50,10 +41,10 @@ export default class User {
 
   async getProjects() {
     const headers = new Headers({
-      Authorization: `Bearer ${this.#authentication}`
+      Authorization: `Bearer ${TPEN.getAuthorization()}`
     })
 
-    return fetch(`${this.baseURL}/my/projects`, { headers })
+    return fetch(`${this.TPEN.servicesURL}/my/projects`, { headers })
       .then((response) => {
         if (!response.ok) {
           return Promise.reject(response)
@@ -91,14 +82,25 @@ export default class User {
             <li>
               ${project.title}
               <div class="manage">
-                <span>Resume</span>
-                <span>Manage</span>
+                <span class="resume-btn">Resume</span>
+                <span class="manage-btn" data-project-id="${project._id}">Manage</span>
               </div>
             </li>
           `
 
             projectsList.insertAdjacentHTML("beforeend", projectTemplate)
           })
+
+          const manageButtons = document.querySelectorAll(".manage-btn")
+          manageButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+              
+              const projectId = event.target.getAttribute("data-project-id")
+              
+              window.location.href = `/manage/?projectID=${projectId}`
+            })
+          })
+
         } else {
           projectsList.innerHTML = "No projects yet. Create one to get started"
         }
@@ -116,11 +118,11 @@ export default class User {
 
   async updateRecord(data) {
     try {
-      const response = await fetch(`${this.baseURL}/my/profile/update`, {
+      const response = await fetch(`${this.TPEN.servicesURL}/my/profile/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.#authentication}`
+          Authorization: `Bearer ${TPEN.getAuthorization()}`
         },
         body: JSON.stringify(data)
       })
@@ -151,5 +153,9 @@ export default class User {
   async updatePrivateInformation(data) {
     const response = await this.updateRecord(data)
     return response
+  }
+
+  static fromToken(token) {
+    return new User(getUserFromToken(token))
   }
 }
