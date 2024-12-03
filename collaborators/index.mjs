@@ -55,13 +55,18 @@ inviteForm.addEventListener("submit", async (event) => {
 })
 
 groupMembersElement.addEventListener("click", async (e) => {
-    const button = e.target
-    const memberID = button.dataset.memberId
-    const memberName = button.dataset.memberName
-
-    if (!memberID) return // Ignore clicks that are not on relevant buttons
-
     try {
+        const button = e.target.closest("button") // Ensure the clicked element is a button
+        if (!button) return // Ignore clicks outside buttons
+
+        const memberID = button.dataset.memberId
+        const memberName = button.dataset.memberName
+
+        if (!memberID) {
+            console.warn("Button does not have a valid member ID")
+            return
+        }
+
         switch (true) {
             case button.classList.contains("remove-button"):
                 await removeMember(memberID, memberName)
@@ -95,6 +100,7 @@ groupMembersElement.addEventListener("click", async (e) => {
         alert("An error occurred. Please try again.")
     }
 })
+
 
 async function renderProjectCollaborators() {
     if (!thisTPEN.activeProject) {
@@ -303,7 +309,6 @@ async function handleSetRoleButton(memberID) {
                 const response = await thisTPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
                 if (response) {
                     alert("Roles updated successfully.")
-                    await renderProjectCollaborators()
                 }
             }
         }
@@ -319,7 +324,6 @@ async function handleSetToViewerButton(memberID) {
         const response = await thisTPEN.activeProject.setToViewer(memberID)
         if (response) {
             alert("User role updated to VIEWER.")
-            await renderProjectCollaborators()
         }
     }
 }
@@ -331,7 +335,6 @@ async function handleMakeLeaderButton(memberID) {
         const response = await thisTPEN.activeProject.makeLeader(memberID)
         if (response) {
             alert("User promoted to LEADER.")
-            await renderProjectCollaborators()
         }
     }
 }
@@ -342,7 +345,6 @@ async function handleDemoteLeaderButton(memberID) {
         const response = await thisTPEN.activeProject.demoteLeader(memberID)
         if (response) {
             alert("User demoted from LEADER.")
-            await renderProjectCollaborators()
         }
     }
 }
