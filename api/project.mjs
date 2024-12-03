@@ -190,7 +190,7 @@ export default class Project {
             body: JSON.stringify(roles)
         }).catch(err => Promise.reject(err))
     }
-
+    
     getLabel() {
         return this.label ?? this.title ?? this.metadata?.find(m => m.label === "title")?.value ?? "Untitled"
     }
