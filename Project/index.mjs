@@ -179,6 +179,7 @@ export default class Project {
             if (!response.ok) {
                 throw new Error("Failed to update roles")
             }
+            return response
         } catch (error) {
             console.error("Error updating roles:", error)
             alert("Failed to update roles. Please try again.")

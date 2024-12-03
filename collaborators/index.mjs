@@ -79,8 +79,8 @@ groupMembersElement.addEventListener("click", async (e) => {
                 await handleMakeLeaderButton(memberID)
                 break
 
-            case button.classList.contains("make-owner-button"):
-                await handleMakeOwnerButton(memberID)
+            case button.classList.contains("transfer-ownership-button"):
+                await handleTransferOwnershipButton(memberID)
                 break
 
             case button.classList.contains("demote-leader-button"):
@@ -107,16 +107,12 @@ async function renderProjectCollaborators() {
     const collaborators = thisTPEN.activeProject.collaborators
     groupTitle.innerHTML = thisTPEN.activeProject.getLabel()
 
-    // Data fix to remove
-    if (collaborators[userId]?.roles.roles) collaborators[userId].roles = collaborators[userId]?.roles.roles
+
     if (collaborators[userId]?.roles.includes("OWNER") || collaborators[userId]?.roles.includes("LEADER")) {
         isOwnerOrLeader = true
     }
 
     for (const collaboratorId in collaborators) {
-        // Data fix to remove
-        if (collaborators[collaboratorId]?.roles.roles) collaborators[collaboratorId].roles = collaborators[collaboratorId]?.roles.roles
-
         const memberData = collaborators[collaboratorId]
 
         // Single "Manage Roles" button
@@ -179,7 +175,7 @@ function toggleRoleManagementButtons(button, memberID) {
     if (!collaboratorRoles.includes("OWNER")) {
         // "Make Owner" button appears only for the current owner and under users who aren't owners
         if (currentUserIsOwner) {
-            buttons.push(`<button class="make-owner-button" data-member-id=${memberID}><i class="fa fa-crown"></i> Make Owner</button>`)
+            buttons.push(`<button class="transfer-ownership-button" data-member-id=${memberID}> Transfer Ownership</button>`)
         }
     }
 
@@ -216,17 +212,19 @@ function toggleRoleManagementButtons(button, memberID) {
 
 
 function renderRolesList(rolesObject, container) {
-    container.innerHTML = "" // Clear existing content
+    container.innerHTML = ""
     Object.keys(rolesObject).forEach((role) => {
-        const roleCheckbox = document.createElement("div")
-        roleCheckbox.classList.add("role-checkbox")
-        roleCheckbox.innerHTML = `
+        if (role.toLowerCase() != "owner") {
+            const roleCheckbox = document.createElement("div")
+            roleCheckbox.classList.add("role-checkbox")
+            roleCheckbox.innerHTML = `
             <label>
                 <input type="checkbox" value="${role}" />
                 ${role}
             </label>
         `
-        container.appendChild(roleCheckbox)
+            container.appendChild(roleCheckbox)
+        }
     })
 }
 
@@ -299,7 +297,7 @@ function closeRoleModal() {
 async function handleSetRoleButton(memberID) {
     openRoleModal(
         "Manage Roles",
-        `Add or remove roles for collaborator ${memberID}`,
+        `Add or remove roles for ${thisTPEN.activeProject.collaborators[memberID]?.profile?.displayName ?? " contributor " + memberID}`,
         async (selectedRoles) => {
             if (selectedRoles.length > 0) {
                 const response = await thisTPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
@@ -350,13 +348,13 @@ async function handleDemoteLeaderButton(memberID) {
 }
 
 
-async function handleMakeOwnerButton(memberID) {
-    const confirm = window.confirm(`Are you sure you want to make collaborator ${memberID} the owner?`)
+async function handleTransferOwnershipButton(memberID) {
+    const confirm = window.confirm(`You are about to transfer ownership of this project to ${thisTPEN.activeProject.collaborators[memberID]?.profile?.displayName ?? " contributor " + memberID}. This action is irreversible. Please confirm if you want to proceed.`)
     if (confirm) {
         const response = await thisTPEN.activeProject.transferOwnership(memberID)
         if (response) {
             alert("Ownership transferred successfully.")
-            await renderProjectCollaborators()
+            location.reload()
         }
     }
 }
