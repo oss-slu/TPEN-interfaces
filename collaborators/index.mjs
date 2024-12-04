@@ -96,15 +96,9 @@ async function removeMember(memberID, memberName) {
     try {
         const data = await content.thisTPEN.activeProject.removeMember(memberID)
         if (!data) return
+        const element = document.querySelector(`[data-member-id="${memberID}"]`)
+        element.remove()
         alert('Member removed successfully')
-        const memberElements = document.querySelectorAll('.member')
-        memberElements.forEach((element) => {
-            const elementMemberId = element.getAttribute('data-member-id')
-            if (elementMemberId === memberID) {
-                element.remove()
-                return
-            }
-        })
     } catch (error) {
         errorHTML.innerHTML = error.toString()
     }

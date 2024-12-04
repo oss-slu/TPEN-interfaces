@@ -79,6 +79,32 @@ export default class Project {
                 eventDispatcher.dispatch("tpen-project-save-failed", error)
             })
     }
+    /**
+     * Remove a member from the project by userId.
+     * @param {String} userId The ID of the member to remove.
+     */
+    async removeMember(userId) {
+        try {
+            const token = await this.getToken()
+            const response = await fetch(`${baseURL}/project/${this._id}/remove-member`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            })
+
+            if (!response.ok) {
+                throw new Error(`Error removing member: ${response.status}`)
+            }
+
+            return await response.text()
+        } catch (error) {
+            console.error('Error removing member:', error)
+            throw error
+        }
+    }
 
     setMetadata(metadata) {
         this.metadata = metadata
