@@ -20,4 +20,5 @@ class EventDispatcher extends EventTarget {
 }
 
 // Export a shared instance of EventDispatcher
-export const eventDispatcher = new EventDispatcher()
+const eventDispatcher = new EventDispatcher()
+export { eventDispatcher }
