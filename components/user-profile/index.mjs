@@ -1,5 +1,5 @@
-import { eventDispatcher } from '../../TPEN/events.mjs'
-import TPEN from '../../TPEN/index.mjs'
+import { eventDispatcher } from '../../api/events.mjs'
+import TPEN from '../../api/TPEN.mjs'
 import User from '../../api/User.mjs'
 
 class UserProfile extends HTMLElement {
