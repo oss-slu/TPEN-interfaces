@@ -4,5 +4,5 @@
 
 console.warn('Deprecated: use and update the file in /api instead')
 
-import Project from "../api/project.mjs";
+import Project from "../api/Project.mjs"
 export default Project;
