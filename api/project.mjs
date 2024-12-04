@@ -79,6 +79,50 @@ export default class Project {
                 eventDispatcher.dispatch("tpen-project-save-failed", error)
             })
     }
+
+    async addMember(email) {
+        try {
+            const AUTH_TOKEN = TPEN.getAuthorization() ?? TPEN.login()
+            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/invite-member`, {
+                headers: {
+                    Authorization: `Bearer ${AUTH_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                method: "POST",
+                body: JSON.stringify({ email }),
+            })
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || `Failed to invite collaborator: ${response.statusText}`)
+            }
+
+            return await response.json()
+        } catch (error) {
+            userMessage(error.message)
+        }
+    }
+
+    async removeMember(userId) {
+        try {
+            const token = TPEN.getAuthorization() ?? TPEN.login()
+            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/remove-member`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            })
+            if (!response.ok) {
+                throw new Error(`Error removing member: ${response.status}`)
+            }
+
+            return await response
+        } catch (error) {
+            userMessage(error.message)
+        }
+    }
+
     async makeLeader(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
@@ -120,7 +164,6 @@ export default class Project {
             userMessage(error.message)
         }
     }
-
 
     async setToViewer(userId) {
         try {
@@ -185,32 +228,6 @@ export default class Project {
             alert("Failed to update roles. Please try again.")
         }
     }
-    /**
-     * Remove a member from the project by userId.
-     * @param {String} userId The ID of the member to remove.
-     */
-    async removeMember(userId) {
-        try {
-            const token = await this.getToken()
-            const response = await fetch(`${baseURL}/project/${this._id}/remove-member`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userId }),
-            })
-
-            if (!response.ok) {
-                throw new Error(`Error removing member: ${response.status}`)
-            }
-
-            return await response.text()
-        } catch (error) {
-            console.error('Error removing member:', error)
-            throw error
-        }
-    }
 
     setMetadata(metadata) {
         this.metadata = metadata
@@ -263,13 +280,6 @@ export default class Project {
         }).catch(err => Promise.reject(err))
     }
 
-    /**
-     * Add roles to a collaborator in a project. Roles should be 
-     * defined in the project's custom roles. Undefined roles will be ignored.
-     * @param {String} userID Collaborator _id to modify roles
-     * @param {Array<String>} roles Roles to add to the user
-     * @returns 
-     */
     async addCollaboratorRole(userID, roles) {
         // role is a string value of the role to add to the user
         if (!this.collaborators?.[userID]) {
@@ -285,14 +295,6 @@ export default class Project {
         }).catch(err => Promise.reject(err))
     }
 
-    /**
-     * Remove roles from a collaborator in a project. Roles will not be 
-     * removed from custom roles if no one is left assigned to them. It is
-     * not allowed to remove the OWNER role or the last role from a user.
-     * @param {String} userID Collaborator _id to modify roles
-     * @param {Array<String>} roles Roles to remove from the user
-     * @returns 
-     */
     async removeCollaboratorRole(userID, roles) {
         // role is a string value of the role to remove from the user
         if (!this.collaborators?.[userID]) {
