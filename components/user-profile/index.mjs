@@ -7,9 +7,7 @@ class UserProfile extends HTMLElement {
         return ['tpen-user-id']
     }
 
-    #TPEN = new TPEN()
-
-    user = this.#TPEN.currentUser
+    user = TPEN.currentUser
 
     constructor() {
         super()
