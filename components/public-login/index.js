@@ -7,7 +7,6 @@ import TPEN from "../../api/TPEN.mjs"
 import { eventDispatcher } from "../../api/events.mjs"
 
 class AuthButton extends HTMLElement {
-  #TPEN = new TPEN()
 
   constructor() {
     super()

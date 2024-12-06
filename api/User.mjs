@@ -8,7 +8,6 @@ export default class User {
   #isTheAuthenticatedUser() {
     return this._id === getUserFromToken(TPEN.getAuthorization())
   }
-  #TPEN = new TPEN()
   constructor(_id) {
     this._id = _id
   }
@@ -17,7 +16,7 @@ export default class User {
     if (!this._id)
       throw Error("User ID is required")
 
-    const serviceAPI = `${this.#TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
+    const serviceAPI = `${TPEN.servicesURL}/${this.#isTheAuthenticatedUser() ? "my/profile" : `user/:${this._id}`
       }`
     const headers = this.#isTheAuthenticatedUser()
       ? new Headers({ Authorization: `Bearer ${TPEN.getAuthorization()}` })
@@ -42,7 +41,7 @@ export default class User {
       Authorization: `Bearer ${TPEN.getAuthorization()}`
     })
 
-    return await fetch(`${this.#TPEN.servicesURL}/my/projects`, { headers })
+    return await fetch(`${TPEN.servicesURL}/my/projects`, { headers })
       .then((response) => {
         if (!response.ok) {
           return Promise.reject(response)
@@ -112,7 +111,7 @@ export default class User {
 
   async updateRecord(data) {
     try {
-      const response = await fetch(`${this.#TPEN.servicesURL}/my/profile/update`, {
+      const response = await fetch(`${TPEN.servicesURL}/my/profile/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

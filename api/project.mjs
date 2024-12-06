@@ -25,7 +25,6 @@ export default class Project {
 
     #authentication
     #isLoaded
-    #TPEN = new TPEN()
 
     constructor(_id) {
         if (typeof _id !== "string") {
@@ -37,7 +36,7 @@ export default class Project {
     async fetch() {
         const AUTH_TOKEN = TPEN.getAuthorization() ?? TPEN.login()
         try {
-            return await fetch(`${this.TPEN.servicesURL}/project/${this._id}`, {
+            return await fetch(`${TPEN.servicesURL}/project/${this._id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,9 +49,11 @@ export default class Project {
                     Object.assign(this, data)
                     this.#isLoaded = true
                     eventDispatcher.dispatch("tpen-project-loaded", this)
+                    return this
                 })
                 .catch(error => {
                     eventDispatcher.dispatch("tpen-project-load-failed", error)
+                    return Promise.reject(error)
                 })
         } catch (error) {
             return userMessage(`${error.status}: ${error.statusText}`)
@@ -63,7 +64,7 @@ export default class Project {
         if (!this.#authentication) {
             throw new Error("Authentication is required to save a project")
         }
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}`, {
             method: "PUT",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,
@@ -83,7 +84,7 @@ export default class Project {
     async addMember(email) {
         try {
             const AUTH_TOKEN = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/invite-member`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/invite-member`, {
                 headers: {
                     Authorization: `Bearer ${AUTH_TOKEN}`,
                     'Content-Type': 'application/json',
@@ -105,7 +106,7 @@ export default class Project {
     async removeMember(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/remove-member`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/remove-member`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -126,7 +127,7 @@ export default class Project {
     async makeLeader(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/addRoles`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/addRoles`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -147,7 +148,7 @@ export default class Project {
     async demoteLeader(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/removeRoles`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/removeRoles`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -168,7 +169,7 @@ export default class Project {
     async setToViewer(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/setRoles`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/setRoles`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -189,7 +190,7 @@ export default class Project {
     async cherryPickRoles(userId, roles) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/setRoles`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userId}/setRoles`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -210,7 +211,7 @@ export default class Project {
     async transferOwnership(userId) {
         try {
             const token = TPEN.getAuthorization() ?? TPEN.login()
-            const response = await fetch(`${this.TPEN.servicesURL}/project/${this._id}/switch/owner`, {
+            const response = await fetch(`${TPEN.servicesURL}/project/${this._id}/switch/owner`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -255,7 +256,7 @@ export default class Project {
     }
 
     async inviteCollaborator(email, roles) {
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/invite-member`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}/invite-member`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,
@@ -266,11 +267,11 @@ export default class Project {
     }
 
     async removeCollaborator(userID) {
-        // userID is the _id (Hexstring) of the user to remove from the project
+        // userID is the _id (Hex String) of the user to remove from the project
         if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/remove-member`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}/remove-member`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,
@@ -285,7 +286,7 @@ export default class Project {
         if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/addRoles`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/addRoles`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,
@@ -300,7 +301,7 @@ export default class Project {
         if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/removeRoles`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/removeRoles`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,
@@ -315,7 +316,7 @@ export default class Project {
         if (!this.collaborators?.[userID]) {
             return Promise.reject(new Error("User not found in collaborators list"))
         }
-        return fetch(`${this.#TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/setRoles`, {
+        return fetch(`${TPEN.servicesURL}/project/${this._id}/collaborator/${userID}/setRoles`, {
             method: "PUT",
             headers: new Headers({
                 Authorization: `Bearer ${this.#authentication}`,

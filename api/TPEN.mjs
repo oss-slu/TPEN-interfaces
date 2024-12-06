@@ -10,7 +10,7 @@
 import { decodeUserToken, getUserFromToken, checkExpired } from '../components/iiif-tools/index.mjs'
 import { eventDispatcher } from './events.mjs'
 
-export default class TPEN {
+class Tpen {
     #actionQueue = []
     #currentUser = {}
     #activeProject = {}
@@ -20,10 +20,21 @@ export default class TPEN {
         this.tinyThingsURL = tinyThingsURL
         this.servicesURL = "https://dev.api.t-pen.org"
         this.currentUser
-        this.activeProject = { _id: new URLSearchParams(window.location.search).get('projectID') }
+        this.activeProject
 
-        eventDispatcher.on("tpen-user-loaded", ev=> this.currentUser = ev.detail)
-        eventDispatcher.on("tpen-project-loaded", ev=> this.activeProject = ev.detail)
+        eventDispatcher.on("tpen-user-loaded", ev => this.currentUser = ev.detail)
+        eventDispatcher.on("tpen-project-loaded", ev => this.activeProject = ev.detail)
+
+        const projectInQuery = new URLSearchParams(window.location.search).get('projectID')
+        if (projectInQuery) {
+            try {
+                import('./Project.mjs').then(module => {
+                    new module.default(projectInQuery).fetch()
+                })
+            } catch (error) {
+                console.error(error)
+            }
+        }
     }
 
     async reset(force = false) {
@@ -78,30 +89,30 @@ export default class TPEN {
             .then(response => response.json())
     }
 
-    static getAuthorization() {
+    getAuthorization() {
         const storedToken = localStorage.getItem("userToken")
         try {
             if (!checkExpired(storedToken)) {
                 return storedToken
             }
-        } catch (error) {}
+        } catch (error) { }
         localStorage.removeItem("userToken")
         return false
     }
 
-    static logout(redirect = origin + location.pathname) {
+    logout(redirect = origin + location.pathname) {
         this.currentUser = null
         localStorage.clear()
         location.href = `https://three.t-pen.org/logout?returnTo=${encodeURIComponent(redirect)}`
         return
     }
 
-    static login(redirect = location.href) {
+    login(redirect = location.href) {
         location.href = `https://three.t-pen.org/login?returnTo=${encodeURIComponent(redirect)}`
         return
     }
 
-    static attachAuthentication = (element) => {
+    attachAuthentication = (element) => {
         if (Array.isArray(element)) {
             element.forEach(elem => this.attachAuthentication(elem))
             return
@@ -132,10 +143,14 @@ function updateUser(element, token) {
     element.querySelectorAll("[tpen-creator]").forEach(elem => elem.setAttribute("tpen-creator", `https://store.rerum.io/v1/id/${userId}`))
 }
 
+// Export a shared instance of EventDispatcher
+const TPEN = new Tpen()
+export default TPEN
+
 // Notify page of module loading if not being imported
-if(window?.location){
-    console.log("TPEN module loaded")
-    window.TPEN = TPEN
-    window.TPEN.eventDispatcher = eventDispatcher
-    document?.dispatchEvent(new CustomEvent("tpen-loaded"))
-}
+// if (window?.location) {
+//     console.log("TPEN module loaded")
+//     window.TPEN = TPEN
+//     window.TPEN.eventDispatcher = eventDispatcher
+//     document?.dispatchEvent(new CustomEvent("tpen-loaded"))
+// }
