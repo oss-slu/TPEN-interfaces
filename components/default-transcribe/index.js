@@ -1,13 +1,14 @@
 // custom element named 'tpen-transcription' with a custom template built from the querystring 'projectID' parameter
-import { fetchProject, userMessage, encodeContentState } from "../iiif-tools/index.mjs"
+import { userMessage, encodeContentState } from "../iiif-tools/index.mjs"
 import "https://cdn.jsdelivr.net/npm/manifesto.js"
 import "../line-image/index.js"
 import "../line-text/index.js"
 import TPEN from "../../api/TPEN.mjs"
 import User from "../../api/User.mjs"
+import Project from "../../api/Project.mjs"
+import { eventDispatcher } from "../../api/events.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {
-    TPEN = new TPEN()
     #transcriptionContainer
     #activeCanvas = {}
     #activeLine = {}
@@ -20,13 +21,11 @@ class TpenTranscriptionElement extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             if(name === 'tpen-user-id') {
-                this.TPEN = new TPEN()
-                this.TPEN.currentUser = new User(newValue).getProfile()
+                TPEN.currentUser = new User(newValue).getProfile()
             }
-            if (name === 'tpen-project') {
-                this.TPEN.activeProject = { _id: newValue }
-                }
-        if(this.userToken) this.#loadProject()
+            if (name === 'tpen-project' && newValue !== TPEN.activeProject._id) {
+                this.#assignProject(newValue)
+            }
         }
     }
 
@@ -37,33 +36,33 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
         TPEN.attachAuthentication(this)
+        eventDispatcher.on('tpen-project-loaded', () => this.#assignProject()) 
     }
     
     connectedCallback() {
-        if (!this.TPEN.activeProject._id) {
-            userMessage('No project ID provided')
+        if (!TPEN.activeProject._id) {
             return
         }
-        this.setAttribute('tpen-project', this.TPEN.activeProject._id)
+        this.setAttribute('tpen-project', TPEN.activeProject._id)
     }
 
-    async #loadProject() {
+    async #assignProject(projectID = TPEN.activeProject._id) {
         try {
-            const project = await fetchProject(this.TPEN.activeProject._id, this.userToken ?? TPEN.getAuthorization())
+            const project = TPEN.activeProject ?? await new Project(projectID).fetch()
             if(!project) return userMessage('Project not found')
             this.#transcriptionContainer.setAttribute('iiif-manifest', project.manifest)
             // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
-            this.TPEN.activeProject.manifest = new manifesto.Manifest(manifest)
+            TPEN.activeProject.manifest = new manifesto.Manifest(manifest)
             // page from URL later
-            this.#activeCanvas = this.TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
+            this.#activeCanvas = TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
             this.#activeLine = this.getFirstLine()
             this.#transcriptionContainer.setAttribute('iiif-canvas', this.#activeCanvas?.id)
             this.#transcriptionContainer.setAttribute('tpen-line-id', this.#activeLine?.id)
             this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(JSON.stringify(this.#activeLine)))
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
-            imgTop.setAttribute('projectID', this.TPEN.activeProject._id)
+            imgTop.setAttribute('projectID', TPEN.activeProject._id)
             const text = document.createElement('tpen-line-text')
             text.setAttribute('id', 'text')
             this.#transcriptionContainer.append(imgTop, text)
