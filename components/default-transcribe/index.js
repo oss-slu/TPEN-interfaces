@@ -10,8 +10,9 @@ import { eventDispatcher } from "../../api/events.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {
     #transcriptionContainer
-    activeCanvas = {}
-    activeLine = {}
+    #activeLine
+    #activeCanvas
+    #manifest
     userToken
 
     static get observedAttributes() {
@@ -44,27 +45,52 @@ class TpenTranscriptionElement extends HTMLElement {
     set activeCanvas(canvas) {
         if (canvas === TPEN.activeCanvas) return
         TPEN.activeCanvas = canvas
+        this.#activeCanvas = canvas
+        // this.querySelectorAll('iiif-canvas').forEach(el=>el.setAttribute('iiif-canvas',canvas.id))
+    }
+
+    get activeCanvas() {
+        return this.#activeCanvas ?? TPEN.activeCanvas ?? {}
     }
 
     set activeLine(line) {
         if (line === TPEN.activeLine) return
         TPEN.activeLine = line
+        this.#activeLine = line
         this.contentState = JSON.stringify(TPEN.activeLine)
+    }
+
+    get activeLine() {
+        return this.#activeLine ?? TPEN.activeLine ?? {}
+    }
+
+    set manifest(manifest) {
+        if(manifest === TPEN.manifest) return
+        TPEN.manifest = manifest
+        this.#manifest = manifest
+        // this.querySelectorAll('iiif-manifest').forEach(el=>el.setAttribute('iiif-manifest',manifest.id))
+    }
+
+    get manifest() {
+        return this.#manifest ?? TPEN.manifest ?? {}
     }
 
     async #loadProject(projectID) {
         try {
             const project = TPEN.activeProject ?? await new Project(projectID).fetch()
             if(!project) return userMessage('Project not found')
-            // load project.manifest
+                // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
-            TPEN.manifest = new manifesto.Manifest(manifest)
+            this.manifest = new manifesto.Manifest(manifest)
             // page from URL later
-            TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
-            TPEN.activeLine = this.getFirstLine()
+            this.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
+            this.activeLine = this.getFirstLine()
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
-            // imgTop.setAttribute('projectID', TPEN.activeProject._id)
+            this.#transcriptionContainer.setAttribute('tpen-line-id', this.activeLine?.id)
+            this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(this.activeLine))
+            this.#transcriptionContainer.setAttribute('iiif-canvas', this.activeCanvas?.id)
+            this.#transcriptionContainer.setAttribute('iiif-manifest', TPEN.manifest?.id)
             const text = document.createElement('tpen-line-text')
             text.setAttribute('id', 'text')
             this.#transcriptionContainer.append(imgTop, text)
@@ -133,7 +159,7 @@ class TpenPaginationElement extends HTMLElement {
     }
     
     connectedCallback() {
-        if (!TPEN.activeProject._id) {
+        if (!TPEN.activeProject?._id) {
             return
         }
         this.setAttribute('tpen-project', TPEN.activeProject._id)
