@@ -24,7 +24,7 @@ class TpenTranscriptionElement extends HTMLElement {
                 TPEN.currentUser = new User(newValue).getProfile()
             }
             if (name === 'tpen-project' && newValue !== TPEN.activeProject._id) {
-                this.#assignProject(newValue)
+                this.#loadProject(newValue)
             }
         }
     }
@@ -36,35 +36,32 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
         TPEN.attachAuthentication(this)
-        eventDispatcher.on('tpen-project-loaded', () => this.#assignProject()) 
-        eventDispatcher.on('move-to-line', (e) => this.#assignLine(e.detail))
-        eventDispatcher.on('change-page', (e) => this.#assignCanvas(e.detail))
+        eventDispatcher.on('tpen-project-loaded', () => this.#loadProject()) 
     }
     
     connectedCallback() {}
 
     set activeCanvas(canvas) {
-        if (canvas === this.activeCanvas) return
-        this.activeCanvas = canvas
+        if (canvas === TPEN.activeCanvas) return
+        TPEN.activeCanvas = canvas
     }
 
     set activeLine(line) {
-        if (line === this.activeLine) return
-        this.activeLine = line
-        this.contentState = JSON.stringify(this.activeLine)
+        if (line === TPEN.activeLine) return
+        TPEN.activeLine = line
+        this.contentState = JSON.stringify(TPEN.activeLine)
     }
 
-    async #assignProject(projectID = TPEN.activeProject._id) {
+    async #loadProject(projectID) {
         try {
             const project = TPEN.activeProject ?? await new Project(projectID).fetch()
             if(!project) return userMessage('Project not found')
-            this.#transcriptionContainer.setAttribute('iiif-manifest', project.manifest)
             // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
-            TPEN.activeProject.manifest = new manifesto.Manifest(manifest)
+            TPEN.manifest = new manifesto.Manifest(manifest)
             // page from URL later
-            this.activeCanvas = TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
-            this.activeLine = this.getFirstLine()
+            TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
+            TPEN.activeLine = this.getFirstLine()
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
             // imgTop.setAttribute('projectID', TPEN.activeProject._id)
@@ -85,30 +82,19 @@ class TpenTranscriptionElement extends HTMLElement {
         }
     }
 
-    async #assignCanvas(canvasID) {
-        this.activeCanvas = TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvasById(canvasID)
-        this.activeLine = this.getFirstLine()
-    }
-
-    async #assignLine(lineID) {
-        this.activeLine = (lineID < 10000) ? this.getLineByIndex(lineID) : this.getLineByID(lineID)
-        // this.#transcriptionContainer.setAttribute('tpen-line-id', this.activeLine?.id)
-        // this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(JSON.stringify(this.activeLine)))
-    }
-
-    getAllLines(canvas = this.activeCanvas) {
+    getAllLines(canvas = TPEN.activeCanvas) {
         return canvas?.__jsonld.annotations?.[0]?.items ?? canvas?.__jsonld.annotations?.[0] ?? canvas?.getContent()
     }
 
-    getLineByIndex(index, canvas = this.activeCanvas) {
+    getLineByIndex(index, canvas = TPEN.activeCanvas) {
         return this.getAllLines(canvas)[index]
     }
 
-    getLineByID(id, canvas = this.activeCanvas) {
+    getLineByID(id, canvas = TPEN.activeCanvas) {
         return this.getAllLines(canvas).find(line => line.id === id ?? line['@id'] === id)
     }
 
-    getFirstLine(canvas = this.activeCanvas) {
+    getFirstLine(canvas = TPEN.activeCanvas) {
         return this.getAllLines(canvas)[0]
     }
 
@@ -157,11 +143,11 @@ class TpenPaginationElement extends HTMLElement {
         try {
             const project = TPEN.activeProject ?? await new Project(projectID).fetch()
             if(!project) return userMessage('Project not found')
-            if (!TPEN.activeProject.manifest?.getSequenceByIndex) {
+            if (!TPEN.manifest?.getSequenceByIndex) {
                 let manifest = await manifesto.loadManifest(project.manifest)
-                TPEN.activeProject.manifest = new manifesto.Manifest(manifest)   
+                TPEN.manifest = new manifesto.Manifest(manifest)   
             }
-            let pages = TPEN.activeProject.manifest?.getSequenceByIndex(0)?.getCanvases()
+            let pages = TPEN.manifest?.getSequenceByIndex(0)?.getCanvases()
             const select = document.createElement('select')
             select.setAttribute('id', 'pageSelect')
             pages.forEach(page => {
@@ -171,7 +157,10 @@ class TpenPaginationElement extends HTMLElement {
                 select.appendChild(option)
             })
             this.#paginationContainer.appendChild(select)
-            select.addEventListener('change', () => eventDispatcher.dispatch('change-page', select.value))
+            select.addEventListener('change', () => {
+                TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasById(select.value)
+                eventDispatcher.dispatch('change-page')
+            })
         }
         catch (err) {
             switch (err.status ?? err.code) {
