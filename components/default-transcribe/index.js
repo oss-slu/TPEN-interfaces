@@ -75,16 +75,22 @@ class TpenTranscriptionElement extends HTMLElement {
         return this.#manifest ?? TPEN.manifest ?? {}
     }
 
+    set activeLine(line) {
+        if (line === TPEN.activeLine) return
+        TPEN.activeLine = line
+        this.contentState = JSON.stringify(TPEN.activeLine)
+    }
+
     async #loadProject(projectID) {
         try {
             const project = TPEN.activeProject ?? await new Project(projectID).fetch()
             if(!project) return userMessage('Project not found')
-                // load project.manifest
+            // load project.manifest
             let manifest = await manifesto.loadManifest(project.manifest)
-            this.manifest = new manifesto.Manifest(manifest)
+            TPEN.manifest = new manifesto.Manifest(manifest)
             // page from URL later
-            this.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
-            this.activeLine = this.getFirstLine()
+            TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
+            TPEN.activeLine = this.getFirstLine()
             const imgTop = document.createElement('tpen-line-image')
             imgTop.setAttribute('id', 'imgTop')
             this.#transcriptionContainer.setAttribute('tpen-line-id', this.activeLine?.id)
