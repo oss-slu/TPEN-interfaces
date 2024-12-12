@@ -14,9 +14,9 @@ class TpenLineImage extends HTMLElement {
     }
 
     #canvasPanel = LINE_IMG()
-    #manifest = TPEN.manifest
-    #canvas = TPEN.activeCanvas
-    #line = TPEN.activeLine
+    #manifest
+    #canvas
+    #line
 
     async attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'tpen-line-id' && oldValue !== newValue) {
@@ -42,13 +42,13 @@ class TpenLineImage extends HTMLElement {
         this.#canvasPanel.setAttribute("preset","responsive")
         this.shadowRoot.append(this.#canvasPanel)
         eventDispatcher.on('change-page', ev => {
-            this.manifest = TPEN.manifest
-            this.canvas = TPEN.activeCanvas
+            this.manifest = ev.detail?.partOf
+            this.canvas = ev.detail?.canvas
         })
         eventDispatcher.on('change-line', ev => {
-            this.line = TPEN.activeLine
+            this.line = ev.detail?.line
             try {
-                let anno = TPEN.activeLine
+                let anno = ev.detail?.line
                 const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)?.split('#xywh=')
                 this.moveTo(TARGET[1])
             } catch (e) { }
@@ -69,55 +69,6 @@ class TpenLineImage extends HTMLElement {
         if(localIiifCanvas) {
             this.canvas = localIiifCanvas
         }
-
-        if (TPEN.activeLine) {
-            try {
-                let anno = JSON.parse(TPEN.activeLine)
-                const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)?.split('#xywh=')
-                this.#canvasPanel.setAttribute("region",TARGET[1])
-                this.#canvasPanel.createAnnotationDisplay(anno)
-                return
-            }catch(e){}
-        }
-
-        // this.#id = (this.#canvasPanel.closest('[tpen-line-id]') ?? this.closest('[tpen-line-id]'))?.getAttribute('tpen-line-id')
-
-        // if (!this.#id || ("null" === this.#id)) {
-        //     const ERR = new Event('tpen-error', { detail: 'Line ID is required' })
-        //     validateContent(null,this,"Line ID is required")
-        //     return
-        // }
-
-        // fetch(this.#id).then(res=>res.json()).then(anno=>{
-        //     const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)
-        //     // this.#canvasPanel.setAttribute("canvas-id",TARGET[0])
-        //     this.#canvasPanel.setAttribute("region",TARGET[1])
-        //     this.#canvasPanel.createAnnotationDisplay(anno)
-        // })
-        // this.addEventListener('canvas-change',ev=>{
-        //     this.#canvasId = this.#canvasPanel.closest('[iiif-canvas]') ?? this.closest('[iiif-canvas]')
-        //     this.#canvasPanel.setCanvas(this.#canvasId)
-        // })
-    }
-
-    async selectImage(){
-        // if(!this.#id) return
-        // try {
-        //     new URL(this.#id)
-        //     // Annotation may not be only embedded for now.
-        //     const TEXT_CONTENT = await loadAnnotation(this.#id)
-        //     this.#canvasPanel.innerText = validateContent(TEXT_CONTENT,this)
-        // } catch (error) {
-        //     console.error(error)
-        //     return validateContent(null,this,"Fetching Error")
-        // }
-    }
-
-    findLine(id){
-        if(this.#canvas) {
-            console.log(this.#canvas)
-        }
-        return false && this.#canvasPanel.findLine(id)
     }
     
     loadContent(){
@@ -161,16 +112,6 @@ customElements.define('tpen-line-image', TpenLineImage)
 
 export default {
     TpenLineImage
-}
-
-
-function loadAnnotation(url){   
-    return fetch(url)
-        .then(response => {
-            if(!response.ok) throw new Error("failed to fetch")
-            return response.json()
-        })        
-        .catch(error => console.error(error))
 }
 
 function validateContent(content,elem,msg) {
