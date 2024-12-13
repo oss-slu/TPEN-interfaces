@@ -1,12 +1,7 @@
 // custom element named 'tpen-transcription' with a custom template built from the querystring 'projectID' parameter
 import { userMessage, encodeContentState } from "../iiif-tools/index.mjs"
-import "https://cdn.jsdelivr.net/npm/manifesto.js"
 import "../line-image/index.js"
 import "../line-text/index.js"
-import TPEN from "../../api/TPEN.mjs"
-import User from "../../api/User.mjs"
-import Project from "../../api/Project.mjs"
-import { eventDispatcher } from "../../api/events.mjs"
 
 class TpenTranscriptionElement extends HTMLElement {
     #transcriptionContainer
@@ -16,17 +11,12 @@ class TpenTranscriptionElement extends HTMLElement {
     userToken
 
     static get observedAttributes() {
-        return ['tpen-project','tpen-user-id']
+        return ['tpen-page', 'iiif-manifest']
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if(name === 'tpen-user-id') {
-                TPEN.currentUser = new User(newValue).getProfile()
-            }
-            if (name === 'tpen-project' && newValue !== TPEN.activeProject._id) {
-                this.#loadProject(newValue)
-            }
+            
         }
     }
 
@@ -36,32 +26,25 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer = document.createElement('div')
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
-        TPEN.attachAuthentication(this)
-        eventDispatcher.on('tpen-project-loaded', () => this.#loadProject()) 
     }
     
     connectedCallback() {}
 
     set activeCanvas(canvas) {
-        if (canvas === TPEN.activeCanvas) return
-        TPEN.activeCanvas = canvas
         this.#activeCanvas = canvas
         // this.querySelectorAll('iiif-canvas').forEach(el=>el.setAttribute('iiif-canvas',canvas.id))
     }
 
     get activeCanvas() {
-        return this.#activeCanvas ?? TPEN.activeCanvas ?? {}
+        return this.#activeCanvas ?? {}
     }
 
     set activeLine(line) {
-        if (line === TPEN.activeLine) return
-        TPEN.activeLine = line
         this.#activeLine = line
-        this.contentState = JSON.stringify(TPEN.activeLine)
     }
 
     get activeLine() {
-        return this.#activeLine ?? TPEN.activeLine ?? {}
+        return this.#activeLine ?? {}
     }
 
     set manifest(manifest) {
