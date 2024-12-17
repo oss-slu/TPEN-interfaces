@@ -1,6 +1,4 @@
 import { decodeContentState } from '../iiif-tools/index.mjs'
-import TPEN from '../../api/TPEN.mjs'
-import { eventDispatcher } from '../../api/events.mjs'
 
 const CANVAS_PANEL_SCRIPT = document.createElement('script')
 CANVAS_PANEL_SCRIPT.src = "https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@latest"
@@ -12,7 +10,6 @@ class TpenLineImage extends HTMLElement {
     static get observedAttributes() {
         return ['tpen-line-id']
     }
-
     #canvasPanel = LINE_IMG()
     #manifest
     #canvas
@@ -41,18 +38,6 @@ class TpenLineImage extends HTMLElement {
         this.attachShadow({ mode: 'open' })
         this.#canvasPanel.setAttribute("preset","responsive")
         this.shadowRoot.append(this.#canvasPanel)
-        eventDispatcher.on('change-page', ev => {
-            this.manifest = ev.detail?.partOf
-            this.canvas = ev.detail?.canvas
-        })
-        eventDispatcher.on('change-line', ev => {
-            this.line = ev.detail?.line
-            try {
-                let anno = ev.detail?.line
-                const TARGET = ((anno.type ?? anno['@type']).match(/Annotation\b/)) ? (anno.target ?? anno.on)?.split('#xywh=') : (anno.items[0]?.target ?? anno.resources[0]?.on)?.split('#xywh=')
-                this.moveTo(TARGET[1])
-            } catch (e) { }
-        })
     }
     
     connectedCallback() {  

@@ -2,7 +2,9 @@
 import { userMessage, encodeContentState } from "../iiif-tools/index.mjs"
 import "../line-image/index.js"
 import "../line-text/index.js"
+import { Vault } from 'https://cdn.jsdelivr.net/npm/@iiif/helpers/+esm'
 
+const vault = new Vault()
 class TpenTranscriptionElement extends HTMLElement {
     #transcriptionContainer
     #activeLine
@@ -16,7 +18,9 @@ class TpenTranscriptionElement extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            
+            if(name === 'tpen-page' ){
+                this.#loadPage(newValue)
+            }
         }
     }
 
@@ -59,42 +63,35 @@ class TpenTranscriptionElement extends HTMLElement {
     }
 
     set activeLine(line) {
-        if (line === TPEN.activeLine) return
-        TPEN.activeLine = line
-        this.contentState = JSON.stringify(TPEN.activeLine)
+        if (line === this.#activeLine) return
+        this.#activeLine = line
+        this.#transcriptionContainer.querySelectorAll('line-text').forEach(el => el.setAttribute('tpen-line-id', line.id))
     }
 
-    async #loadProject(projectID) {
+    async #loadPage(annotationPageID) {
+        let page = { id: annotationPageID }
         try {
-            const project = TPEN.activeProject ?? await new Project(projectID).fetch()
-            if(!project) return userMessage('Project not found')
-            // load project.manifest
-            let manifest = await manifesto.loadManifest(project.manifest)
-            TPEN.manifest = new manifesto.Manifest(manifest)
-            // page from URL later
-            TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasByIndex(0)
-            TPEN.activeLine = this.getFirstLine()
-            const imgTop = document.createElement('tpen-line-image')
-            imgTop.setAttribute('id', 'imgTop')
-            this.#transcriptionContainer.setAttribute('tpen-line-id', this.activeLine?.id)
-            this.#transcriptionContainer.setAttribute('iiif-content', encodeContentState(this.activeLine))
-            this.#transcriptionContainer.setAttribute('iiif-canvas', this.activeCanvas?.id)
-            this.#transcriptionContainer.setAttribute('iiif-manifest', TPEN.manifest?.id)
-            const text = document.createElement('tpen-line-text')
-            text.setAttribute('id', 'text')
-            this.#transcriptionContainer.append(imgTop, text)
+            page = await vault.load(annotationPageID)
         } catch (err) {
             switch (err.status ?? err.code) {
                 case 401:
                     return userMessage('Unauthorized')
-                case 403:   
+                case 403:
                     return userMessage('Forbidden')
                 case 404:
-                    return userMessage('Project not found') 
+                    return userMessage('Project not found')
                 default:
                     return userMessage(err.message ?? err.statusText ?? err.text ?? 'Unknown error')
             }
         }
+        let firstLine = vault.get(page.items?.[0].id) ?? await vault.load(page.items?.[0].id)
+        let lines = ``
+        page.items.forEach(line => {
+            lines += `<tpen-line-text tpen-line-id="${line.id}"></tpen-line-text>`
+        })
+        this.#transcriptionContainer.innerHTML = lines
+        this.activeLine = firstLine
+        //this.activeCanvas = await vault.load(firstLine.target.source)
     }
 
     getAllLines(canvas = TPEN.activeCanvas) {
@@ -144,7 +141,6 @@ class TpenPaginationElement extends HTMLElement {
         this.#paginationContainer = document.createElement('div')
         this.#paginationContainer.setAttribute('id', 'paginationContainer')
         this.shadowRoot.append(this.#paginationContainer)
-        eventDispatcher.on('tpen-project-loaded', () => this.#loadPages())
     }
     
     connectedCallback() {
@@ -154,28 +150,28 @@ class TpenPaginationElement extends HTMLElement {
         this.setAttribute('tpen-project', TPEN.activeProject._id)
     }
 
-    async #loadPages(projectID = TPEN.activeProject._id) {
+    async #loadPages(manifest) {
         try {
-            const project = TPEN.activeProject ?? await new Project(projectID).fetch()
-            if(!project) return userMessage('Project not found')
-            if (!TPEN.manifest?.getSequenceByIndex) {
-                let manifest = await manifesto.loadManifest(project.manifest)
-                TPEN.manifest = new manifesto.Manifest(manifest)   
-            }
-            let pages = TPEN.manifest?.getSequenceByIndex(0)?.getCanvases()
-            const select = document.createElement('select')
-            select.setAttribute('id', 'pageSelect')
-            pages.forEach(page => {
-                const option = document.createElement('option')
-                option.value = page.id
-                option.textContent = page.getLabel().getValue(navigator.language)
-                select.appendChild(option)
-            })
-            this.#paginationContainer.appendChild(select)
-            select.addEventListener('change', () => {
-                TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasById(select.value)
-                eventDispatcher.dispatch('change-page')
-            })
+            // const project = TPEN.activeProject ?? await new Project(projectID).fetch()
+            // if(!project) return userMessage('Project not found')
+            // if (!TPEN.manifest?.getSequenceByIndex) {
+            //     let manifest = await manifesto.loadManifest(project.manifest)
+            //     TPEN.manifest = new manifesto.Manifest(manifest)   
+            // }
+            // let pages = TPEN.manifest?.getSequenceByIndex(0)?.getCanvases()
+            // const select = document.createElement('select')
+            // select.setAttribute('id', 'pageSelect')
+            // pages.forEach(page => {
+            //     const option = document.createElement('option')
+            //     option.value = page.id
+            //     option.textContent = page.getLabel().getValue(navigator.language)
+            //     select.appendChild(option)
+            // })
+            // this.#paginationContainer.appendChild(select)
+            // select.addEventListener('change', () => {
+            //     TPEN.activeCanvas = TPEN.manifest?.getSequenceByIndex(0)?.getCanvasById(select.value)
+            //     eventDispatcher.dispatch('change-page')
+            // })
         }
         catch (err) {
             switch (err.status ?? err.code) {
