@@ -26,7 +26,7 @@ function renderProjects(projects) {
         const projectItem = document.createElement('li')
         projectItem.classList.add('project')
         projectItem.innerHTML = `
-            <div class="title">${project.name ?? project.title}</div>
+            <div class="title">${project.name ?? project.title ?? project.label}</div>
             <div class="delete" data-id="${project._id}">&#128465;</div>
         `
         projectsList.appendChild(projectItem)
