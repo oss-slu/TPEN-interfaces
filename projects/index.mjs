@@ -1,20 +1,10 @@
-import User from "../User/index.mjs"
-import checkUserAuthentication from "../utilities/checkUserAuthentication.mjs"
-import getHash from "../utilities/getHash.mjs"
+import  User  from "../api/User.mjs"
+import TPEN from "../api/TPEN.mjs"
 
 document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const TPEN_USER = await checkUserAuthentication()
-
-        let token = TPEN_USER.authorization
-        let userID = getHash(TPEN_USER?.["http://store.rerum.io/agent"] ?? "https://store.rerum.io/v1/id/65f8615ec43bd66568c666fa")
-
-        const userObj = new User(userID)
-        userObj.authentication = token
-
-        userObj.renderProjects("projects-container")
-    } catch (error) {
-        console.error("User authentication check failed:", error)
-    }
-});
-
+    const projectsList = document.getElementById("projects-container")
+    TPEN.attachAuthentication(projectsList)
+    const userId = projectsList.getAttribute("tpen-user-id")
+    const user = new User(userId)
+    user.renderProjects("projects-container")
+})

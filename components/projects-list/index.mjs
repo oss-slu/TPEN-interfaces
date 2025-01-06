@@ -1,6 +1,6 @@
-import User from "../../User/index.mjs"
-import TPEN from "../../TPEN/index.mjs"
-import { eventDispatcher } from "../../TPEN/events.mjs"
+import User from "../../api/User.mjs"
+import TPEN from "../../api/TPEN.mjs"
+import { eventDispatcher } from "../../api/events.mjs"
 
 export default class ProjectsList extends HTMLElement {
     static get observedAttributes() {
@@ -8,7 +8,6 @@ export default class ProjectsList extends HTMLElement {
     }
 
     #projects = []
-    #TPEN = new TPEN()
 
     constructor() {
         super()
@@ -16,40 +15,45 @@ export default class ProjectsList extends HTMLElement {
     }
 
     async connectedCallback() {
-        TPEN.attachAuthentication(this);
+        TPEN.attachAuthentication(this)
         if (this.currentUser && this.currentUser._id) {
             try {
-                await this.getProjects();
-                this.render();
+                await this.getProjects()
+                this.render()
             } catch (error) {
-                console.error("Error fetching projects:", error);
-                this.innerHTML = "Failed to load projects.";
+                console.error("Error fetching projects:", error)
+                this.innerHTML = "Failed to load projects."
             }
         } else {
-            this.innerHTML = "No user logged in yet";
+            this.innerHTML = "No user logged in yet"
         }
     }
-    
+
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'tpen-user-id') {
             if (oldValue !== newValue) {
                 const loadedUser = new User(newValue)
                 loadedUser.authentication = TPEN.getAuthorization()
-                loadedUser.getProfile().then(user => this.currentUser = user)
+                loadedUser.getProfile()
             }
         }
     }
 
     render() {
-        if (!this.currentUser || !this.projects) {
-            this.innerHTML = "No user or projects available";
-            return;
-        }
-    
-        this.renderProjectsList();
+        if (!TPEN.currentUser._id) return
+
+        this.innerHTML = `<ul>${this.#projects.reduce((a, project) =>
+            a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
+            <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
+              </li>`,
+            ``)}</ul>`
+
     }
-    
+
+    /**
+     * @deprecated
+     */
     renderProjectsList() {
         this.innerHTML = `
             <h2>Welcome, ${this.currentUser.name}</h2>
@@ -61,28 +65,28 @@ export default class ProjectsList extends HTMLElement {
                     </li>
                 `).join("")}
             </ul>
-        `;
-    
-        this.attachDetailsListeners();
+        `
+
+        this.attachDetailsListeners()
     }
-    
+
     attachDetailsListeners() {
         this.querySelectorAll('.details-button').forEach(button => {
             button.addEventListener('click', (event) => {
-                const projectId = event.target.closest('li').getAttribute('data-id');
-                this.loadContributors(projectId);
-            });
-        });
+                const projectId = event.target.closest('li').getAttribute('data-id')
+                this.loadContributors(projectId)
+            })
+        })
     }
-    
+
 
     async loadContributors(projectId) {
         try {
-            const contributors = await this.fetchContributors(projectId);
-            const contributorsList = document.getElementById('contributorsList');
+            const contributors = TPEN.activeProject.collaborators
+            const contributorsList = document.getElementById('contributorsList')
             if (!contributorsList) {
-                console.error("Contributors list element not found");
-                return;
+                console.error("Contributors list element not found")
+                return
             }
             contributorsList.innerHTML = contributors.map(contributor => `
                 <li>
@@ -91,73 +95,64 @@ export default class ProjectsList extends HTMLElement {
                     <p>Role: ${contributor.role}</p>
                     <button onclick="managePermissions('${contributor.id}')">Manage Permissions</button>
                 </li>
-            `).join("");
+            `).join("")
         } catch (error) {
-            console.error(`Error fetching contributors for project ${projectId}:`, error);
+            console.error(`Error fetching contributors for project ${projectId}:`, error)
         }
     }
 
     async getProjects() {
-        return this.#TPEN.currentUser.getProjects()
-            .then(async (projects) => {
-                // Fetch contributors for each project
-                const projectsWithContributors = await Promise.all(
-                    projects.map(async (project) => {
-                        const contributors = await this.fetchContributors(project._id); // Fetch contributors
-                        return { ...project, contributors }; // Add contributors to project object
-                    })
-                );
-                this.projects = projectsWithContributors;
-                return projectsWithContributors;
-            });
+        return TPEN.currentUser.getProjects()
+            .then((projects) => {
+                this.#projects = projects
+                return projects
+            })
     }
-    
+    /**
+     * 
+     * @deprecated This method is deprecated. Please use TPEN.activeProject.collaborators instead
+     */
     async fetchContributors(projectId) {
-        const token = TPEN.getAuthorization();
-        const url = `${this.#TPEN.servicesURL}/project/${projectId}/contributors`;
-        console.log(`Fetching contributors from: ${url}`);
-    
+        const token = TPEN.getAuthorization()
+        const url = `${TPEN.servicesURL}/project/${projectId}/contributors`
+        console.log(`Fetching contributors from: ${url}`)
+
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-        });
-    
+        })
+
         if (!response.ok) {
-            console.error(`Failed to fetch contributors: ${response.statusText}`);
-            throw new Error(`Failed to fetch contributors for project ${projectId}`);
+            console.error(`Failed to fetch contributors: ${response.statusText}`)
+            throw new Error(`Failed to fetch contributors for project ${projectId}`)
         }
-    
-        const data = await response.json();
-        console.log(`Fetched contributors for project ${projectId}:`, data);
-        return data;
+
+        const data = await response.json()
+        console.log(`Fetched contributors for project ${projectId}:`, data)
+        return data
     }
-    
+
 
     get currentUser() {
-        return this.#TPEN.currentUser || {};
+        return TPEN.currentUser
     }
-    
+
     set currentUser(user) {
-        if (!user || this.#TPEN.currentUser?._id === user._id) {
-            return;
+        if (TPEN.currentUser?._id !== user._id) {
+            TPEN.currentUser = user
         }
-        this.#TPEN.currentUser = user;
-    
-        this.#TPEN.currentUser.getProjects()
-            .then((projects) => {
-                this.projects = projects;
-                this.render();
-            })
-            .catch(error => {
-                console.error("Error fetching projects for current user:", error);
-            });
+        TPEN.currentUser.getProjects().then((projects) => {
+            this.projects = projects
+            this.render()
+        })
+        return this
     }
-    
+
     get projects() {
         return this.#projects
-    } 
+    }
 
     set projects(projects) {
         this.#projects = projects
