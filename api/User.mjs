@@ -78,7 +78,7 @@ export default class User {
           projects.forEach((project) => {
             const projectTemplate = `
             <li>
-              ${project.title}
+              ${project.title??project.label}
               <div class="manage">
                 <span class="resume-btn">Resume</span>
                 <span class="manage-btn" data-project-id="${project._id}">Manage</span>

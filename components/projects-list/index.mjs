@@ -36,7 +36,7 @@ export default class ProjectsList extends HTMLElement {
         if(!TPEN.currentUser._id) return
 
         this.innerHTML = `<ul>${this.#projects.reduce((a, project) => 
-            a + `<li tpen-project-id="${project._id}">${project.title}
+            a + `<li tpen-project-id="${project._id}">${project.title??project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
               </li>`, 
         ``)}</ul>`
