@@ -8,7 +8,7 @@ const LINE_IMG = () => document.createElement('canvas-panel')
 
 class TpenLineImage extends HTMLElement {
     static get observedAttributes() {
-        return ['tpen-line-id']
+        return ['tpen-line-id','region']
     }
     #canvasPanel = LINE_IMG()
     #manifest
@@ -17,7 +17,10 @@ class TpenLineImage extends HTMLElement {
 
     async attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'tpen-line-id' && oldValue !== newValue) {
-            this.line = newValue
+            this.lineId = newValue
+        }
+        if (name === 'region' && oldValue !== newValue) {
+            this.#canvasPanel.setAttribute('region', newValue.split('=').pop())
         }
     }
 

@@ -52,14 +52,11 @@ class TpenTranscriptionElement extends HTMLElement {
     }
 
     set manifest(manifest) {
-        if(manifest === TPEN.manifest) return
-        TPEN.manifest = manifest
         this.#manifest = manifest
-        // this.querySelectorAll('iiif-manifest').forEach(el=>el.setAttribute('iiif-manifest',manifest.id))
     }
 
     get manifest() {
-        return this.#manifest ?? TPEN.manifest ?? {}
+        return this.#manifest ?? this.closest('[iiif-manifest]')?.getAttribute('iiif-manifest') ?? {}
     }
 
     set activeLine(line) {
@@ -84,13 +81,18 @@ class TpenTranscriptionElement extends HTMLElement {
                     return userMessage(err.message ?? err.statusText ?? err.text ?? 'Unknown error')
             }
         }
-        let lines = await Promise.all(page.items.map(async (l) => {
+        let lines = await Promise.all(page.items.flatMap(async l => {
             const lineElem = document.createElement('tpen-line-text')
-            lineElem.line = await vault.get({id:l.id,type:"Annotation"}) ?? vault.load(l.id)
+            const lineImg = document.createElement('tpen-line-image')
+            lineElem.line = vault.get({id:l.id,type:"Annotation"}) ?? await vault.load(l.id)
             lineElem.line.body[0] = vault.get({id:lineElem.line.body[0].id,type:"ContentResource"})
             lineElem.setAttribute('tpen-line-id', l.id)
-            return lineElem
-        }))
+            lineImg.setAttribute('tpen-line-id', l.id)
+            lineImg.setAttribute('iiif-canvas', lineElem.line.target.source.id)
+            lineImg.setAttribute('region', lineElem.line.target.selector.value)
+            lineImg.setAttribute('iiif-manifest', this.manifest)
+            return [lineElem, lineImg]
+        })).then(results => results.flat())
         this.#transcriptionContainer.append(...lines)
         this.activeLine = lines[0].line
     }
