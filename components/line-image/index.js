@@ -32,43 +32,43 @@ class TpenLineImage extends HTMLElement {
     set line(value) {
         this.#canvasPanel.createAnnotationDisplay(value)
     }
-    
+
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
-        this.#canvasPanel.setAttribute("preset","responsive")
+        this.#canvasPanel.setAttribute("preset", "responsive")
         this.shadowRoot.append(this.#canvasPanel)
     }
-    
-    connectedCallback() {  
+
+    connectedCallback() {
         const localIiifContent = this.#canvasPanel.closest('[iiif-content]')?.getAttribute('iiif-content') ?? this.closest('[iiif-content]')?.getAttribute('iiif-content')
         const localIiifCanvas = this.#canvasPanel.closest('[iiif-canvas]')?.getAttribute('iiif-canvas') ?? this.closest('[iiif-canvas]')?.getAttribute('iiif-canvas')
         const localIiifManifest = this.#canvasPanel.closest('[iiif-manifest]')?.getAttribute('iiif-manifest') ?? this.closest('[iiif-manifest]')?.getAttribute('iiif-manifest')
-        if(localIiifContent) {
+        if (localIiifContent) {
             this.line = decodeContentState(localIiifContent)
             console.log(localIiifContent)
         }
-        if(localIiifManifest) {
+        if (localIiifManifest) {
             this.manifest = localIiifManifest
         }
-        if(localIiifCanvas) {
+        if (localIiifCanvas) {
             this.canvas = localIiifCanvas
         }
     }
-    
-    loadContent(){
+
+    loadContent() {
         try {
             const TEXT_CONTENT = JSON.parse(decodeContentState(this.content))
-            this.innerText = validateContent(TEXT_CONTENT,this)
+            this.innerText = this.validateContent(TEXT_CONTENT)
         } catch (error) {
             console.error(error)
-            return validateContent(null,this,"Decoding Error")
+            return this.validateContent(null, "Decoding Error")
         }
     }
 
-    moveTo(x,y,width,height,duration=1500) {
-        if(typeof x === 'string') {
-            const [x,y,w,h] = x.split(',')
+    moveTo(x, y, width, height, duration = 1500) {
+        if (typeof x === 'string') {
+            const [x, y, w, h] = x.split(',')
             x = parseInt(x)
             y = parseInt(y)
             width = parseInt(w)
@@ -77,19 +77,26 @@ class TpenLineImage extends HTMLElement {
         this.#canvasPanel.transition(tm => {
             tm.goToRegion({ height, width, x, y }, {
                 transition: {
-                easing: this.#canvasPanel.easingFunctions().easeOutExpo,
-                duration,
+                    easing: this.#canvasPanel.easingFunctions().easeOutExpo,
+                    duration,
                 },
             })
         })
     }
 
     setManifest(value) {
-        this.#canvasPanel.setAttribute("manifest-id",value)
+        this.#canvasPanel.setAttribute("manifest-id", value)
     }
 
     setCanvas(value) {
-        this.#canvasPanel.setAttribute("canvas-id",value)
+        this.#canvasPanel.setAttribute("canvas-id", value)
+    }
+    validateContent(content, elem, msg) {
+        if (content == null) {
+            elem.setAttribute('aria-invalid', true)
+            elem.setAttribute('title', msg ?? 'Invalid content')
+        }
+        return content
     }
 }
 
@@ -97,12 +104,4 @@ customElements.define('tpen-line-image', TpenLineImage)
 
 export default {
     TpenLineImage
-}
-
-function validateContent(content,elem,msg) {
-    if(content==null){
-        elem.setAttribute('aria-invalid',true)
-        elem.setAttribute('title',msg ?? 'Invalid content')
-    }
-    return content
 }

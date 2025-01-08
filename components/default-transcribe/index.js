@@ -65,13 +65,18 @@ class TpenTranscriptionElement extends HTMLElement {
     set activeLine(line) {
         if (line === this.#activeLine) return
         this.#activeLine = line
-        this.#transcriptionContainer.querySelectorAll('line-text').forEach(el => el.setAttribute('tpen-line-id', line.id))
+        this.#transcriptionContainer.querySelectorAll('line-text').forEach(el => {
+            if(Object.keys(line).length > 4) {
+                return el.dispatchEvent(new CustomEvent('tpen-set-line', { detail: line }))
+            }
+            el.setAttribute('tpen-line-id', line.id)
+        })
     }
 
     async #loadPage(annotationPageID) {
         let page = { id: annotationPageID }
         try {
-            page = await vault.load(annotationPageID)
+            page = vault.get({id:annotationPageID,type:"AnnotationPage"}) ?? await vault.load(annotationPageID)
         } catch (err) {
             switch (err.status ?? err.code) {
                 case 401:
@@ -84,14 +89,15 @@ class TpenTranscriptionElement extends HTMLElement {
                     return userMessage(err.message ?? err.statusText ?? err.text ?? 'Unknown error')
             }
         }
-        let firstLine = vault.get(page.items?.[0].id) ?? await vault.load(page.items?.[0].id)
-        let lines = ``
-        page.items.forEach(line => {
-            lines += `<tpen-line-text tpen-line-id="${line.id}"></tpen-line-text>`
-        })
-        this.#transcriptionContainer.innerHTML = lines
-        this.activeLine = firstLine
-        //this.activeCanvas = await vault.load(firstLine.target.source)
+        let lines = await Promise.all(page.items.map(async (l) => {
+            const lineElem = document.createElement('tpen-line-text')
+            lineElem.line = await vault.get({id:l.id,type:"Annotation"}) ?? vault.load(l.id)
+            lineElem.line.body[0] = vault.get({id:lineElem.line.body[0].id,type:"ContentResource"})
+            lineElem.setAttribute('tpen-line-id', l.id)
+            return lineElem
+        }))
+        this.#transcriptionContainer.append(...lines)
+        this.activeLine = lines[0].line
     }
 
     getAllLines(canvas = TPEN.activeCanvas) {

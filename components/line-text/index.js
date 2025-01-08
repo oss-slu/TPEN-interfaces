@@ -13,7 +13,8 @@ class TpenLineText extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             if (name === 'tpen-line-id') {
-                this.loadText(newValue);
+                if(newValue!==this.line?.id)
+                    this.loadText(newValue)
             } else if (name === 'iiif-content') {
                 this.loadContent(newValue)
             }
@@ -27,6 +28,10 @@ class TpenLineText extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.innerHTML = LINE_TEXT_HTML
+        this.addEventListener('tpen-set-line', e => {
+            this.line = e.detail
+            this.drawLineText()
+        })
     }
 
     connectedCallback() {
@@ -35,13 +40,17 @@ class TpenLineText extends HTMLElement {
         if (!this.#id() && !this.#content()) {
             this.validateContent(null,SPAN,"Line ID is required")
         }
-        
+        if(this.line) {
+            this.setAttribute('tpen-line-id',this.line.id)
+            if(Object.keys(this.line).length > 4) this.drawLineText()
+            return
+        }
         this.#content() ? this.loadContent(this.#content(),SPAN) : this.loadText(this.#id(),SPAN)
     }
 
-    drawLineText(textObj) {
+    drawLineText() {
         const SPAN = this.shadowRoot.querySelector('span')
-        const innerText = this.validateContent(this.getText(textObj))
+        const innerText = this.validateContent(this.getText(this.line))
         SPAN.innerText = innerText
     }
 
@@ -49,21 +58,21 @@ class TpenLineText extends HTMLElement {
         if(!lineId) return
         try {
             new URL(lineId)
-            const TEXT_CONTENT = await this.#loadAnnotation(lineId)
-            this.drawLineText(TEXT_CONTENT)
+            this.line = await this.#loadAnnotation(lineId)
+            this.drawLineText()
         } catch (error) {
             console.error(error)
-            return this.validateContent(null,elem,"Fetching Error")
+            return this.validateContent(null,"Fetching Error")
         }
     }
     
-    loadContent(b64,elem){
+    loadContent(b64){
         try {
-            const TEXT_CONTENT = JSON.parse(decodeContentState(b64))
-            this.drawLineText(TEXT_CONTENT)
+            this.line = JSON.parse(decodeContentState(b64))
+            this.drawLineText()
         } catch (error) {
             console.error(error)
-            return this.validateContent(null,elem,"Decoding Error")
+            return this.validateContent(null,"Decoding Error")
         }
     }
     
