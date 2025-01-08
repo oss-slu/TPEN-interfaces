@@ -65,12 +65,7 @@ class TpenTranscriptionElement extends HTMLElement {
     set activeLine(line) {
         if (line === this.#activeLine) return
         this.#activeLine = line
-        this.#transcriptionContainer.querySelectorAll('line-text').forEach(el => {
-            if(Object.keys(line).length > 4) {
-                return el.dispatchEvent(new CustomEvent('tpen-set-line', { detail: line }))
-            }
-            el.setAttribute('tpen-line-id', line.id)
-        })
+        this.#transcriptionContainer.dispatchEvent(new CustomEvent('tpen-set-line', { detail: line }))
     }
 
     async #loadPage(annotationPageID) {
