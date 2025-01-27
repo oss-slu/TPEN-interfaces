@@ -2,10 +2,13 @@
 import { userMessage, encodeContentState } from "../iiif-tools/index.mjs"
 import "../line-image/index.js"
 import "../line-text/index.js"
+import User from "../../api/User.mjs"
+import TPEN from "../../api/TPEN.mjs"
 import { Vault } from 'https://cdn.jsdelivr.net/npm/@iiif/helpers/+esm'
 
 const vault = new Vault()
 class TpenTranscriptionElement extends HTMLElement {
+    TPEN = TPEN
     #transcriptionContainer
     #activeLine
     #activeCanvas
@@ -18,8 +21,12 @@ class TpenTranscriptionElement extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if(name === 'tpen-page' ){
-                this.#loadPage(newValue)
+            if (name === 'tpen-user-id') {
+                this.TPEN = TPEN
+                this.TPEN.currentUser = new User(newValue).getProfile()
+                if (name === 'tpen-page') {
+                    this.#loadPage(newValue)
+                }
             }
         }
     }
@@ -31,8 +38,8 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
     }
-    
-    connectedCallback() {}
+
+    connectedCallback() { }
 
     set activeCanvas(canvas) {
         this.#activeCanvas = canvas
@@ -68,7 +75,7 @@ class TpenTranscriptionElement extends HTMLElement {
     async #loadPage(annotationPageID) {
         let page = { id: annotationPageID }
         try {
-            page = vault.get({id:annotationPageID,type:"AnnotationPage"}) ?? await vault.load(annotationPageID)
+            page = vault.get({ id: annotationPageID, type: "AnnotationPage" }) ?? await vault.load(annotationPageID)
         } catch (err) {
             switch (err.status ?? err.code) {
                 case 401:
@@ -84,8 +91,8 @@ class TpenTranscriptionElement extends HTMLElement {
         let lines = await Promise.all(page.items.flatMap(async l => {
             const lineElem = document.createElement('tpen-line-text')
             const lineImg = document.createElement('tpen-line-image')
-            lineElem.line = vault.get({id:l.id,type:"Annotation"}) ?? await vault.load(l.id)
-            lineElem.line.body[0] = vault.get({id:lineElem.line.body[0].id,type:"ContentResource"})
+            lineElem.line = vault.get({ id: l.id, type: "Annotation" }) ?? await vault.load(l.id)
+            lineElem.line.body[0] = vault.get({ id: lineElem.line.body[0].id, type: "ContentResource" })
             lineElem.setAttribute('tpen-line-id', l.id)
             lineImg.setAttribute('tpen-line-id', l.id)
             lineImg.setAttribute('iiif-canvas', lineElem.line.target.source.id)
@@ -145,7 +152,7 @@ class TpenPaginationElement extends HTMLElement {
         this.#paginationContainer.setAttribute('id', 'paginationContainer')
         this.shadowRoot.append(this.#paginationContainer)
     }
-    
+
     connectedCallback() {
         if (!TPEN.activeProject?._id) {
             return
@@ -180,10 +187,10 @@ class TpenPaginationElement extends HTMLElement {
             switch (err.status ?? err.code) {
                 case 401:
                     return userMessage('Unauthorized')
-                case 403:   
+                case 403:
                     return userMessage('Forbidden')
                 case 404:
-                    return userMessage('Project not found') 
+                    return userMessage('Project not found')
                 default:
                     return userMessage(err.message ?? err.statusText ?? err.text ?? 'Unknown error')
             }
