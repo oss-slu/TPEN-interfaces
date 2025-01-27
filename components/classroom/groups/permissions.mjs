@@ -1,11 +1,24 @@
 import { Roles } from "./roles.mjs"
 import {Action,Scope,Entity} from "./permissions_parameters.mjs"
+import fs from "fs";
 const hasPermission = require('./checkPermissions.mjs');
 
-export const Permissions = {
+export let Permissions = {}
+
+export function loadPermissions() {
+    try {
+        const data = fs.readFileSync('./permissionsConfig.json', 'utf-8');
+        Permissions = JSON.parse(data);
+        console.log("Permissions loaded successfully.");
+    } catch (err) {
+        console.log("Failed to load permissions configuration:", err);
+    }
+}
+
+/*export const Permissions = {
     [Roles.OWNER]: ['*_*_*'],
     [Roles.LEADER]: [
-        /* ACTION_SCOPE_ENTITY */
+        /* ACTION_SCOPE_ENTITY 
         'UPDATE_*_PROJECT',
         '*_*_MEMBER',
         '*_*_ROLE',
@@ -14,7 +27,7 @@ export const Permissions = {
         '*_*_PAGE'
     ],
     [Roles.CONTRIBUTOR]: [
-        /* ACTION_SCOPE_ENTITY */
+        /* ACTION_SCOPE_ENTITY 
         'READ_*_MEMBER',
         'UPDATE_TEXT_*',
         'UPDATE_ORDER_*',
@@ -24,7 +37,7 @@ export const Permissions = {
         'UPDATE_DESCRIPTION_LAYER',
         'CREATE_*_LAYER'
     ]
-};
+};*/
 
 // Generate possible patterns to match
 export function generatePatterns(action, scope, entity) {
@@ -112,3 +125,5 @@ export function addPermission(role,action,scope,entity){
 
     Object.defineProperty(Permissions,Roles[role],{value:`${action}_${scope}_${entity}`,writable:true,enumerable:true,configurable:true});
 }
+
+loadPermissions();
