@@ -25,7 +25,8 @@ class UserProfile extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'tpen-user-id') {
             if (oldValue !== newValue) {
-                if(newValue === this.user._id) return // already loaded
+                const currVal = this?.user?._id
+                if(newValue === currVal) return // already loaded
                 const loadedUser = new User(newValue)
                 loadedUser.authentication = TPEN.getAuthorization()
                 loadedUser.getProfile()
