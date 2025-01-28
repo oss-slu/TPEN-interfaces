@@ -31,8 +31,8 @@ class TpenTranscriptionElement extends HTMLElement {
         this.#transcriptionContainer.setAttribute('id', 'transcriptionContainer')
         this.shadowRoot.append(this.#transcriptionContainer)
     }
-    
-    connectedCallback() {}
+
+    connectedCallback() { }
 
     set activeCanvas(canvas) {
         this.#activeCanvas = canvas
