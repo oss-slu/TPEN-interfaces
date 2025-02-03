@@ -3,11 +3,10 @@
  * @author thehabes, cubap
  */
 
-import TPEN from "../../TPEN/index.mjs"
-import { eventDispatcher } from "../../TPEN/events.mjs"
+import TPEN from "../../api/TPEN.mjs"
+import { eventDispatcher } from "../../api/events.mjs"
 
 class AuthButton extends HTMLElement {
-  #TPEN = new TPEN()
 
   constructor() {
     super()
@@ -23,7 +22,14 @@ class AuthButton extends HTMLElement {
     this.shadowRoot.append(button)
   }
 
-  login = TPEN.login
+  /**
+    * Use the TPEN3 Central Login to redirect back to this page with a valid ID Token.
+  */
+  login() {
+    const redirect = location.href
+    location.href = `${CENTRAL}/login?returnTo=${encodeURIComponent(redirect)}`
+    return
+  }
 
   logout = TPEN.logout
 }
