@@ -19,12 +19,8 @@ an action on a particular entity and scope. */
 export function checkPermissions(role, action, scope, entity) {
     if (!Permissions[role]) return false; // If role doesn't exist
 
-    // Get the permissions for the specified role
-    const rolePerms = Permissions[role];
-    const patterns = checkPermissions(role, action, scope, entity);
-
-    // Check if any pattern matches the role's permissions
-    return patterns.some(pattern => rolePerms.includes(pattern));
+    // Directly return the boolean result from hasPermission
+    return hasPermission(role, action, scope, entity);
 };
 
 //can we combine checkPermissions with permissions here?
