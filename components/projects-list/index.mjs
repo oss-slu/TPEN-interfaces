@@ -7,7 +7,7 @@ export default class ProjectsList extends HTMLElement {
         return ['tpen-user-id']
     }
 
-    #projects = []
+    _projects = [] //protected variable, so can be accessed by child class
 
     constructor() {
         super()
@@ -43,7 +43,7 @@ export default class ProjectsList extends HTMLElement {
     render() {
         if (!TPEN.currentUser._id) return
 
-        this.innerHTML = `<ul>${this.#projects.reduce((a, project) =>
+        this.innerHTML = `<ul>${this._projects.reduce((a, project) =>
             a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
               </li>`,
@@ -104,7 +104,7 @@ export default class ProjectsList extends HTMLElement {
     async getProjects() {
         return TPEN.currentUser.getProjects()
             .then((projects) => {
-                this.#projects = projects
+                this._projects = projects
                 return projects
             })
     }
@@ -151,11 +151,11 @@ export default class ProjectsList extends HTMLElement {
     }
 
     get projects() {
-        return this.#projects
+        return this._projects
     }
 
     set projects(projects) {
-        this.#projects = projects
+        this._projects = projects
         return this
     }
 }

@@ -45,10 +45,11 @@
             <h1>Welcome!</h1>
             <div class="input-container">
                 <div class="label-container">
+                    <!--search bar-->
                     <form id="projectForm" class="input-form">
                         <label for="projectId">Project ID:</label>
                         <input id="projectId" maxlength="24" name="projectId" type="text" required>
-                        <button class="submit-button" type="submit">Submit</button>
+                        <button class="submit-button" type="submit" onclick="search()">Submit</button>
                     </form>
                     <tpen-projects-list id="clickList"></tpen-projects-list>
                     <div class="role-based-options">
@@ -88,8 +89,8 @@
             <p>TPEN Classroom Interface</p>
         </footer>
 
-        <!-- Hamburger menu script for mobile devices -->
         <script>
+            //Hamburger menu script for mobile devices
             function toggleMenu() {
                 const navbar = document.getElementById('navbar');
                 navbar.classList.toggle('responsive'); // Match the CSS class
@@ -107,6 +108,13 @@
                     }
                 }
             });
+
+            function search(){
+                const input = document.getElementById("projectId");
+                let searchResult = '<tpen-project-search project-id='+input+'><tpen-project-search>';
+                document.getElementById("clickList").outerHTML = searchResult;
+            }
+
         </script>
     </body>
 </html>
