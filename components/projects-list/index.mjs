@@ -15,34 +15,18 @@ export default class ProjectsList extends HTMLElement {
     }
 
     async connectedCallback() {
-        await TPEN.attachAuthentication(this);
+        TPEN.attachAuthentication(this);
         
         console.log("Checking logged-in user...");
         console.log("User Object:", this.currentUser);
     
         if (!this.currentUser || !this.currentUser._id) {
-            console.warn("No user is logged in.");
-            
-            this.innerHTML = `
-                <div style="color: red; text-align: center; padding: 10px;">
-                    <strong>Error:</strong> No user logged in. Please check your credentials.
-                </div>
-            `;
+            console.warn("No user is logged in. Redirecting...");
             return;
         }
     
         console.log("User is logged in:", this.currentUser);
-        try {
-            await this.getProjects();
-            this.render();
-        } catch (error) {
-            console.error("Error fetching projects:", error);
-            this.innerHTML = `
-                <div style="color: red; text-align: center; padding: 10px;">
-                    <strong>Error:</strong> Failed to load projects. Please try again later.
-                </div>
-            `;
-        }
+        this.getProjects().then(() => this.render());
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
@@ -143,9 +127,15 @@ export default class ProjectsList extends HTMLElement {
             console.error(`Error fetching contributors for project ${projectId}:`, error)
         }
     }
+    
 
     async getProjects() {
-        return TPEN.currentUser.getProjects()
+        if (!this.#TPEN.currentUser || !this.#TPEN.currentUser._id) {
+            this.innerHTML = `<p style="color: red; text-align: center;">Error: No user logged in.</p>`;
+            return [];
+        }
+    
+        return this.#TPEN.currentUser.getProjects()
             .then((projects) => {
                 if (!projects || projects.length === 0) {
                     console.warn("No projects available for this user.");
