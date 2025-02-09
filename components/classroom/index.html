@@ -6,6 +6,9 @@
         <link rel="stylesheet" type="text/css" href="./styles.css" />
         <title>TPEN Classroom Interface</title>
         <script src="../projects-list/index.mjs" type="module"></script>
+        <script type="module">
+            import { project_id } from '../projects-list/index.mjs';
+        </script>
         <script type="module" src="./fetchData.mjs"></script>
         <script type="module" src="./roleBasedDisplay.mjs"></script>
         <style>
@@ -49,7 +52,7 @@
                     <form id="projectForm" class="input-form">
                         <label for="projectId">Project ID:</label>
                         <input id="projectId" maxlength="24" name="projectId" type="text" required>
-                        <button class="submit-button" type="submit" onclick="search()">Submit</button>
+                        <button id ="searchbutton" class="submit-button" type="submit">Submit</button>
                     </form>
                     <tpen-projects-list id="clickList"></tpen-projects-list>
                     <div class="role-based-options">
@@ -109,10 +112,22 @@
                 }
             });
 
+            const searchbutton = document.getElementById("searchbutton")
+            searchbutton.addEventListener('click', (event) => {
+                event.preventDefault();
+                search();
+            });
+
+
             function search(){
+                console.log("search function called");
                 const input = document.getElementById("projectId");
-                let searchResult = '<tpen-project-search project-id='+input+'><tpen-project-search>';
-                document.getElementById("clickList").outerHTML = searchResult;
+                const list = document.getElementById("clickList")
+                if(list instanceof(ProjectsList)){
+                    list.project_id(input);
+                }else{
+                    console.log("womp womp");
+                }
             }
 
         </script>

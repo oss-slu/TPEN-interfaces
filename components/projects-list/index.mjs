@@ -7,11 +7,17 @@ export default class ProjectsList extends HTMLElement {
         return ['tpen-user-id']
     }
 
-    _projects = [] //protected variable, so can be accessed by child class
+    projects = []
+    search_list = false
+    projectid
 
-    constructor() {
+    constructor(search_list = false, projectid = null) {
         super()
         eventDispatcher.on("tpen-user-loaded", ev => this.currentUser = ev.detail)
+        if(search_list==true){
+            this.search_list = true;
+            this.projectid = projectid;
+        }
     }
 
     async connectedCallback() {
@@ -43,7 +49,7 @@ export default class ProjectsList extends HTMLElement {
     render() {
         if (!TPEN.currentUser._id) return
 
-        this.innerHTML = `<ul>${this._projects.reduce((a, project) =>
+        this.innerHTML = `<ul>${this.projects.reduce((a, project) =>
             a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
               </li>`,
@@ -79,6 +85,11 @@ export default class ProjectsList extends HTMLElement {
         })
     }
 
+    project_id(projectid){
+        console.log("set project id function called");
+        this.projectid = projectid;
+        this.search_list = true;
+    }
 
     async loadContributors(projectId) {
         try {
@@ -104,8 +115,13 @@ export default class ProjectsList extends HTMLElement {
     async getProjects() {
         return TPEN.currentUser.getProjects()
             .then((projects) => {
-                this._projects = projects
-                return projects
+                if(this.search_list==false){
+                    this.projects = projects
+                    return projects
+                }else if(this.projectid!=null){
+                    this.projects = projects.find(project=>project._id==this.projectid)
+                    return projects
+                }
             })
     }
     /**
@@ -151,11 +167,11 @@ export default class ProjectsList extends HTMLElement {
     }
 
     get projects() {
-        return this._projects
+        return this.projects
     }
 
     set projects(projects) {
-        this._projects = projects
+        this.projects = projects
         return this
     }
 }
