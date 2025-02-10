@@ -7,11 +7,17 @@ export default class ProjectsList extends HTMLElement {
         return ['tpen-user-id']
     }
 
-    #projects = []
+    projects = []
+    search_list = false;
+    projectid = null;
 
-    constructor() {
+    constructor(search_list = false, projectid = null) {
         super()
         eventDispatcher.on("tpen-user-loaded", ev => this.currentUser = ev.detail)
+        if(search_list==true){
+            this.search_list = true;
+            this.projectid = projectid;
+        }
     }
 
     async connectedCallback() {
@@ -76,6 +82,16 @@ export default class ProjectsList extends HTMLElement {
        
 
     render() {
+
+        if (!TPEN.currentUser._id) return
+
+        if(this.projects == undefined){
+            this.innerHTML = "Project does not exist!";
+            return;
+        }
+
+        this.innerHTML = `<ul>${this.projects.reduce((a, project) =>
+
         if (!TPEN.currentUser?._id) {
             this.innerHTML = `<p style="color: red; text-align: center;">Error: No user logged in.</p>`;
             return;
@@ -87,6 +103,7 @@ export default class ProjectsList extends HTMLElement {
         }
     
         this.innerHTML = `<ul>${this.#projects.reduce((a, project) =>
+
             a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
               </li>`, 
@@ -121,7 +138,16 @@ export default class ProjectsList extends HTMLElement {
             })
         })
     }
-
+    
+    project_id(projectid){
+        console.log("set project id function called");
+        this.projectid = projectid;
+        this.search_list = true;
+        console.log(this.projectid);
+        this.getProjects().then((projects) => {
+            this.render()
+        })
+    }
 
     async loadContributors(projectId) {
         try {
@@ -145,8 +171,24 @@ export default class ProjectsList extends HTMLElement {
     }
 
     async getProjects() {
+        console.log('getProjects called');
         return TPEN.currentUser.getProjects()
             .then((projects) => {
+
+                if(this.search_list==false){
+                    this.projects = projects
+                    return projects
+                }else{
+                    this.projects = [] //clearing array
+                    this.projects = projects.find(project=>project._id==this.projectid)
+                    if(this.projects!=undefined){
+                        console.log("project found")}
+                    else{
+                        console.log("project undefined")
+                    }
+                    return projects
+                }
+
                 if (!projects || projects.length === 0) {
                     console.warn("No projects available for this user.");
     
@@ -160,6 +202,7 @@ export default class ProjectsList extends HTMLElement {
     
                 this.#projects = projects;
                 return projects;
+
             })
             .catch(error => {
                 console.error("Error fetching projects:", error);
@@ -215,11 +258,11 @@ export default class ProjectsList extends HTMLElement {
     }
 
     get projects() {
-        return this.#projects
+        return this.projects
     }
 
     set projects(projects) {
-        this.#projects = projects
+        this.projects = projects
         return this
     }
 }
