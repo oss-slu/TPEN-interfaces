@@ -4,6 +4,8 @@ import fs from "fs";
 const hasPermission = require('./checkPermissions.mjs');
 
 export let Permissions = {}
+/* function that loads permissions from a permissions json file
+if parsed correctly it will assign it to the `Permissions` variable */
 export function loadPermissions() {
     try {
         const data = fs.readFileSync('./permissionsConfig.json', 'utf-8');
