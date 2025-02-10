@@ -1,56 +1,28 @@
 import { Roles } from "./roles.mjs"
 import {Action,Scope,Entity} from "./permissions_parameters.mjs"
+import fs from "fs";
 const hasPermission = require('./checkPermissions.mjs');
 
-export const Permissions = {
-    [Roles.OWNER]: ['*_*_*'],
-    [Roles.LEADER]: [
-        /* ACTION_SCOPE_ENTITY */
-        'UPDATE_*_PROJECT',
-        '*_*_MEMBER',
-        '*_*_ROLE',
-        '*_*_PERMISSION',
-        '*_*_LAYER',
-        '*_*_PAGE'
-    ],
-    [Roles.CONTRIBUTOR]: [
-        /* ACTION_SCOPE_ENTITY */
-        'READ_*_MEMBER',
-        'UPDATE_TEXT_*',
-        'UPDATE_ORDER_*',
-        'UPDATE_SELECTOR_*',
-        'CREATE_SELECTOR_*',
-        'DELETE_*_LINE',
-        'UPDATE_DESCRIPTION_LAYER',
-        'CREATE_*_LAYER'
-    ]
-};
-
-// Generate possible patterns to match
-export function generatePatterns(action, scope, entity) {
-    return [
-        `${action}_${scope}_${entity}`,
-        `${action}_${scope}_*`,
-        `${action}_*_${entity}`,
-        `*_${scope}_${entity}`,
-        `*_*_${entity}`,
-        `*_${scope}_*`,
-        `${action}_*_*`,
-        '*_*_*'
-    ];
-};
+export let Permissions = {}
+/* function that loads permissions from a permissions json file
+if parsed correctly it will assign it to the `Permissions` variable */
+export function loadPermissions() {
+    try {
+        const data = fs.readFileSync('./permissionsConfig.json', 'utf-8');
+        Permissions = JSON.parse(data);
+        console.log("Permissions loaded successfully.");
+    } catch (err) {
+        console.log("Failed to load permissions configuration:", err);
+    }
+}
 
 /* validate whether a specific role can perform 
 an action on a particular entity and scope. */
 export function checkPermissions(role, action, scope, entity) {
     if (!Permissions[role]) return false; // If role doesn't exist
 
-    // Get the permissions for the specified role
-    const rolePerms = Permissions[role];
-    const patterns = generatePatterns(action, scope, entity);
-
-    // Check if any pattern matches the role's permissions
-    return patterns.some(pattern => rolePerms.includes(pattern));
+    // Directly return the boolean result from hasPermission
+    return hasPermission(role, action, scope, entity);
 };
 
 //can we combine checkPermissions with permissions here?
@@ -112,3 +84,15 @@ export function addPermission(role,action,scope,entity){
 
     Object.defineProperty(Permissions,Roles[role],{value:`${action}_${scope}_${entity}`,writable:true,enumerable:true,configurable:true});
 }
+
+// Helper functions //
+
+export function canUpdateProject(role) {
+    return checkPermissions(role, Action.UPDATE, Scope.ALL, Entity.PROJECT);
+}
+
+export function canManageUsers(role) {
+    return checkPermissions(role, Action.ALL, Scope.ALL, Entity.MEMBER);
+}
+
+loadPermissions();

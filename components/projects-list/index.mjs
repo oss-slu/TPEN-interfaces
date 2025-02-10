@@ -21,32 +21,68 @@ export default class ProjectsList extends HTMLElement {
     }
 
     async connectedCallback() {
-        TPEN.attachAuthentication(this)
-        if (this.currentUser && this.currentUser._id) {
-            try {
-                await this.getProjects()
-                this.render()
-            } catch (error) {
-                console.error("Error fetching projects:", error)
-                this.innerHTML = "Failed to load projects."
-            }
-        } else {
-            this.innerHTML = "No user logged in yet"
+        await TPEN.attachAuthentication(this);
+        
+        console.log("Checking logged-in user...");
+        console.log("User Object:", this.currentUser);
+    
+        if (!this.currentUser || !this.currentUser._id) {
+            console.warn("No user is logged in.");
+            
+            this.innerHTML = `
+                <div style="color: red; text-align: center; padding: 10px;">
+                    <strong>Error:</strong> No user logged in. Please check your credentials.
+                </div>
+            `;
+            return;
+        }
+    
+        console.log("User is logged in:", this.currentUser);
+        try {
+            await this.getProjects();
+            this.render();
+        } catch (error) {
+            console.error("Error fetching projects:", error);
+            this.innerHTML = `
+                <div style="color: red; text-align: center; padding: 10px;">
+                    <strong>Error:</strong> Failed to load projects. Please try again later.
+                </div>
+            `;
         }
     }
-
-
+    
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'tpen-user-id') {
-            if (oldValue !== newValue) {
-                const loadedUser = new User(newValue)
-                loadedUser.authentication = TPEN.getAuthorization()
-                loadedUser.getProfile()
-            }
+            console.log(`User ID changed: ${newValue}`);
+            const loadedUser = new User(newValue);
+            loadedUser.authentication = TPEN.getAuthorization();
+    
+            loadedUser.getProfile()
+                .then(user => {
+                    console.log("Fetched user details:", user);
+    
+                    if (!user || !user._id || user.message?.includes("not found")) {
+                        throw new Error(`User not found: ${user.message}`);
+                    }
+    
+                    TPEN.currentUser = user;
+                    this.getProjects().then(() => this.render());
+                })
+                .catch(error => {
+                    console.error("Error fetching user:", error);
+    
+                    this.innerHTML = `
+                        <div style="color: red; text-align: center; padding: 10px;">
+                            <strong>Error:</strong> User not found. Please enter a valid user ID.
+                        </div>
+                    `;
+                });
         }
     }
+       
 
     render() {
+
         if (!TPEN.currentUser._id) return
 
         if(this.projects == undefined){
@@ -55,12 +91,25 @@ export default class ProjectsList extends HTMLElement {
         }
 
         this.innerHTML = `<ul>${this.projects.reduce((a, project) =>
+
+        if (!TPEN.currentUser?._id) {
+            this.innerHTML = `<p style="color: red; text-align: center;">Error: No user logged in.</p>`;
+            return;
+        }
+    
+        if (!this.#projects || this.#projects.length === 0) {
+            this.innerHTML = `<p style="color: red; text-align: center;">No projects available.</p>`;
+            return;
+        }
+    
+        this.innerHTML = `<ul>${this.#projects.reduce((a, project) =>
+
             a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
-              </li>`,
-            ``)}</ul>`
-
+              </li>`, 
+            ``)}</ul>`;
     }
+    
 
     /**
      * @deprecated
@@ -125,6 +174,7 @@ export default class ProjectsList extends HTMLElement {
         console.log('getProjects called');
         return TPEN.currentUser.getProjects()
             .then((projects) => {
+
                 if(this.search_list==false){
                     this.projects = projects
                     return projects
@@ -138,7 +188,32 @@ export default class ProjectsList extends HTMLElement {
                     }
                     return projects
                 }
+
+                if (!projects || projects.length === 0) {
+                    console.warn("No projects available for this user.");
+    
+                    this.innerHTML = `
+                        <div style="color: red; text-align: center; padding: 10px;">
+                            <strong>Notice:</strong> No projects available. Create a new project to get started.
+                        </div>
+                    `;
+                    return [];
+                }
+    
+                this.#projects = projects;
+                return projects;
+
             })
+            .catch(error => {
+                console.error("Error fetching projects:", error);
+    
+                this.innerHTML = `
+                    <div style="color: red; text-align: center; padding: 10px;">
+                        <strong>Error:</strong> Failed to fetch projects. Please try again later.
+                    </div>
+                `;
+                return [];
+            });
     }
     /**
      * 
