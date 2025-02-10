@@ -49,6 +49,11 @@ export default class ProjectsList extends HTMLElement {
     render() {
         if (!TPEN.currentUser._id) return
 
+        if(this.projects == undefined){
+            this.innerHTML = "Project does not exist!";
+            return;
+        }
+
         this.innerHTML = `<ul>${this.projects.reduce((a, project) =>
             a + `<li tpen-project-id="${project._id}">${project.title ?? project.label}
             <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
@@ -84,13 +89,15 @@ export default class ProjectsList extends HTMLElement {
             })
         })
     }
-
+    
     project_id(projectid){
         console.log("set project id function called");
         this.projectid = projectid;
         this.search_list = true;
         console.log(this.projectid);
-        return this;
+        this.getProjects().then((projects) => {
+            this.render()
+        })
     }
 
     async loadContributors(projectId) {
@@ -121,8 +128,14 @@ export default class ProjectsList extends HTMLElement {
                 if(this.search_list==false){
                     this.projects = projects
                     return projects
-                }else if(this.projectid!=null){
+                }else{
+                    this.projects = [] //clearing array
                     this.projects = projects.find(project=>project._id==this.projectid)
+                    if(this.projects!=undefined){
+                        console.log("project found")}
+                    else{
+                        console.log("project undefined")
+                    }
                     return projects
                 }
             })
