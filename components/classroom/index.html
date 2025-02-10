@@ -6,9 +6,6 @@
         <link rel="stylesheet" type="text/css" href="./styles.css" />
         <title>TPEN Classroom Interface</title>
         <script src="../projects-list/index.mjs" type="module"></script>
-        <script type="module">
-            import { project_id } from '../projects-list/index.mjs';
-        </script>
         <script type="module" src="./fetchData.mjs"></script>
         <script type="module" src="./roleBasedDisplay.mjs"></script>
         <style>
@@ -121,13 +118,9 @@
 
             function search(){
                 console.log("search function called");
-                const input = document.getElementById("projectId");
+                const input = document.getElementById("projectForm");
                 const list = document.getElementById("clickList")
-                if(list instanceof(ProjectsList)){
-                    list.project_id(input);
-                }else{
-                    console.log("womp womp");
-                }
+                list.project_id(input);
             }
 
         </script>
