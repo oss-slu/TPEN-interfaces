@@ -25,13 +25,20 @@ class NewAction extends HTMLElement {
                     }
                 }
             </style>
-            <div class="new-action">
-                <button>Create a New Project</button>
-                <button>Import a Resource</button>
-                <button>Upgrade from TPEN 2.8</button>
+          <div class="new-action">
+                <button id="create-project">Create a New Project</button>
+                <button id="import-resource">Import a Resource</button>
+                <button id="upgrade">Upgrade from TPEN 2.8</button>
             </div>
         `
+
+        this.shadowRoot.getElementById('import-resource').addEventListener('click', () => {
+            window.location.href = '/interfaces/import-project.html'
+        })
+        this.shadowRoot.getElementById('create-project').addEventListener('click', () => {
+            window.location.href = '/interfaces/project/create'
+        })
     }
 }
 
-customElements.define('new-action', NewAction) 
+customElements.define('tpen-new-action', NewAction) 
