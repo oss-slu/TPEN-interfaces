@@ -9,7 +9,6 @@ class NewAction extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    // align-items: left;
                 }
                 button {
                     margin: 5px;

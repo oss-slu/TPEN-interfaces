@@ -4,13 +4,18 @@ class ContinueWorking extends HTMLElement {
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.innerHTML = `
             <style>
-                /* Add styles for the continue working component */
-                .continue-working {
+                .tpen-continue-working {
                     padding: 10px;
                     display: flex;
+                    gap:10px
                 }
                 .section {
                     margin-bottom: 15px;
+                    cursor:pointer;
+                    transition:all 0.3s linear;
+                    &:hover{
+                    transform:scale(0.9)
+                    }
                 }
                 .section img {
                     width: 100%;
@@ -18,22 +23,22 @@ class ContinueWorking extends HTMLElement {
                     border-radius: 4px;
                 }
             </style>
-            <div class="continue-working">
+            <div class="tpen-continue-working">
                 <div class="section" id="last-open">
                     <h3>Last Open</h3>
-                    <img src="path/to/last-open-thumbnail.jpg" alt="Last Open Thumbnail">
+                    <img src="../assets/images/manuscript_img.webp">
                 </div>
                 <div class="section" id="recent-changes">
                     <h3>Recent Changes</h3>
-                    <img src="path/to/recent-changes-thumbnail.jpg" alt="Recent Changes Thumbnail">
+                    <img src="../assets/images/manuscript_img.webp">
                 </div>
                 <div class="section" id="newest-project">
                     <h3>Newest Project</h3>
-                    <img src="path/to/newest-project-thumbnail.jpg" alt="Newest Project Thumbnail">
+                    <img src="../assets/images/manuscript_img.webp">
                 </div>
             </div>
         `
     }
 }
 
-customElements.define('continue-working', ContinueWorking) 
+customElements.define('tpen-continue-working', ContinueWorking) 

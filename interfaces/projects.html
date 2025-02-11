@@ -7,32 +7,32 @@
     <title>Projects Interface</title>
     <script type="module" src="../components/profile-info.js"></script>
     <script type="module" src="../components/project-list.js"></script>
-    <script type="module" src="../components/new-action.js"></script>
-    <script type="module" src="../components/continue-working.js"></script>
+    <script type="module" src="../components/new-action/index.mjs"></script>
+    <script type="module" src="../components/continue-working/index.mjs"></script>
     <script type="module" src="../components/projects-list/index.mjs"></script>
     <script type="module" src="../components/user-profile/index.mjs"></script>
 
     <style>
-
         .container {
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
             padding: 20px;
-            border: 2px solid red;
-            margin: 20px auto;
+            margin: 25px auto;
             width: 90%;
         }
-        .header{ 
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         tpen-user-profile {
-            grid-column: 1 / -1;
-            border: 2px solid red;
-            padding: 5px;
+            width: 300px;
+            margin-bottom: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .card-container {
@@ -47,6 +47,7 @@
             padding: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .longer-card {
             min-width: 500px;
         }
@@ -57,14 +58,12 @@
     <div class="container">
         <div class="header">
             <div class="logo">TPEN Logo</div>
-            <!-- <profile-info></profile-info> -->
             <tpen-user-profile></tpen-user-profile>
         </div>
         <div class="card-container">
             <tpen-projects-list manage class="card"></tpen-projects-list>
-            <!-- <project-list class="card"></project-list> -->
-            <new-action class="card"></new-action>
-            <continue-working class="card longer-card"></continue-working> 
+            <tpen-new-action class="card"></tpen-new-action>
+            <tpen-continue-working class="card longer-card"></tpen-continue-working>
         </div>
     </div>
 </body>
