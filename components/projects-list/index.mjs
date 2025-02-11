@@ -75,10 +75,18 @@ export default class ProjectsList extends HTMLElement {
                     ${isManage ? `<a href="/manage/?projectID=${project._id}">${project.title ?? project.label}</a>` : project.title ?? project.label}
                     <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
             </div>
-                    ${isManage ? '<button class="delete-btn">Delete</button>' : ''}
+                    ${isManage ? `<button class="delete-btn" data-project-id=${project._id}>Delete</button>` : ''}
                </li>`,
             ``)}</ul>`
+
+            this.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener("click", (event) => {
+                    const projectId = event.target.getAttribute("data-project-id");
+                    alert(`Delete not implemented for project ID: ${projectId}`);
+                });
+            });
     }
+
 
     /**
      * @deprecated
