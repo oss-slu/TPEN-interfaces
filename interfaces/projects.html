@@ -10,6 +10,8 @@
     <script type="module" src="../components/new-action.js"></script>
     <script type="module" src="../components/continue-working.js"></script>
     <script type="module" src="../components/projects-list/index.mjs"></script>
+    <script type="module" src="../components/user-profile/index.mjs"></script>
+
     <style>
 
         .container {
@@ -27,9 +29,10 @@
             align-items: center;
         }
 
-        profile-info {
+        tpen-user-profile {
             grid-column: 1 / -1;
             border: 2px solid red;
+            padding: 5px;
         }
 
         .card-container {
@@ -54,10 +57,11 @@
     <div class="container">
         <div class="header">
             <div class="logo">TPEN Logo</div>
-            <profile-info></profile-info>
+            <!-- <profile-info></profile-info> -->
+            <tpen-user-profile></tpen-user-profile>
         </div>
         <div class="card-container">
-            <tpen-projects-list class="card"></tpen-projects-list>
+            <tpen-projects-list manage class="card"></tpen-projects-list>
             <!-- <project-list class="card"></project-list> -->
             <new-action class="card"></new-action>
             <continue-working class="card longer-card"></continue-working> 
