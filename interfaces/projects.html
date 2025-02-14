@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects Interface</title>
-    <script type="module" src="../components/profile-info.js"></script>
-    <script type="module" src="../components/project-list.js"></script>
-    <script type="module" src="../components/new-action/index.mjs"></script>
-    <script type="module" src="../components/continue-working/index.mjs"></script>
+    <script type="module" src="../components/new-action.js"></script>
+    <script type="module" src="../components/continue-working/index.js"></script>
     <script type="module" src="../components/projects-list/index.mjs"></script>
+    <script type="module" src="../components/projects-list/project-list-view.js"></script>
     <script type="module" src="../components/user-profile/index.mjs"></script>
 
     <style>
@@ -46,6 +45,27 @@
             border-radius: 8px;
             padding: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        /* Custom scrollbar */
+        .card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .card::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .card::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .longer-card {
@@ -61,7 +81,7 @@
             <tpen-user-profile></tpen-user-profile>
         </div>
         <div class="card-container">
-            <tpen-projects-list manage class="card"></tpen-projects-list>
+            <tpen-projects-view class="card"></tpen-projects-view>
             <tpen-new-action class="card"></tpen-new-action>
             <tpen-continue-working class="card longer-card"></tpen-continue-working>
         </div>

@@ -51,8 +51,8 @@ export default class ProjectsList extends HTMLElement {
         <style>
         li{
         margin:5px 0px;
-        display:flex;
-        justify-content:space-between;
+        display:flex; 
+        gap:10px
         
         }
             .delete-btn {
