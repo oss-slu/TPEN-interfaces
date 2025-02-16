@@ -1,31 +1,33 @@
 import { Roles } from './groups/roles.mjs';
 
 const userRoles = localStorage.getItem('userRole');
+console.log(userRoles);
 
 export function updateUIBasedOnRoles(roles) {
     const managementOptions = document.getElementById('managementOptions');
     const viewOptions = document.getElementById('viewOptions');
 
-    // If the user doesn't have a role
     if (!roles || roles.length === 0) {
         managementOptions.style.display = 'none';
         viewOptions.style.display = 'none';
         return;
     }
 
-    // Show management/view options for OWNER and LEADER
+    // Hide management options for Contributors
+    if (roles.includes(Roles.CONTRIBUTOR)) {
+        managementOptions.style.display = 'none'; // Ensure Contributors can't see management options
+        viewOptions.style.display = 'block'; // Allow Contributors to see their options
+        return;
+    }
+
+    // Show management options for OWNER and LEADER
     if (roles.includes(Roles.OWNER) || roles.includes(Roles.LEADER)) {
         managementOptions.style.display = 'block';
     } else {
         managementOptions.style.display = 'none';
     }
 
-    // Show view options for CONTRIBUTORS
-    if (roles.includes(Roles.CONTRIBUTOR)) {
-        viewOptions.style.display = 'block';
-    } else {
-        viewOptions.style.display = 'none';
-    }
+    viewOptions.style.display = 'block'; // Default visible for all roles
 }
 
 updateUIBasedOnRoles(userRoles);
