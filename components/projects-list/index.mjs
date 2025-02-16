@@ -8,8 +8,8 @@ export default class ProjectsList extends HTMLElement {
     }
 
     #projects = []
-    search_list = false
-    projectid = null
+    #search_list = false
+    #projectid = null
 
     constructor() {
         super()
@@ -124,9 +124,9 @@ export default class ProjectsList extends HTMLElement {
 
     project_id(projectid) {
         console.log("set project id function called");
-        this.projectid = projectid;
-        this.search_list = true;
-        console.log(this.projectid);
+        this.#projectid = projectid;
+        this.#search_list = true;
+        console.log(this.#projectid);
         this.getProjects().then(() => {
             this.render()
         })
@@ -156,11 +156,11 @@ export default class ProjectsList extends HTMLElement {
     async getProjects() {
         return TPEN.currentUser.getProjects()
             .then((projects) => {
-                if (this.search_list === false) {
+                if (this.#search_list === false) {
                     this.#projects = projects;
                     return projects;
                 } else {
-                    const project = projects.find(project => project._id === this.projectid);
+                    const project = projects.find(project => project._id === this.#projectid);
                     if (project) {
                         this.#projects = [project];
                         console.log("Project found:", project);
