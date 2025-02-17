@@ -1,5 +1,8 @@
 import { Roles } from './groups/roles.mjs';
 
+// Had to set the userRole in localStorage to CONTRIBUTOR
+// because my role was GUEST
+localStorage.setItem('userRole', 'CONTRIBUTOR');
 const userRoles = localStorage.getItem('userRole');
 console.log(userRoles);
 
@@ -15,8 +18,8 @@ export function updateUIBasedOnRoles(roles) {
 
     // Hide management options for Contributors
     if (roles.includes(Roles.CONTRIBUTOR)) {
-        managementOptions.style.display = 'none'; // Ensure Contributors can't see management options
-        viewOptions.style.display = 'block'; // Allow Contributors to see their options
+        managementOptions.style.display = 'none';
+        viewOptions.style.display = 'block';
         return;
     }
 

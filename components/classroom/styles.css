@@ -93,8 +93,10 @@ h3 {
 }
 
 .role-based-options {
-    display: grid;
-    gap: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 3rem;
 }
 
 .permOptions li a {
