@@ -7,6 +7,7 @@ export default class ProjectsManager extends HTMLElement {
 
     constructor() {
         super()
+        this.attachShadow({mode:"open"})
         eventDispatcher.on("tpen-user-loaded", ev => this.currentUser = ev.detail)
     }
 
@@ -28,7 +29,7 @@ export default class ProjectsManager extends HTMLElement {
     render() {
         if (!TPEN.currentUser._id) return
 
-        this.innerHTML = `
+        this.shadowRoot.innerHTML = `
             <style>
                 li {
                     margin: 5px 0px;

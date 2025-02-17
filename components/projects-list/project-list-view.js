@@ -7,6 +7,7 @@ export default class ProjectsView extends HTMLElement {
 
     constructor() {
         super()
+        this.attachShadow({mode:"open"})
         eventDispatcher.on("tpen-user-loaded", ev => this.currentUser = ev.detail)
     }
 
@@ -28,7 +29,7 @@ export default class ProjectsView extends HTMLElement {
     render() {
         if (!TPEN.currentUser._id) return
 
-        this.innerHTML = `
+        this.shadowRoot.innerHTML = `
             <style>
                 li {
                     margin: 5px 0px;
@@ -43,7 +44,7 @@ export default class ProjectsView extends HTMLElement {
                     </li>`, ``)}
 
                          ${this.#projects.reduce((a, project) =>
-            a + `<li tpen-project-id="${project._id}">
+                a + `<li tpen-project-id="${project._id}">
                         ${project.title ?? project.label} 
                         <span class="badge">${project.roles.join(", ").toLowerCase()}</span>
                     </li>`, ``)}

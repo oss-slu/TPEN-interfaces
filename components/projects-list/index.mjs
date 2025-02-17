@@ -79,12 +79,12 @@ export default class ProjectsList extends HTMLElement {
                </li>`,
             ``)}</ul>`
 
-            this.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener("click", (event) => {
-                    const projectId = event.target.getAttribute("data-project-id");
-                    alert(`Delete not implemented for project ID: ${projectId}`);
-                });
-            });
+        this.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener("click", (event) => {
+                const projectId = event.target.getAttribute("data-project-id")
+                alert(`Delete not implemented for project ID: ${projectId}`)
+            })
+        })
     }
 
 
