@@ -22,53 +22,58 @@ function renderProjects(projects) {
         console.log("There are no projects for this user")
         return
     }
+
     projects.forEach(project => {
         const projectItem = document.createElement('li')
         projectItem.classList.add('project')
         projectItem.innerHTML = `
-            <div class="title">${project.name ?? project.title ?? project.label}</div>
+            <div class="title" data-id="${project._id}">${project.name ?? project.title ?? project.label}</div>
             <div class="delete" data-id="${project._id}">&#128465;</div>
         `
         projectsList.appendChild(projectItem)
     })
 
-    // Add delete functionality to each delete button
-    const deleteButtons = projectsList.querySelectorAll('.delete')
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
+    projectsList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('title')) {
+            const projectID = event.target.getAttribute('data-id')
+            reloadNewProject(projectID)
+        }
+    })
+
+    projectsList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('delete')) {
             const projectID = event.target.getAttribute('data-id')
             deleteProject(projectID)
-        })
+        }
     })
 }
 
+async function reloadNewProject(projectID) {
+    window.history.pushState({}, "", `?projectID=${projectID}`)
 
-async function renderActiveProject(fallbackProjectId) {
+    const project = new Project(projectID)
+    await project.fetch()
+    TPEN.activeProject = project
+    await renderActiveProject(projectID)
+}
+
+async function renderActiveProject(projectId) {
     const activeProjectContainer = document.getElementById('active-project')
     activeProjectContainer.innerHTML = ''
 
-    let projectId = TPEN.activeProject?._id // ?? fallbackProjectId
-    if (!projectId) {
-        // cheat to help other tabs for now
-        location.href = `?projectID=${fallbackProjectId ?? 'DEV_ERROR'}`
-        return
-    }
+    let project = new Project(projectId)
+    await project.fetch()
 
-    let project = TPEN.activeProject
-    if (!project) {
-        project = new Project(projectId)
-        await project.fetch()
-    }
-    activeProjectContainer.innerHTML = `   <p>
-    Active project is
-    <span class="red"> "${project?.label ?? project?.title ?? '[ untitled ]'}"</span>
-
-  </p>
-  <p>
-    Active project T-PEN I.D.
-    <span class="red">${project?._id ?? 'ERR!'}</span>
-  </p>`
-
+    activeProjectContainer.innerHTML = `   
+        <p>
+            Active project is
+            <span class="red"> "${project?.label ?? project?.title ?? '[ untitled ]'}"</span>
+        </p>
+        <p>
+            Active project T-PEN I.D.
+            <span class="red">${project?._id ?? 'ERR!'}</span>
+        </p>
+    `
     loadMetadata(project)
 }
 
@@ -96,7 +101,7 @@ async function deleteProject(projectID) {
 async function loadMetadata(project) {
     let projectMetada = document.getElementById("project-metadata")
     const metadata = project.metadata 
-
+    projectMetada.innerHTML = ""
     metadata.forEach((data) => {
 
         const label = decodeURIComponent(getLabel(data))
@@ -109,7 +114,6 @@ async function loadMetadata(project) {
         </li>`
     })
 }
-
 
 document.getElementById("update-metadata-btn").addEventListener("click", () => {
     openModal()
@@ -127,11 +131,9 @@ document.getElementById("cancel-btn").addEventListener("click", () => {
     closeModal()
 })
 
-
 function closeModal() {
     document.getElementById("metadata-modal").classList.add("hidden")
 }
-
 
 function openModal() {
     const modal = document.getElementById("metadata-modal")
@@ -161,9 +163,6 @@ function openModal() {
     modal.classList.remove("hidden")
 }
 
-
-
-
 function addMetadataField(lang = "none", label = "", value = "", index = null) {
     const fieldsContainer = document.getElementById("metadata-fields")
     const fieldHTML = `
@@ -189,9 +188,6 @@ function addMetadataField(lang = "none", label = "", value = "", index = null) {
             e.target.parentElement.remove()
         })
 }
-
-
-
 
 async function updateMetadata() {
     const fields = document.querySelectorAll(".metadata-field")
@@ -222,8 +218,6 @@ async function updateMetadata() {
     }
 }
 
-
-
 function refreshMetadataDisplay(metadata) {
     const projectMetadata = document.getElementById("project-metadata")
     projectMetadata.innerHTML = ""
@@ -240,8 +234,6 @@ function refreshMetadataDisplay(metadata) {
       `
     })
 }
-
-
 
 function getLabel(data) {
     if (typeof data.label === "string") {
@@ -271,15 +263,18 @@ function getValue(data) {
     return "Unknown Value"
 }
 
-
-
-// This function is called after the "projects" component is loaded
 async function loadProjects() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const projectIDFromURL = urlParams.get("projectID")
     const projects = await fetchProjects()
-    renderActiveProject(projects[0]?._id)
     renderProjects(projects)
-
+    
+    if (projectIDFromURL) {
+        await renderActiveProject(projectIDFromURL)
+    }
+    else {
+        await renderActiveProject(projects[0]?._id)
+    }
 }
-
 
 export { loadProjects }
