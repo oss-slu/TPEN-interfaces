@@ -28,8 +28,8 @@ async function fetchProjectData(projectId) {
             roles: value.roles
         }));
 
-        // Display all collaborators in ms
-        msg.innerHTML = `<pre>${JSON.stringify(collaborators, null, 2)}</pre>`;
+        // Display all collaborators in msg
+        MSG_CONTAINER.innerHTML = `<pre>${JSON.stringify(collaborators, null, 2)}</pre>`;
 
         return data; // Ensures function returns data
 
@@ -40,16 +40,11 @@ async function fetchProjectData(projectId) {
     }
 }
 
-PROJECT_FORM.addEventListener('submit', async function (event) {
-    const projectID = projectId.value;
-    location.href = '?projectID=' + projectID;  // Redirect to the same page with the projectID in the query string
-});
-
 document.getElementById("clickList").addEventListener("click", async function (event) {
     const LI = event.target.closest("#clickList li");
     if (LI) {
         const projectID = LI.getAttribute("tpen-project-id");
-        console.log(`✅ Project clicked! Fetching details for Project ID: ${projectID}`);
+        console.log(`Project clicked: Fetching details for Project ID: ${projectID}`);
 
         if (!projectID) {
             console.error("No project ID found!");
@@ -57,7 +52,6 @@ document.getElementById("clickList").addEventListener("click", async function (e
         }
 
         try {
-            console.log("Calling fetchProjectData...");
             const projectData = await fetchProjectData(projectID);
             console.log("Project data fetched:", projectData);
 
@@ -67,10 +61,18 @@ document.getElementById("clickList").addEventListener("click", async function (e
                 return;
             }
 
+            const userRoles = Object.keys(projectData.roles || {}).join(", ");
+
+            const rolesDisplay = userRoles ? `<p><strong>Roles:</strong> ${userRoles}</p>` : "<p>No assigned roles</p>";
+            
             MSG_CONTAINER.innerHTML = `
                 <p><strong>Project ID: </strong> ${projectData._id || "Unknown"}</p>
-                <p><strong>User Roles:</strong> ${Array.isArray(projectData.roles) ? projectData.roles.join(", ") : "No roles assigned"}</p>
-                <p><strong>Permissions:</strong> ${Array.isArray(projectData.permissions) ? projectData.permissions.join(", ") : "No permissions available"}</p>
+                ${rolesDisplay}
+                <p><strong>Permissions:</strong> ${
+                    Array.isArray(projectData.permissions) 
+                        ? projectData.permissions.join(", ") 
+                        : "No permissions available"
+                }</p>
             `;
 
         } catch (error) {
@@ -81,6 +83,7 @@ document.getElementById("clickList").addEventListener("click", async function (e
 });
 
 fetchProjectData(PROJECT_FORM);
+
 
 
 
