@@ -70,11 +70,11 @@ export function updateUIBasedOnRoles(roles) {
 }
 
 // Fetch project data and update UI on page load
-(async function initialize() {
+document.addEventListener("DOMContentLoaded", async () => {
     const projectID = '671bef745c729146b048fe9a'; // Replace with actual project ID
     const projectData = await fetchUserRoles(projectID);
 
     if (projectData) {
         updateUIBasedOnRoles(projectData.userRoles);
     }
-})();
+});
