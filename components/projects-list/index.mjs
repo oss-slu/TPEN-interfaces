@@ -164,9 +164,16 @@ export default class ProjectsList extends HTMLElement {
                     if (project) {
                         this.#projects = [project];
                         console.log("Project found:", project);
-                    } else {
-                        this.#projects = [];
-                        console.log("Project not found.");
+                    }else {
+                        const project = projects.find(project=>project.title.toLowerCase() === this.#projectid.toLowerCase())
+                        if(project){
+                            this.#projects = [project];
+                            console.log("Project found:", project);
+                        }
+                        else{
+                            this.#projects = [];
+                            console.log("Project not found.");
+                        }
                     }
                     return this.#projects;
                 }
