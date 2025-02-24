@@ -46,9 +46,9 @@
             <div class="input-container">
                 <div class="label-container">
                     <form id="projectForm" class="input-form">
-                        <label for="projectId">Project ID:</label>
+                        <label for="projectId">Project Title or ID:</label>
                         <input id="projectId" maxlength="24" name="projectId" type="text" required>
-                        <button class="submit-button" type="submit">Submit</button>
+                        <button id ="searchbutton" class="submit-button" type="submit">Submit</button>
                     </form>
                     <tpen-projects-list id="clickList"></tpen-projects-list>
                     <div class="role-based-options">
@@ -107,6 +107,20 @@
                     }
                 }
             });
+
+            const searchbutton = document.getElementById("searchbutton")
+            searchbutton.addEventListener('click', (event) => {
+                event.preventDefault();
+                search();
+            });
+
+            function search(){
+                console.log("search function called");
+                const input = document.getElementById("projectId").value;
+                const list = document.getElementById("clickList");
+                list.project_id(input);
+            }
+
         </script>
     </body>
 </html>
