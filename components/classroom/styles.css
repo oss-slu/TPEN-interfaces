@@ -51,7 +51,7 @@ h3 {
     margin: 0;
 }
 
-li a {
+.navbar li a {
     display: block;;
     color: #fff;
     text-decoration: none;
@@ -59,7 +59,7 @@ li a {
     overflow: hidden;
 }
 
-li a::after {
+.navbar li a::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -70,7 +70,7 @@ li a::after {
     transition: width 0.3s ease-in-out;
 }
 
-li a:hover::after {
+.navbar li a:hover::after {
     width: 100%;
 }
 
@@ -93,8 +93,16 @@ li a:hover::after {
 }
 
 .role-based-options {
-    display: grid;
-    gap: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 3rem;
+}
+
+.permOptions li a {
+    list-style: none;
+    padding: 0;
+    color: #000;
 }
 
 footer {
