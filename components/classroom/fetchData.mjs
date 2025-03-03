@@ -12,8 +12,8 @@ export async function fetchProjectData(projectId) {
     try {
         const token = TPEN.getAuthorization();
         const response = await fetch(`${TPEN.servicesURL}/project/${projectId}`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` }
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         const data = await response.json();

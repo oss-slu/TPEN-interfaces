@@ -42,11 +42,11 @@ export function setupRoleSelectHandler(roleSelect, customRoleContainer) {
         if (roleSelect.value === "CUSTOM") {
             // Show custom role input and permissions section if custom role is selected
             customRoleContainer.style.display = "block";
-            permissionsSection.style.display = "block";  // Ensure permissions section is visible
+            permissionsSection.style.display = "block";
         } else {
             // Hide custom role input and permissions section if a predefined role is selected
             customRoleContainer.style.display = "none";
-            permissionsSection.style.display = "none";  // Hide permissions section
+            permissionsSection.style.display = "none";
             document.getElementById("customRoleName").value = "";  // Clear custom role input
         }
     });
@@ -89,7 +89,7 @@ export async function saveCustomRoleAndPermissions(projectId, roleSelect, custom
 
     try {
         // Fetch project data to retrieve current roles
-        const token = TPEN.getAuthorization();  // Get authorization token from TPEN API
+        const token = TPEN.getAuthorization();
         const response = await fetch(`${TPEN.servicesURL}/project/${projectId}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
@@ -108,7 +108,7 @@ export async function saveCustomRoleAndPermissions(projectId, roleSelect, custom
 
         // Send the updated project roles back to the server
         const updateResponse = await fetch(`${TPEN.servicesURL}/project/${projectId}`, {
-            method: "PUT",
+            method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
