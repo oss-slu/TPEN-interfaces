@@ -124,6 +124,30 @@
                 list.project_id(input);
             }
 
+            document.addEventListener("DOMContentLoaded", function () {
+            const roleSelect = document.getElementById("roleSelect");
+
+            if (!roleSelect) {
+                console.error("❌ roleSelect not found in the DOM!");
+                return;
+            }
+
+            roleSelect.addEventListener("change", function () {
+                const selectedRole = this.value;
+                const contributorOptions = document.getElementById("viewOptions");
+
+                console.log("Role changed to:", selectedRole);           
+
+                if (selectedRole === "CONTRIBUTOR") {
+                    contributorOptions.style.display = "block";  // Show contributor options
+                    contributorOptions.innerHTML = "<p>Contributor options are now visible</p>"; 
+                    console.log("Contributor options are now visible");
+                } else {
+                    contributorOptions.style.display = "none";  // Hide contributor options
+                    console.log("Contributor options are now hidden");
+                }
+            });
+        });
         </script>
     </body>
 </html>
