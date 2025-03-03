@@ -49,7 +49,7 @@ export function updateUIBasedOnRoles(roles) {
     const managementOptions = document.getElementById('managementOptions');
     const viewOptions = document.getElementById('viewOptions');
 
-    if (!roles || roles.length === 0) {
+    if (!roles || roles.length === 0 || roles[0] == 'UNKNOWN') {
         managementOptions.style.display = 'none';
         viewOptions.style.display = 'none';
         return;

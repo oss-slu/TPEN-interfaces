@@ -1,14 +1,14 @@
 import { Roles } from "./roles.mjs"
 import {Action,Scope,Entity} from "./permissions_parameters.mjs"
 import fs from "fs";
-const hasPermission = require('./checkPermissions.mjs');
+import {hasPermission} from "./checkPermissions.mjs"
 
 export let Permissions = {}
 /* function that loads permissions from a permissions json file
 if parsed correctly it will assign it to the `Permissions` variable */
-export function loadPermissions() {
+export function loadPermissions(filePath) {
     try {
-        const data = fs.readFileSync('./permissionsConfig.json', 'utf-8');
+        const data = fs.readFileSync(filePath, 'utf-8'); //file path of json can be updated based on where this function is used
         Permissions = JSON.parse(data);
         console.log("Permissions loaded successfully.");
     } catch (err) {
@@ -95,4 +95,4 @@ export function canManageUsers(role) {
     return checkPermissions(role, Action.ALL, Scope.ALL, Entity.MEMBER);
 }
 
-loadPermissions();
+loadPermissions("./permissionsConfig.json");

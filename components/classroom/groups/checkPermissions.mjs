@@ -1,5 +1,5 @@
 import {Roles} from "./roles.mjs"
-import {Permissions} from "./permissions.mjs"
+import {Permissions, loadPermissions} from "./permissions.mjs"
 
 /**
  * Checks if a role has permission for a specific action on an entity 
@@ -11,7 +11,8 @@ import {Permissions} from "./permissions.mjs"
  * @return - boolean value, true if role has permission and false otherwise
  */
 
-function hasPermission(role, action, scope, entity){
+export function hasPermission(role, action, scope, entity){
+
     if (!Permissions[Roles[role]]) return false; 
 
     let rolePermissions = Permissions[Roles[role]];
@@ -43,5 +44,3 @@ function hasPermission(role, action, scope, entity){
 
     return false;
 }
-
-module.exports = hasPermission;
