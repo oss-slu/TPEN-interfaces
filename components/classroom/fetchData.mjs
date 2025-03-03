@@ -1,8 +1,16 @@
-import TPEN from '../../TPEN/index.mjs';
+import TPEN from '../../api/TPEN.mjs';
+import { updateUIBasedOnRoles } from './roleBasedDisplay.mjs';
 
+// Get references to UI elements
 const PROJECT_FORM = document.getElementById("projectId");
-const MSG_CONTAINER = document.getElementById("msg"); 
+const MSG_CONTAINER = document.getElementById("msg");
 
+/**
+ * Fetches project data from the TPEN API using the given project ID.
+ * Extracts user roles and updates the UI accordingly.
+ * @param {string} projectId - The ID of the project to fetch.
+ * @returns {Object|null} Project data including user roles, or null if an error occurs.
+ */
 async function fetchProjectData(projectId) {
     console.log("Fetching project data for:", projectId);
 
@@ -21,25 +29,41 @@ async function fetchProjectData(projectId) {
             return null;
         }
 
-        // Extract all collaborators
+        // Extract all collaborators and their roles
         const collaborators = Object.entries(data.collaborators || {}).map(([key, value]) => ({
             id: key,
             name: value.profile.displayName,
             roles: value.roles
         }));
 
-        // Display all collaborators in msg
+        // Get the currently logged-in user's name
+        const currentUser = TPEN.currentUser?.displayName;
+        const userRoles = currentUser 
+            ? collaborators.find(collab => collab.name === currentUser)?.roles || [] 
+            : [];
+
+        console.log("Logged-in User:", currentUser);
+        console.log("Extracted Roles:", userRoles);
+
+        // Update UI based on extracted roles
+        updateUIBasedOnRoles(userRoles);
+
+        // Display all collaborators in the message container
         MSG_CONTAINER.innerHTML = `<pre>${JSON.stringify(collaborators, null, 2)}</pre>`;
 
-        return data; // Ensures function returns data
+        return { ...data, userRoles }; // Include userRoles in returned data
 
     } catch (error) {
         console.error("Error fetching project data:", error);
         MSG_CONTAINER.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-        return null; // Return null if an error occurs
+        return null;
     }
 }
 
+/**
+ * Event listener for when a user clicks on a project in the list.
+ * Fetches and displays the project's details including roles and permissions.
+ */
 document.getElementById("clickList").addEventListener("click", async function (event) {
     const LI = event.target.closest("#clickList li");
     if (LI) {
@@ -53,7 +77,6 @@ document.getElementById("clickList").addEventListener("click", async function (e
 
         try {
             const projectData = await fetchProjectData(projectID);
-            console.log("Project data fetched:", projectData);
 
             if (!projectData) {
                 console.error("No project data returned!");
@@ -61,18 +84,28 @@ document.getElementById("clickList").addEventListener("click", async function (e
                 return;
             }
 
-            const userRoles = Object.keys(projectData.roles || {}).join(", ");
+            // Extract user roles
+            const userRoles = projectData.userRoles || [];
 
-            const rolesDisplay = userRoles ? `<p><strong>Roles:</strong> ${userRoles}</p>` : "<p>No assigned roles</p>";
-            
+            // Extract permissions for the user's roles
+            const userPermissions = new Set();
+            userRoles.forEach(role => {
+                if (projectData.roles[role]) {
+                    projectData.roles[role].forEach(permission => userPermissions.add(permission));
+                }
+            });
+
+            const permissionsArray = Array.from(userPermissions);
+
+            // Display roles and permissions in the UI
+            const rolesDisplay = userRoles.length 
+                ? `<p><strong>Roles:</strong> ${userRoles.join(", ")}</p>` 
+                : "<p>No assigned roles</p>";
+
             MSG_CONTAINER.innerHTML = `
                 <p><strong>Project ID: </strong> ${projectData._id || "Unknown"}</p>
                 ${rolesDisplay}
-                <p><strong>Permissions:</strong> ${
-                    Array.isArray(projectData.permissions) 
-                        ? projectData.permissions.join(", ") 
-                        : "No permissions available"
-                }</p>
+                <p><strong>Permissions:</strong> ${permissionsArray.length ? permissionsArray.join(", ") : "No permissions available"}</p>
             `;
 
         } catch (error) {
@@ -82,9 +115,5 @@ document.getElementById("clickList").addEventListener("click", async function (e
     }
 });
 
+// Fetch project data when the project form is submitted
 fetchProjectData(PROJECT_FORM);
-
-
-
-
-
