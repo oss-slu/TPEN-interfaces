@@ -128,7 +128,7 @@
             const roleSelect = document.getElementById("roleSelect");
 
             if (!roleSelect) {
-                console.error("❌ roleSelect not found in the DOM!");
+                console.error("roleSelect not found in the DOM!");
                 return;
             }
 
@@ -140,7 +140,7 @@
 
                 if (selectedRole === "CONTRIBUTOR") {
                     contributorOptions.style.display = "block";  // Show contributor options
-                    contributorOptions.innerHTML = "<p>Contributor options are now visible</p>"; 
+                    contributorOptions.innerHTML = "<p>Contributor Options Include: READ_MEMBER, UPDATE_TEXT, UPDATE_ORDER_, UPDATE_SELECTOR_, CREATE_SELECTOR_, DELETE_LINE, UPDATE_DESCRIPTION_LAYER, CREATE*_LAYER </p>"; 
                     console.log("Contributor options are now visible");
                 } else {
                     contributorOptions.style.display = "none";  // Hide contributor options
