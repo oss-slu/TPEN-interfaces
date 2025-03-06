@@ -124,30 +124,49 @@
                 list.project_id(input);
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
-            const roleSelect = document.getElementById("roleSelect");
-
-            if (!roleSelect) {
-                console.error("roleSelect not found in the DOM!");
-                return;
-            }
-
-            roleSelect.addEventListener("change", function () {
-                const selectedRole = this.value;
+            document.addEventListener("DOMContentLoaded", async function () {
+                const roleSelect = document.getElementById("roleSelect");
                 const contributorOptions = document.getElementById("viewOptions");
+                let rolesData = {}; // Store JSON data
 
-                console.log("Role changed to:", selectedRole);           
-
-                if (selectedRole === "CONTRIBUTOR") {
-                    contributorOptions.style.display = "block";  // Show contributor options
-                    contributorOptions.innerHTML = "<p>Contributor Options Include: READ_MEMBER, UPDATE_TEXT, UPDATE_ORDER_, UPDATE_SELECTOR_, CREATE_SELECTOR_, DELETE_LINE, UPDATE_DESCRIPTION_LAYER, CREATE*_LAYER </p>"; 
-                    console.log("Contributor options are now visible");
-                } else {
-                    contributorOptions.style.display = "none";  // Hide contributor options
-                    console.log("Contributor options are now hidden");
+                async function loadRoles() {
+                    try {
+                        const response = await fetch('./groups/permissionsConfig.json');
+                        if (!response.ok) throw new Error("Failed to load permissionsConfig.json");
+                        rolesData = await response.json(); 
+                    } catch (error) {
+                        rolesData = {};
+                    }
                 }
+
+                await loadRoles();
+
+                roleSelect.addEventListener("change", function () {
+                    const selectedRole = this.value;
+                    console.log("🔄 Role changed to:", selectedRole);
+
+                    fetch('./config/permissionsConfig.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Loaded JSON Data:", data);
+                        })
+                        .catch(error => console.error("Error loading JSON:", error));
+
+                    if (selectedRole === "CONTRIBUTOR") {
+                        if (rolesData.CONTRIBUTOR) {
+                            contributorOptions.style.display = "block";
+                            contributorOptions.innerHTML = `
+                                <h3>Contributor Options</h3>
+                                <ul>
+                                    ${rolesData.CONTRIBUTOR.map(permission => `<li>${permission}</li>`).join("")}
+                                </ul>
+                            `;
+                        } else {
+                            contributorOptions.style.display = "none";
+                        }
+                    }
+                });
             });
-        });
         </script>
     </body>
 </html>
