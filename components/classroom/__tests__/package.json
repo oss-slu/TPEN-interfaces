@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "@babel/preset-env": "^7.25.7",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0"
@@ -9,12 +10,16 @@
     "test": "jest"
   },
   "jest": {
-    "testEnvironment": "jest-environment-jsdom",
+    "testMatch": [
+      "**/?(*.)+(spec|test).mjs"
+    ],
     "transform": {
       "^.+\\.mjs$": "babel-jest"
     },
-    "testMatch": [
-      "**/__test__.mjs"
-    ]
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ],
+    "testEnvironment": "jsdom"
   }
 }
