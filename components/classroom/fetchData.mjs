@@ -40,46 +40,15 @@ async function fetchProjectData(projectId) {
     }
 }
 
-document.getElementById("clickList").addEventListener("click", async function (event) {
+document.getElementById("clickList").addEventListener("click", function (event) {
     const LI = event.target.closest("#clickList li");
-    if (LI) {
-        const projectID = LI.getAttribute("tpen-project-id");
-        console.log(`Project clicked: Fetching details for Project ID: ${projectID}`);
+    if (!LI) return;
 
-        if (!projectID) {
-            console.error("No project ID found!");
-            return;
-        }
+    const projectID = LI.getAttribute("tpen-project-id");
+    if (!projectID) return;
 
-        try {
-            const projectData = await fetchProjectData(projectID);
-            console.log("Project data fetched:", projectData);
-
-            if (!projectData) {
-                console.error("No project data returned!");
-                MSG_CONTAINER.innerHTML = `<p style="color: red;">No project data available.</p>`;
-                return;
-            }
-
-            const userRoles = Object.keys(projectData.roles || {}).join(", ");
-
-            const rolesDisplay = userRoles ? `<p><strong>Roles:</strong> ${userRoles}</p>` : "<p>No assigned roles</p>";
-            
-            MSG_CONTAINER.innerHTML = `
-                <p><strong>Project ID: </strong> ${projectData._id || "Unknown"}</p>
-                ${rolesDisplay}
-                <p><strong>Permissions:</strong> ${
-                    Array.isArray(projectData.permissions) 
-                        ? projectData.permissions.join(", ") 
-                        : "No permissions available"
-                }</p>
-            `;
-
-        } catch (error) {
-            console.error("Error fetching project data:", error);
-            MSG_CONTAINER.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-        }
-    }
+    // Redirect to new page
+    window.location.href = `project.html?projectID=${projectID}`;
 });
 
 fetchProjectData(PROJECT_FORM);
