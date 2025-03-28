@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="./styles.css" />
+        <script type="module" src="./invite.mjs"></script>
+        <title>TPEN Classroom Interface</title> 
+    </head>
+    <body>
+        <div class="header">
+            <h1>TPEN Classroom Interface</h1>
+            <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
+            <div class="navbar" id="navbar">
+                <ul>
+                    <li><a href="./index.html" aria-label="home">Home</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="page-container">
+            <h1 id="title">Project Roster</h1>
+            <!--placeholder for now, replace with actual members later-->
+            <p>Member 1: Roles<br><br>
+                Member 2: Roles<br><br>
+                Member 3: Roles<br>
+            </p>
+            <button id="invite-button">Invite Members</button>
+            <div class="modal" id="invitemodal">
+                <div id="invite-section-container">
+                    <h2 id="title">Invite New Members</h2>
+                    <form id="invite-form">
+                        <label for="invitee-email">Invitee's Email: </label>
+                        <input type="email" name="invitee-email" id="invitee-email" required/>
+                        <button type="submit" id="submit" class="submit-btn">Submit</button>
+                        <p id="error" class="error-message"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
