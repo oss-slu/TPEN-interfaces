@@ -21,27 +21,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("Project Data:", projectData);
+    window.projectData = projectData;
 
-    const roles = Object.keys(projectData.roles || {});
-    const container = document.createElement("div");
+    const userID = Object.keys(projectData.collaborators).find(
+      id => projectData.collaborators[id].profile?.displayName === "sarah.fidahussain"
+      );
+
+    const user = projectData.collaborators?.[userID];
+    const roles = user?.roles || [];
+
+    console.log("User Roles:", roles);
+
+    // Label to show user roles
+    const roleDisplay = document.createElement("p");
+    roleDisplay.textContent = `Roles: ${roles.join(", ")}`;
+    document.body.appendChild(roleDisplay);
+
+    // Build role-specific buttons
+    let buttonsHTML = "";
 
     if (roles.includes("OWNER") || roles.includes("LEADER")) {
-        
-      container.innerHTML = `
+      buttonsHTML += `
         <button>Invite New Members</button>
         <button>Manage Roster</button>
         <button>Manage Roles</button>
       `;
-    } else if (roles.includes("CONTRIBUTOR")) {
-      container.innerHTML = `
+    }
+
+    if (roles.includes("CONTRIBUTOR")) {
+      buttonsHTML += `
         <button>Upload Assignments</button>
         <button>Transcription</button>
         <button>Gradebook</button>
       `;
-    } else {
-      container.innerHTML = "<p>You have no special permissions in this project.</p>";
     }
 
+    if (!buttonsHTML) {
+      buttonsHTML = "<p>You have no special permissions in this project.</p>";
+    }
+
+    const container = document.createElement("div");
+    container.style.marginTop = "1rem";
+    container.innerHTML = buttonsHTML;
     document.body.appendChild(container);
 
   } catch (err) {
@@ -49,3 +70,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";
   }
 });
+
