@@ -23,21 +23,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Project Data:", projectData);
     window.projectData = projectData;
 
-    const userID = Object.keys(projectData.collaborators).find(
-      id => projectData.collaborators[id].profile?.displayName === "sarah.fidahussain"
+    // Try to get the user ID from TPEN, fallback to matching the first ID with a displayName
+    let userID = TPEN?.currentUser?._id;
+
+    if (!userID) {
+      userID = Object.keys(projectData.collaborators).find(
+        id => projectData.collaborators[id].profile?.displayName
       );
+    }
 
     const user = projectData.collaborators?.[userID];
     const roles = user?.roles || [];
 
     console.log("User Roles:", roles);
 
-    // Label to show user roles
+    // Show the roles on screen
     const roleDisplay = document.createElement("p");
     roleDisplay.textContent = `Roles: ${roles.join(", ")}`;
     document.body.appendChild(roleDisplay);
 
-    // Build role-specific buttons
+    // Build buttons based on roles
     let buttonsHTML = "";
 
     if (roles.includes("OWNER") || roles.includes("LEADER")) {
@@ -70,4 +75,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";
   }
 });
-
