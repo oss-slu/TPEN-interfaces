@@ -1,4 +1,4 @@
-import { templates } from './templates.mjs'; // Import the templates array
+import { templates } from './templates.mjs';
 
 // MainTemplate function that manages and displays other templates
 const MainTemplate = () => {
