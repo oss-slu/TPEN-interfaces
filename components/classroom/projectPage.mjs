@@ -1,5 +1,16 @@
 import TPEN from '../../TPEN/index.mjs';
 
+function extractUsernameFromToken(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload?.nickname || payload?.name || payload?.preferred_username;
+    } catch (e) {
+      console.warn("Couldn't extract username from token", e);
+      return null;
+    }
+  }
+  
+
 document.addEventListener("DOMContentLoaded", async () => {
   const projectId = new URLSearchParams(window.location.search).get("projectID");
 
@@ -14,6 +25,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    const username = extractUsernameFromToken(token);
+      
+    console.log("Extracted Username:", username);
     const projectData = await response.json();
     
     if (!projectData || !projectData._id) {
@@ -22,15 +36,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     console.log("Project Data:", projectData);
     window.projectData = projectData;
-
-    // Try to get the user ID from TPEN, fallback to matching the first ID with a displayName
-    let userID = TPEN?.currentUser?._id;
-
-    if (!userID) {
-      userID = Object.keys(projectData.collaborators).find(
-        id => projectData.collaborators[id].profile?.displayName
-      );
-    }
+      
+    const userID = Object.keys(projectData.collaborators).find(id => {
+        return projectData.collaborators[id].profile?.displayName === username;
+    });
 
     const user = projectData.collaborators?.[userID];
     const roles = user?.roles || [];
