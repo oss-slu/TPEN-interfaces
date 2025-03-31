@@ -17,21 +17,13 @@ const MainTemplate = () => {
       <div>
         <h1>Main Template</h1>
         <div id="buttons-container">
-          ${templates.map((template, index) => `
-            <button class="template-button" data-index="${index}">
-              ${template.templateName}
+          ${templates.map((template) => `
+            <button class="template-button">
+              <a href="./templates/${template.fileName}" class="template-link">
+                ${template.templateName}
+              </a>
             </button>
           `).join('')}
-        </div>
-        <div id="selected-template">
-          ${selectedTemplate ? `
-            <div>
-              <h2>${selectedTemplate.templateName}</h2>
-              ${selectedTemplate.content}
-            </div>
-          ` : `
-            <p>Please select a template to view its content.</p>
-          `}
         </div>
       </div>
     `;
