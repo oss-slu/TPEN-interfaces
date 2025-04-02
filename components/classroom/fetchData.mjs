@@ -1,4 +1,4 @@
-import TPEN from '../../TPEN/index.mjs';
+import TPEN from '../../api/TPEN.mjs';
 
 const PROJECT_FORM = document.getElementById("projectId");
 const MSG_CONTAINER = document.getElementById("msg"); 
@@ -52,8 +52,3 @@ document.getElementById("clickList").addEventListener("click", function (event) 
 });
 
 fetchProjectData(PROJECT_FORM);
-
-
-
-
-
