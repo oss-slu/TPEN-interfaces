@@ -6,7 +6,8 @@
         <link rel="stylesheet" type="text/css" href="./styles.css" />
         <title>TPEN Classroom Interface</title>
         <script src="../projects-list/index.mjs" type="module"></script>
-        <script type="module" src="./main.mjs"></script>
+        <script type="module" src="./fetchData.mjs"></script>
+        <script type="module" src="./roleBasedDisplay.mjs"></script>
         <style>
             #msg pre {
                 text-align: left;
@@ -66,14 +67,12 @@
                                     <label for="customRoleName">Custom Role Name:</label>
                                     <input type="text" id="customRoleName">
                                 </div>
-                                <div id="permissionsSection" style="display: none;">
-                                    <h4>Permissions:</h4>
-                                    <ul id="permissionsList">
-                                        <!-- Permissions will be dynamically loaded here -->
-                                    </ul>
-                                    <button id="addPermissionBtn">Add Permission</button>
-                                    <button id="saveRoleBtn">Save Role</button>
-                                </div>
+                                <h4>Permissions:</h4>
+                                <ul id="permissionsList">
+                                    <!-- Permissions will be dynamically loaded here -->
+                                </ul>
+                                <button id="addPermissionBtn">Add Permission</button>
+                                <button id="saveRoleBtn">Save Role</button>
                             </div>
                         </div>
                         <div id="viewOptions" style="display: none;">
