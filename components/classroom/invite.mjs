@@ -1,9 +1,9 @@
 import TPEN from "../../api/TPEN.mjs";
-//import { renderProjectCollaborators } from "../../collaborators/index.mjs";
 
-document.addEventListener("DOMContentLoaded", async () => { //copied sarah's code just to test the functionality, maybe put this method in fetchData?
+document.addEventListener("DOMContentLoaded", async () => {
     const projectId = new URLSearchParams(window.location.search).get("projectID");
-  
+    const roster = document.getElementById("roster")
+
     if (!projectId) {
       document.body.innerHTML = "<p style='color:red;'>Missing project ID in URL.</p>";
       return;
@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => { //copied sarah's cod
       });
   
       const projectData = await response.json();
+      const collaborators = projectData.collaborators || {};
   
       if (!projectData || !projectData._id) {
         throw new Error("Invalid or missing project data");
@@ -24,8 +25,51 @@ document.addEventListener("DOMContentLoaded", async () => { //copied sarah's cod
       console.log("Project Data:", projectData);
 
       document.getElementById("title").innerText = projectData.title+" Project Roster";
-      
-      //renderProjectCollaborators() //how can we get this to work with the existing function?
+
+      roster.innerHTML = "";
+
+      Object.keys(collaborators).forEach(id => {
+      const user = collaborators[id];
+      const name = user.profile?.displayName || "(Unnamed)";
+      const roles = user.roles?.join(", ") || "No roles";
+
+      const li = document.createElement("li");
+      const button = document.createElement("button")
+      button.textContent = `${name} — ${roles}`;
+      button.classList.add("rosterbutton");
+      li.appendChild(button);
+
+      const options = document.createElement("div");
+      const managebutton = document.createElement("button");
+      managebutton.textContent = "Manage Roles";
+      managebutton.classList.add("optionbuttons");
+      options.appendChild(managebutton);
+      const removebutton = document.createElement("button");
+      removebutton.textContent = "Remove User";
+      removebutton.style.backgroundColor = "red";
+      removebutton.classList.add("optionbuttons");
+      options.appendChild(removebutton);
+      options.classList.add("rosterbuttonoptions");
+      li.appendChild(options);
+
+      li.classList.add("rosterlistitem");
+      roster.appendChild(li);
+      });
+      const rosteritems = document.getElementsByClassName("rosterbutton");
+      var i;
+
+      for (i = 0; i < rosteritems.length; i++) {
+        rosteritems[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          console.log(content);
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
     }catch (err) {
         console.error("Something went wrong:", err);
         document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";

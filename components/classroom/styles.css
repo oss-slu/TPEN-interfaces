@@ -105,6 +105,38 @@ h3 {
     color: #000;
 }
 
+.rosterlistitem{
+    list-style-type: none;
+    padding: 5px;
+}
+
+.rosterbutton{
+    padding: 15px;
+    width: 80%;
+    border: none;
+    background-color: lightgray;
+    color:#516059;
+    font-weight: bold;
+}
+
+.active, .rosterbutton:hover{
+    background-color: #516059;
+    color:#fff;
+}
+
+.rosterbuttonoptions{
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+.optionbuttons{
+    padding: 5px;
+    background-color:gray;
+    margin: 5px;
+}
+
 footer {
     padding: 10px;
     text-align: center;
@@ -122,6 +154,7 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    cursor: pointer;
 }
 
 .modal {
