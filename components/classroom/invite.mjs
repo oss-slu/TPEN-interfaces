@@ -1,4 +1,4 @@
-import TPEN from "../../../api/TPEN.mjs";
+import TPEN from "../../api/TPEN.mjs";
 //import { renderProjectCollaborators } from "../../collaborators/index.mjs";
 
 document.addEventListener("DOMContentLoaded", async () => { //copied sarah's code just to test the functionality, maybe put this method in fetchData?

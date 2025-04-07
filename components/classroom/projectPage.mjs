@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (roles.includes("OWNER") || roles.includes("LEADER")) {
       buttonsHTML += `
-        <button onclick="window.location.href='templates/inviteroster.html?projectID=${projectId}'">Invite New Members</button>
+        <button onclick="window.location.href='inviteroster.html?projectID=${projectId}'">Invite New Members</button>
         <button onclick="window.location.href='templates/manageRoster.html?projectID=${projectId}'">Manage Roster</button>
         <button onclick="window.location.href='templates/manageRoles.html?projectID=${projectId}'">Manage Roles</button>
       `;
