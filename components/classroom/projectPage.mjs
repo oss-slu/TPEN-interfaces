@@ -74,10 +74,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       buttonsHTML = "<p>You have no special permissions in this project.</p>";
     }
 
-    const container = document.createElement("div");
-    container.style.marginTop = "1rem";
-    container.innerHTML = buttonsHTML;
-    document.body.appendChild(container);
+    // Create a div to hold the buttons
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+    buttonContainer.innerHTML = buttonsHTML;
+
+    // Create the main container if it doesn't already exist
+    let container = document.querySelector(".container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "container";
+      document.body.appendChild(container);
+    }
+
+    // Append the role display and button container to the main container
+    container.appendChild(roleDisplay);
+    container.appendChild(buttonContainer);
 
   } catch (err) {
     console.error("Something went wrong:", err);

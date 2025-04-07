@@ -3,20 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="./styles.css" />
+        <link rel="stylesheet" type="text/css" href="./styles/styles.css" />
         <script type="module" src="./invite.mjs"></script>
         <title>TPEN Classroom Interface</title> 
     </head>
     <body>
-        <div class="header">
-            <h1>TPEN Classroom Interface</h1>
-            <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
-            <div class="navbar" id="navbar">
-                <ul>
-                    <li><a href="./index.html" aria-label="home">Home</a></li>
-                </ul>
-            </div>
-        </div>
+        <div id="header-container"></div>
         <div class="page-container">
             <h1 id="title">Project Roster</h1>
             <!--placeholder for now, replace with actual members later-->
@@ -37,5 +29,15 @@
                 </div>
             </div>
         </div>
+        <div id="footer-container"></div>
+
+        <script type="module">
+            import { loadHeader } from './partials/loadHeader.mjs';
+            import { loadFooter } from './partials/loadFooter.mjs';
+            document.addEventListener("DOMContentLoaded", async () => {
+                await loadHeader();
+                await loadFooter();
+            });
+        </script>
     </body>
 </html>
