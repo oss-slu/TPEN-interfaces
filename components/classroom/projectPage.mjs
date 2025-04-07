@@ -50,26 +50,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const roleDisplay = document.createElement("p");
     roleDisplay.textContent = `Roles: ${roles.join(", ")}`;
     document.body.appendChild(roleDisplay);
-
-    // Build buttons based on roles
+    
     let buttonsHTML = "";
 
     if (roles.includes("OWNER") || roles.includes("LEADER")) {
       buttonsHTML += `
-        <button>Invite New Members</button>
-        <button>Manage Roster</button>
-        <button>Manage Roles</button>
+        <button onclick="window.location.href='templates/inviteroster.html?projectID=${projectId}'">Invite New Members</button>
+        <button onclick="window.location.href='templates/manageRoster.html?projectID=${projectId}'">Manage Roster</button>
+        <button onclick="window.location.href='templates/manageRoles.html?projectID=${projectId}'">Manage Roles</button>
       `;
     }
-
+    
     if (roles.includes("CONTRIBUTOR")) {
       buttonsHTML += `
-        <button>Upload Assignments</button>
-        <button>Transcription</button>
-        <button>Gradebook</button>
+        <button onclick="window.location.href='templates/uploadAssignments.html?projectID=${projectId}'">Upload Assignments</button>
+        <button onclick="window.location.href='templates/transcription.html?projectID=${projectId}'">Transcription</button>
+        <button onclick="window.location.href='templates/gradebook.html?projectID=${projectId}'">Gradebook</button>
       `;
     }
-
+    
     if (!buttonsHTML) {
       buttonsHTML = "<p>You have no special permissions in this project.</p>";
     }

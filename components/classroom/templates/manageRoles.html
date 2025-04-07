@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Roles | TPEN Classroom</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <script type="module" src="./manageRoles.mjs"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>TPEN Classroom Interface</h1>
+    <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
+    <div class="navbar" id="navbar">
+      <ul>
+        <li><a href="../index.html" aria-label="home">Home</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-container">
+    <h2>Manage Project Roles</h2>
+
+    <p>Select a user and assign or update their role for this project.</p>
+
+    <form id="role-form">
+      <label for="user-select">Select User:</label><br />
+      <select id="user-select" required>
+        <option value="">-- Choose a user --</option>
+        <!-- Dynamically filled with collaborator names -->
+      </select><br /><br />
+
+      <label for="role-select">Select Role:</label><br />
+      <select id="role-select" required>
+        <option value="OWNER">OWNER</option>
+        <option value="LEADER">LEADER</option>
+        <option value="CONTRIBUTOR">CONTRIBUTOR</option>
+        <option value="CUSTOM">CUSTOM</option>
+      </select><br /><br />
+
+      <button type="submit">Update Role</button>
+      <p id="role-update-msg" style="margin-top: 1em;"></p>
+    </form>
+
+    <div id="current-roles-section" style="margin-top: 2em;">
+      <h3>Current Project Roles</h3>
+      <ul id="current-roles-list">
+        <!-- Populated with user-role pairs -->
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

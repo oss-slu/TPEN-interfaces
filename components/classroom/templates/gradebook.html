@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gradebook | TPEN Classroom</title>
+    <link rel="stylesheet" type="text/css" href="../styles.css" />
+    <script type="module" src="./gradebook.mjs"></script>
+  </head>
+  <body>
+    <div class="header">
+      <h1>TPEN Classroom Interface</h1>
+      <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
+      <div class="navbar" id="navbar">
+        <ul>
+          <li><a href="../index.html" aria-label="home">Home</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-container">
+      <h2>Gradebook</h2>
+
+      <table class="gradebook-table">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Assignment 1</th>
+            <th>Assignment 2</th>
+            <th>Final Grade</th>
+          </tr>
+        </thead>
+        <tbody id="gradebook-body">
+          <!-- Dynamically populate this later -->
+          <tr>
+            <td>Jane Doe</td>
+            <td>85</td>
+            <td>92</td>
+            <td>89</td>
+          </tr>
+          <tr>
+            <td>John Smith</td>
+            <td>78</td>
+            <td>88</td>
+            <td>83</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
