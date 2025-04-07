@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gradebook | TPEN Classroom</title>
     <link rel="stylesheet" type="text/css" href="../styles.css" />
-    <script type="module" src="./gradebook.mjs"></script>
+    <script type="module" src="./grades.mjs"></script>
   </head>
   <body>
     <div class="header">
@@ -19,23 +19,32 @@
     </div>
 
     <div class="page-container">
-      <h2>Gradebook</h2>
+      <h2>My Grades</h2>
 
-      <table class="gradebook-table">
+      <table class="grade-table">
         <thead>
           <tr>
-            <th>Student Name</th>
-            <th>Assignment 1</th>
-            <th>Assignment 2</th>
-            <th>Final Grade</th>
+            <th>Assignment Name</th>
+            <th>Grades</th>
           </tr>
         </thead>
-        <tbody id="gradebook-names">
+        <tbody id="grade-body">
           <!-- Dynamically populate this later -->
+          <tr>
+            <td>Project 1</td>
+            <td>85</td>
+          </tr>
+          <tr>
+            <td>Project 2</td>
+            <td>78</td>
+          </tr>
         </tbody>
-            <tbody id="gradebook-body">
-                <!-- Dynamically populate this later -->
-            </tbody>
+        <thead>
+            <tr>
+              <th>Final Grade</th>
+              <th>81.5</th>
+            </tr>
+          </thead>
       </table>
     </div>
   </body>

@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <button onclick="window.location.href='inviteroster.html?projectID=${projectId}'">Invite New Members</button>
         <button onclick="window.location.href='templates/manageRoster.html?projectID=${projectId}'">Manage Roster</button>
         <button onclick="window.location.href='templates/manageRoles.html?projectID=${projectId}'">Manage Roles</button>
+        <button onclick="window.location.href='templates/gradebook.html?projectID=${projectId}'">Gradebook</button>
       `;
     }
 
@@ -71,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       buttonsHTML += `
         <button onclick="window.location.href='templates/uploadAssignments.html?projectID=${projectId}'">Upload Assignments</button>
         <button onclick="window.location.href='templates/transcription.html?projectID=${projectId}'">Transcription</button>
-        <button onclick="window.location.href='templates/gradebook.html?projectID=${projectId}'">Gradebook</button>
+        <button onclick="window.location.href='templates/grades.html?projectID=${projectId}'">Grades</button>
       `;
     }
 
