@@ -1,5 +1,5 @@
 export async function loadHeader() {
-    const response = await fetch('/TPEN-interfaces/components/classroom/partials/header.html');
+    const response = await fetch('./partials/header.html');
     const html = await response.text();
     document.getElementById('header-container').innerHTML = html;
     
