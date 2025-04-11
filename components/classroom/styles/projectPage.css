@@ -1,0 +1,47 @@
+h1 {
+    text-align: center;
+}
+  
+.container {
+    max-width: fit-content;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    padding-top: 1rem;
+    margin: 2rem auto; /* Centers the container horizontally */
+}
+  
+p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+  
+button {
+    width: 150px; /* Set a fixed width */
+    height: 50px; /* Set a fixed height */
+    display: flex; /* Center text horizontally and vertically */
+    justify-content: center;
+    align-items: center;
+}
+  
+@media (max-width: 600px) {
+    .container {
+      padding: 1rem;
+    }
+  
+    button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+}
