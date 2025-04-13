@@ -2,12 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Classroom Group Options</title>
+  <link rel="stylesheet" href="./styles/projectPage.css">
+  <link rel="stylesheet" href="./styles/styles.css">
 </head>
 <body>
+  <div id="header-container"></div>
   <h1>Classroom Group Options</h1>
   <div id="role-options"></div>
+  <div id="footer-container"></div>
 
   <script type="module" src="./projectPage.mjs"></script>
+  <script type="module">
+    import { loadHeader } from './partials/loadHeader.mjs';
+    import { loadFooter } from './partials/loadFooter.mjs';
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadHeader();
+      await loadFooter();
+    });
+  </script>
 </body>
 </html>

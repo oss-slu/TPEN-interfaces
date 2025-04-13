@@ -3,12 +3,47 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="./styles.css" />
+        <link rel="stylesheet" type="text/css" href="./styles/styles.css" />
         <title>TPEN Classroom Interface</title>
         <script src="../projects-list/index.mjs" type="module"></script>
         <script type="module" src="./fetchData.mjs"></script>
         <script type="module" src="./roleBasedDisplay.mjs"></script>
         <style>
+            h3 {
+                margin: 0;
+            }
+
+            .page-container {
+                flex: 1;
+                text-align: center;
+            }
+
+            .page-container h2 {
+                color: #516059;
+            }
+
+            .input-container {
+                text-align: center;
+                padding-top: 1rem;
+            }
+
+            .input-form {
+                padding-bottom: 0.5rem;
+            }
+
+            .role-based-options {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                margin-top: 3rem;
+            }
+
+            .permOptions li a {
+                list-style: none;
+                padding: 0;
+                color: #000;
+            }
+
             #msg pre {
                 text-align: left;
                 overflow: auto;
@@ -24,6 +59,20 @@
                 cursor: pointer;
             }
             @media (max-width: 600px) {
+                .input-container {
+                    padding-top: 1rem;
+                }
+
+                .input-form {
+                    display: grid;
+                    padding-inline: 5rem;
+                    gap: 0.5rem;
+                }
+
+                .role-based-options {
+                    padding-inline: 5rem;
+                }
+                
                 #msg pre {
                     width: auto;
                     margin-inline: 1rem;
@@ -32,15 +81,7 @@
         </style>
     </head>
     <body>
-        <div class="header">
-            <h1>TPEN Classroom Interface</h1>
-            <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
-            <div class="navbar" id="navbar">
-                <ul>
-                    <li><a href="./index.html" aria-label="home">Home</a></li>
-                </ul>
-            </div>
-        </div>
+        <div id="header-container"></div>
         <div class="page-container">
             <h1>Welcome!</h1>
             <div class="input-container">
@@ -84,31 +125,17 @@
                     </div>
                     <p id="msg"></p>
                 </div>
-
             </div>
+            <div id="footer-container"></div>
         </div>
-        <footer>
-            <p>TPEN Classroom Interface</p>
-        </footer>
 
         <!-- Hamburger menu script for mobile devices -->
-        <script>
-            function toggleMenu() {
-                const navbar = document.getElementById('navbar');
-                navbar.classList.toggle('responsive'); // Match the CSS class
-            }
-
-            document.addEventListener('click', (event) => {
-                const navbar = document.getElementById('navbar');
-                const menuIcon = document.querySelector('.hamburger-menu');
-                if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                    if (navbar.classList.contains('visible')) {
-                        navbar.classList.add('closing');
-                        setTimeout(() => {
-                            navbar.classList.remove('visible', 'closing');
-                        }, 400);
-                    }
-                }
+        <script type="module">
+            import { loadHeader } from './partials/loadHeader.mjs';
+            import { loadFooter } from './partials/loadFooter.mjs';
+            document.addEventListener("DOMContentLoaded", async () => {
+                await loadHeader();
+                await loadFooter();
             });
 
             const searchbutton = document.getElementById("searchbutton")
