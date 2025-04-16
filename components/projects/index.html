@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Projects List Module</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <script src="../../api/TPEN.js" type="module"></script>
+    <script src="index.js" type="module"></script>
+    <script src="project-header.js" type="module"></script>
+    <script src="./project-list-view.js" type="module"></script>
+    <script src="./project-list-write.js" type="module"></script>
+    <script src="../../api/events.js" type="module"></script>
+</head>
+
+<body>
+    <h2>User Content</h2>
+
+    <small>/components/projects</small>
+    <h3>Projects (roles)</h3>
+    <style scoped>
+        .badge::before {
+            content: '(';
+        }
+
+        .badge::after {
+            content: ')';
+        }
+    </style>
+
+    <h2>Project Header</h2>
+
+    <tpen-project-header></tpen-project-header>
+
+    <tpen-projects-list></tpen-projects-list>
+
+    <h2>READ ONLY PROJECTS RENDERING</h2>
+
+    <tpen-projects-view></tpen-projects-view>
+
+    <h2>READ-WRITE PROJECTS RENDERING</h2>
+
+    <tpen-projects-manager></tpen-projects-manager>
+
+
+</body>
+
+</html>

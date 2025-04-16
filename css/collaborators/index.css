@@ -1,0 +1,381 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #69ACC9 url(https://t-pen.org/TPEN/images/tpen_badgeEmergeClear.png) bottom right no-repeat fixed;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.tagline {
+    text-align: center;
+    font-size: 1.25rem;
+    color: black;
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 70%;
+}
+
+.manage-interface {
+    width: 70%;
+    margin: 10px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffebb9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.title h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #b14628;
+    text-align: center;
+}
+
+.title p {
+    font-size: 1.025rem;
+    color: #555;
+    text-align: center;
+    margin-top: 10px;
+}
+
+#content{
+    width: 100%;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.collaborators-container .member {
+    width: 100%;
+}      
+
+.default-btn.return-btn {
+    background: none;
+    background-color: #69acc9;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    margin: auto;
+}
+
+.default-btn.return-btn .btn-icon {
+    margin-left: 10px;
+}
+
+.default-btn.return-btn:hover {
+    background-color: #0056b3;
+}
+
+.return-btn {
+    position: relative;
+}
+
+project-collaborators::part(group-title) {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+project-collaborators::part(project-title-h1) {
+    font-size: 1.75rem;
+    color: #333;
+    margin: 0;
+}
+
+project-collaborators::part(project-title) {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+project-collaborators::part(group-members-title) {
+    font-size: 20px;
+    margin: 20px 0;
+    font-weight: 500;
+    color : #b14628;
+    padding: 0 20px;
+}
+
+project-collaborators::part(group-members) {
+    list-style-type: none;
+    padding: 10px 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+project-collaborators::part(member) {
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    margin-bottom: 10px;
+    padding: 20px 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+project-collaborators::part(member-info) {
+    font-size: 1rem;
+    color: #333;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+
+project-collaborators::part(role) {
+    font-weight: bold;
+    color: #555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+project-collaborators::part(leader) {
+    color: white;
+    padding: 5px;
+    background-color: #28a745;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #28a745;
+    border-radius: 5px;
+}
+
+project-collaborators::part(owner) {
+    color: white;
+    padding: 5px;
+    background-color: #007BFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+}
+
+project-collaborators::part(default-roles) {
+    color: white;
+    padding: 5px;
+    background-color: #6c757d;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #6c757d;
+    border-radius: 5px;
+}
+
+project-collaborators::part(custom-role) {
+    color: white;
+    padding: 5px;
+    background-color: #6c757d;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #6c757d;
+    border-radius: 5px;
+}
+
+project-collaborators::part(manage-roles-button) {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+project-collaborators::part(manage-roles-button:hover) {
+    background-color: #0056b3;
+} 
+
+project-collaborators::part(role-management-buttons){
+    width: 100%;
+    gap: 10px;
+    display: flex;
+    padding: 20px;
+}
+
+project-collaborators::part(transfer-ownership-button){
+    background-color: #28a745;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+project-collaborators::part(make-leader-button){
+    background-color: #007BFF;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+project-collaborators::part(demote-leader-button){
+    background-color: #17a2b8;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+project-collaborators::part(set-to-viewer-button){
+    background-color:#0056b3;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+project-collaborators::part(set-role-button){
+    background-color: #6c757d;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+project-collaborators::part(remove-button){
+    background-color: #dc3545;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+invite-member::part(invite-section-container) {
+    padding: 20px;
+    /* background-color: #ffebb9; */
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0 auto;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+}
+
+invite-member::part(title) {
+    font-size: 20px;
+    margin: 10px 0 20px;
+    font-weight: 500;
+    color : #b14628;
+}
+
+invite-member::part(description) {
+    font-size: 0.875rem;
+    color: #333;
+}
+
+invite-member::part(invite-form) {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+invite-member::part(email-label) {
+    font-size: 0.9rem;
+    color: black;
+}
+
+invite-member::part(email-input) {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 30%;
+}
+
+invite-member::part(submit-button) {
+    padding: 10px 15px;
+    font-size: 1rem;
+    background-color: #69acc9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+invite-member::part(submit-button):hover {
+    background-color: #0056b3;
+}
+
+invite-member::part(error-message) {
+    color: red;
+    font-size: 0.875rem;
+    display: none;
+}
+
+invite-member::part(error) {
+    color: white;
+    font-size: 0.9rem;
+    background-color: #f87563;
+    border-radius: 5px;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 40%;
+}
+
+roles-handler::part(modal-content) {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+roles-handler::part(modal-actions) {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+roles-handler::part(modal-buttons-confirm) {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+roles-handler::part(modal-buttons-cancel) {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
