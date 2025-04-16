@@ -16,10 +16,7 @@ After loading the library to your page, component, or module, a `TPEN` object wi
 All other classes and their methods will be in that namespace.
 
 ```javascript
-<script src="https://interfaces.t-pen.org/js/tpen.js"></script>
-<script>
-  const TPEN = new TPEN()
-</script>
+<script src="https://app.t-pen.org/api/TPEN.js" type="module"></script>
 ```
 
 The classes provided will return JSON for processing by your own interfaces with no opinion about how 
@@ -29,7 +26,6 @@ automatically send the user's token with each request. If you are using some oth
 a good place to connect it.
 
 ## Cookbook
-
 
 Recipes for building interfaces to interact with the TPEN API.
 
