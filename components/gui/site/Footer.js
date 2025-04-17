@@ -89,6 +89,9 @@ class TpenFooter extends HTMLElement {
                 mix-blend-mode: multiply;
                 height: 100px;
             }
+            img:last-of-type {
+                clip-path: polygon(0 10%, 0 100%,30% 25%, 0 500%, 100% 20%, 255% 10%, 100% 0%);
+            }
         `
         shadow.appendChild(style)
     }
