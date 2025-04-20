@@ -8,19 +8,13 @@
   <link rel="stylesheet" href="./styles/styles.css">
 </head>
 <body>
-  <div id="header-container"></div>
+  <tpen3-header></tpen3-header>
   <h1>Classroom Group Options</h1>
   <div id="role-options"></div>
-  <div id="footer-container"></div>
+  <tpen3-footer></tpen3-footer>
 
   <script type="module" src="./projectPage.mjs"></script>
-  <script type="module">
-    import { loadHeader } from './partials/loadHeader.mjs';
-    import { loadFooter } from './partials/loadFooter.mjs';
-    document.addEventListener("DOMContentLoaded", async () => {
-      await loadHeader();
-      await loadFooter();
-    });
-  </script>
+  <script src="./partials/header.js"></script>
+  <script src="./partials/footer.js"></script>
 </body>
 </html>
