@@ -3,7 +3,7 @@ import TPEN from '../../../api/TPEN.js'
 class TpenFooter extends HTMLElement {
 
     links = [
-        { href: '/home', text: 'Home' },
+        { href: '/index', text: 'Home' },
         { href: '/account', text: 'Account' },
         { href: '/contact', text: 'Contact' },
         { href: '/about', text: 'About Us' },
