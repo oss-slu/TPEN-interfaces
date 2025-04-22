@@ -179,7 +179,7 @@ class TpenHeader extends HTMLElement {
                     <ul>
                         <li><a href="/index">Home</a></li>
                         <li><a href="/about">About</a></li>
-                        <li><a href="https://three.t-pen.org/logout?returnTo=${location}">Logout</a></li>
+                        <li class="logout-btn"><a href="#">Logout</a></li>
                     </ul>
                 </nav>
             </header>
@@ -206,6 +206,7 @@ class TpenHeader extends HTMLElement {
             btn.classList.add('hidden')
             btn.removeEventListener('click', ev.detail.callback)
         })
+        this.shadowRoot.querySelector('.logout-btn').addEventListener('click', ()=>TPEN.logout())
     }
 }
 

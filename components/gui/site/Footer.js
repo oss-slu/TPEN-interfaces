@@ -15,11 +15,6 @@ class TpenFooter extends HTMLElement {
         super()
         const shadow = this.attachShadow({ mode: 'open' })
 
-        const linkElem = document.createElement('link');
-        linkElem.setAttribute('rel', 'stylesheet');
-        linkElem.setAttribute('href', './index.css');
-        shadow.appendChild(linkElem);
-
         const footer = document.createElement('footer')
         footer.className = 'site-footer'
 
