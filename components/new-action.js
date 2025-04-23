@@ -28,6 +28,7 @@ class NewAction extends HTMLElement {
                 <button id="create-project">Create a New Project</button>
                 <button id="import-resource">Import a Resource</button>
                 <button id="upgrade">Upgrade from TPEN 2.8</button>
+                <button id="link-tpen-2.8">Link TPEN 2.8 Account</button>
             </div>
         `
 
@@ -37,6 +38,10 @@ class NewAction extends HTMLElement {
         this.shadowRoot.getElementById('create-project').addEventListener('click', () => {
             window.location.href = '/interfaces/project/create'
         })
+        this.shadowRoot.getElementById('link-tpen-2.8').addEventListener('click', () => {
+            const redirectUri = encodeURIComponent(window.location.origin + '/interfaces/link-tpen-2.8/index.html');
+            window.location.href = `http://localhost:8080/TPEN/login.jsp?redirect_uri=${redirectUri}`
+        })        
     }
 }
 
