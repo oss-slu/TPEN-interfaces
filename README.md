@@ -68,4 +68,3 @@ Add descriptive key-value pairs to a project. This might be used to make a list 
 easier to filter or more discoverable from an external source. On its own, this may not mean
 much but combined with a customized project list page, it could be a powerful tool.
 
-Priyal
