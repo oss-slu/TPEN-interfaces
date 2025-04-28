@@ -42,7 +42,7 @@ class NewAction extends HTMLElement {
         })
         this.shadowRoot.getElementById("link-tpen-2.8").addEventListener("click", () => {
             const userToken = localStorage.getItem("userToken")
-            document.cookie = `userToken=${userToken}; path=/; secure; samesite=strict`
+            document.cookie = `userToken=${userToken}; path=/; domain='t-pen.org'; secure; samesite=strict;`
             const redirectUri = encodeURIComponent(`${TPEN.servicesURL}/project/import28`)
             window.location.href = `https://dev.t-pen.org/TPEN/login.jsp?redirect_uri=${redirectUri}`
         })
