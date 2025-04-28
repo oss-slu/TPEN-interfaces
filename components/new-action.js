@@ -1,3 +1,5 @@
+import TPEN from "../api/TPEN.js"
+
 class NewAction extends HTMLElement {
     constructor() {
         super()
@@ -28,6 +30,7 @@ class NewAction extends HTMLElement {
                 <button id="create-project">Create a New Project</button>
                 <button id="import-resource">Import a Resource</button>
                 <button id="upgrade">Upgrade from TPEN 2.8</button>
+                <button id="link-tpen-2.8">Link TPEN 2.8 Account</button>
             </div>
         `
 
@@ -36,6 +39,12 @@ class NewAction extends HTMLElement {
         })
         this.shadowRoot.getElementById('create-project').addEventListener('click', () => {
             window.location.href = '/interfaces/project/create'
+        })
+        this.shadowRoot.getElementById("link-tpen-2.8").addEventListener("click", () => {
+            const userToken = localStorage.getItem("userToken")
+            document.cookie = `userToken=${userToken}; path=/; secure; samesite=strict`
+            const redirectUri = encodeURIComponent(`${TPEN.servicesURL}/project/import28`)
+            window.location.href = `https://t-pen.org/TPEN/login.jsp?redirect_uri=${redirectUri}`
         })
     }
 }
