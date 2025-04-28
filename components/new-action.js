@@ -44,7 +44,7 @@ class NewAction extends HTMLElement {
             const userToken = localStorage.getItem("userToken")
             document.cookie = `userToken=${userToken}; path=/; secure; samesite=strict`
             const redirectUri = encodeURIComponent(`${TPEN.servicesURL}/project/import28`)
-            window.location.href = `https://dev.t-pen.org/TPEN/login.jsp?redirect_uri=${redirectUri}`
+            window.location.href = `https://t-pen.org/TPEN/login.jsp?redirect_uri=${redirectUri}`
         })
     }
 }
