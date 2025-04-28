@@ -2,13 +2,22 @@ import TPEN from '../../TPEN/index.mjs';
 
 function extractUsernameFromToken(token) {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload?.nickname || payload?.name || payload?.preferred_username;
+    if (!token || typeof token !== "string") throw new Error("Token is not valid");
+
+    const parts = token.split(".");
+    if (parts.length !== 3) throw new Error("Token is not a valid JWT format");
+
+    // Some JWT payloads are base64url encoded — replace '-' and '_' to make it valid base64
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const decodedPayload = JSON.parse(atob(base64));
+
+    return decodedPayload?.nickname || decodedPayload?.name || decodedPayload?.preferred_username;
   } catch (e) {
     console.warn("Couldn't extract username from token", e);
     return null;
   }
 }
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const projectId = new URLSearchParams(window.location.search).get("projectID");
@@ -62,8 +71,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (roles.includes("OWNER") || roles.includes("LEADER")) {
       buttonsHTML += `
         <button onclick="window.location.href='inviteroster.html?projectID=${projectId}'">Invite New Members</button>
-        <button onclick="window.location.href='templates/manageRoster.html?projectID=${projectId}'">Manage Roster</button>
-        <button onclick="window.location.href='templates/manageRoles.html?projectID=${projectId}'">Manage Roles</button>
         <button onclick="window.location.href='templates/gradebook.html?projectID=${projectId}'">Gradebook</button>
       `;
     }
