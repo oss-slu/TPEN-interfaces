@@ -8,16 +8,7 @@
     <script type="module" src="./transcription.mjs"></script>
   </head>
   <body>
-    <div class="header">
-      <h1>TPEN Classroom Interface</h1>
-      <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
-      <div class="navbar" id="navbar">
-        <ul>
-          <li><a href="../index.html" aria-label="home">Home</a></li>
-        </ul>
-      </div>
-    </div>
-
+    <tpen3-header></tpen3-header>
     <div class="page-container">
       <h2>Transcription Workspace</h2>
       <p>Use the editor below to transcribe text from scanned assignments or documents.</p>
@@ -34,5 +25,8 @@
         <p id="transcription-msg" style="color: green;"></p>
       </div>
     </div>
+    <tpen3-footer></tpen3-footer>
+    <script src="../partials/header.js"></script>
+    <script src="../partials/footer.js"></script>
   </body>
 </html>
