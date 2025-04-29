@@ -43,11 +43,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       const managebutton = document.createElement("button");
       managebutton.textContent = "Manage Roles";
       managebutton.classList.add("optionbuttons");
+      managebutton.dataset.userid = id;
+      console.log(managebutton.dataset.user);
+      const rolemodal = document.getElementById("rolemodal")
+      managebutton.onclick = function() {
+          rolemodal.style.display = "block";
+          const user = collaborators[managebutton.dataset.userid]
+          document.getElementById("roletitle").innerText = "Manage Roles For "+user.profile?.displayName;
+          //update which boxes are checked based on the roles the user currently has
+      }
       options.appendChild(managebutton);
+
       const removebutton = document.createElement("button");
       removebutton.textContent = "Remove User";
       removebutton.style.backgroundColor = "red";
       removebutton.classList.add("optionbuttons");
+      removebutton.dataset.user = user;
       options.appendChild(removebutton);
       options.classList.add("rosterbuttonoptions");
       li.appendChild(options);
@@ -87,7 +98,27 @@ window.onclick = function(event) {
     if (event.target == modal) {
       modal.style.display = "none";
     }
+    else if (event.target == rolemodal) {
+      rolemodal.style.display = "none";
+    }
 }
+
+const checklist = document.getElementById("rolechecklist")
+const handleConfirm = () => { //this is from tpen code, is called when we submit the role changes
+  // Collect selected roles
+  const selectedRoles = Array.from(
+  checklist.querySelectorAll("input[type=checkbox]:checked")
+  ).map((checkbox) => checkbox.value)
+}
+async (selectedRoles) => { //move this up???
+            if (selectedRoles.length > 0) {
+                const response = await TPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
+                if (response) {
+                    alert("Roles updated successfully.")
+                }
+            }
+        }
+
 
 const inviteForm = document.getElementById("invite-form")
 const submitButton = document.getElementById("submit")
