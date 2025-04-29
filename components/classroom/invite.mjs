@@ -27,6 +27,55 @@ document.addEventListener("DOMContentLoaded", async () => {
             const name = user.profile?.displayName || "(Unnamed)";
             const roles = user.roles?.join(", ") || "No roles";
 
+      const li = document.createElement("li");
+      const button = document.createElement("button")
+      button.textContent = `${name} — ${roles}`;
+      button.classList.add("rosterbutton");
+      li.appendChild(button);
+
+      const options = document.createElement("div");
+      const managebutton = document.createElement("button");
+      managebutton.textContent = "Manage Roles";
+      managebutton.classList.add("optionbuttons");
+      managebutton.dataset.userid = id;
+      console.log(managebutton.dataset.user);
+      const rolemodal = document.getElementById("rolemodal")
+      managebutton.onclick = function() {
+          rolemodal.style.display = "block";
+          const user = collaborators[managebutton.dataset.userid]
+          document.getElementById("roletitle").innerText = "Manage Roles For "+user.profile?.displayName;
+          //update which boxes are checked based on the roles the user currently has
+      }
+      options.appendChild(managebutton);
+
+      const removebutton = document.createElement("button");
+      removebutton.textContent = "Remove User";
+      removebutton.style.backgroundColor = "red";
+      removebutton.classList.add("optionbuttons");
+      removebutton.dataset.user = user;
+      options.appendChild(removebutton);
+      options.classList.add("rosterbuttonoptions");
+      li.appendChild(options);
+
+      li.classList.add("rosterlistitem");
+      roster.appendChild(li);
+      });
+      const rosteritems = document.getElementsByClassName("rosterbutton");
+      var i;
+
+      for (i = 0; i < rosteritems.length; i++) {
+        rosteritems[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          console.log(content);
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
+    }catch (err) {
             const li = document.createElement("li");
             li.classList.add("rosterlistitem");
 
@@ -96,6 +145,27 @@ window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
+    else if (event.target == rolemodal) {
+      rolemodal.style.display = "none";
+    }
+}
+
+const checklist = document.getElementById("rolechecklist")
+const handleConfirm = () => { //this is from tpen code, is called when we submit the role changes
+  // Collect selected roles
+  const selectedRoles = Array.from(
+  checklist.querySelectorAll("input[type=checkbox]:checked")
+  ).map((checkbox) => checkbox.value)
+}
+async (selectedRoles) => { //move this up???
+            if (selectedRoles.length > 0) {
+                const response = await TPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
+                if (response) {
+                    alert("Roles updated successfully.")
+                }
+            }
+        }
+
 };
 
 const inviteForm = document.getElementById("invite-form");

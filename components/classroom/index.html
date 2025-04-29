@@ -102,7 +102,7 @@
 
         </style>
     </head>
-    <div id="header-container"></div>
+    <tpen3-header></tpen3-header>
 
     <div class="page-container">
         <h1>Welcome!</h1>
@@ -166,19 +166,12 @@
 
         <p id="msg"></p>
 
-        <div id="footer-container"></div>
+        <tpen3-footer></tpen3-footer>
     </div>
 
 
         <!-- Hamburger menu script for mobile devices -->
         <script type="module">
-            import { loadHeader } from './partials/loadHeader.mjs';
-            import { loadFooter } from './partials/loadFooter.mjs';
-            document.addEventListener("DOMContentLoaded", async () => {
-                await loadHeader();
-                await loadFooter();
-            });
-
             const searchbutton = document.getElementById("searchbutton")
             searchbutton.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -237,5 +230,7 @@
                 });
             });
         </script>
+        <script src="./partials/header.js"></script>
+        <script src="./partials/footer.js"></script>
     </body>
 </html>
