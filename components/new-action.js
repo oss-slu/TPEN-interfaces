@@ -42,8 +42,8 @@ class NewAction extends HTMLElement {
         })
         this.shadowRoot.getElementById("link-tpen-2.8").addEventListener("click", () => {
             const userToken = localStorage.getItem("userToken")
-            document.cookie = `userToken=${userToken}; path=/; secure; samesite=strict`
-            const redirectUri = encodeURIComponent(`${TPEN.servicesURL}/project/import28`)
+            document.cookie = `userToken=${userToken}; path=/; domain=t-pen.org; secure; samesite=strict;`
+            const redirectUri = encodeURIComponent("https://app.t-pen.org/interfaces/import-tpen28/index.html")
             window.location.href = `https://dev.t-pen.org/TPEN/login.jsp?redirect_uri=${redirectUri}`
         })
     }
