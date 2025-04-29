@@ -52,8 +52,3 @@ document.getElementById("clickList").addEventListener("click", function (event) 
 });
 
 fetchProjectData(PROJECT_FORM);
-
-
-
-
-
