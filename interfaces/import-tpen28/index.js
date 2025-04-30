@@ -20,7 +20,7 @@ async function fetchProjects() {
   const UID = params.get("UID")
 
   const response = await fetch(
-    `http://localhost:3012/project/import28/${UID}`,
+    `${TPEN.servicesURL}/project/import28/${UID}`,
     {
       method: "GET",
       credentials: "include",
@@ -69,7 +69,7 @@ async function goForward() {
     .find((row) => row.startsWith("userToken="))
     ?.split("=")[1]
 
-  const url = `https://t-pen.org/TPEN/manifest/${selectedId}`
+  const url = `https://dev.t-pen.org/TPEN/manifest/${selectedId}`
 
   const importResponse = await fetch(
     `${TPEN.servicesURL}/project/import?createFrom=URL`,
@@ -87,7 +87,7 @@ async function goForward() {
   const projectID = result._id
 
   const projectResponse = await fetch(
-    `http://localhost:8080/TPEN/getProjectTPENServlet?projectID=${selectedId}`,
+    `https://dev.t-pen.org/TPEN/getProjectTPENServlet?projectID=${selectedId}`,
     {
       method: "GET",
       credentials: "include"
