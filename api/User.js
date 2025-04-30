@@ -56,61 +56,6 @@ export default class User {
       })
   }
 
-  renderProjects(containerId) {
-    let projectsList = document.getElementById(containerId)
-
-    if (!containerId || !projectsList) {
-      if (!containerId) {
-        alert("Provide id for container to render projects")
-      } else {
-        alert(`Container element with ID '${containerId}' not found.`)
-      }
-
-      throw new Error(
-        "Provide container id and attach id to HTML element where projects should be rendered"
-      )
-    }
-
-    this.getProjects()
-      .then((projects) => {
-        projectsList.innerHTML = ""
-        if (projects.length) {
-          projects.forEach((project) => {
-            const projectTemplate = `
-            <li>
-              ${project.title??project.label}
-              <div class="manage">
-                <span class="resume-btn">Resume</span>
-                <span class="manage-btn" data-project-id="${project._id}">Manage</span>
-              </div>
-            </li>
-          `
-            projectsList.insertAdjacentHTML("beforeend", projectTemplate)
-          })
-          const manageButtons = document.querySelectorAll(".manage-btn")
-          manageButtons.forEach((button) => {
-            button.addEventListener("click", (event) => {
-              
-              const projectId = event.target.getAttribute("data-project-id")
-              
-              window.location.href = `/manage/?projectID=${projectId}`
-            })
-          })
-        } else {
-          projectsList.innerHTML = "No projects yet. Create one to get started"
-        }
-      })
-      .catch((error) => {
-        const errorTemplate = `
-          <li>
-            Error ${error.status ?? 500}: ${error.statusText ?? "Unknown Server error"}
-          </li>
-        `
-        projectsList.insertAdjacentHTML("beforeend", errorTemplate)
-        throw error
-      })
-  }
-
   async updateRecord(data) {
     try {
       const response = await fetch(`${TPEN.servicesURL}/my/profile/update`, {
