@@ -17,8 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const projectData = await response.json();
         const collaborators = projectData.collaborators || {};
+        console.log(projectData);
 
-        document.getElementById("title").innerText = projectData.title + " Project Roster";
+        // Use innerText or textContent to set the title
+        document.getElementById("title").innerText = projectData.label + " Project Roster";
         roster.innerHTML = ""; // Clear loading text
 
         // Build the roster dynamically
@@ -27,102 +29,104 @@ document.addEventListener("DOMContentLoaded", async () => {
             const name = user.profile?.displayName || "(Unnamed)";
             const roles = user.roles?.join(", ") || "No roles";
 
-      const li = document.createElement("li");
-      const button = document.createElement("button")
-      button.textContent = `${name} — ${roles}`;
-      button.classList.add("rosterbutton");
-      li.appendChild(button);
-
-      const options = document.createElement("div");
-      const managebutton = document.createElement("button");
-      managebutton.textContent = "Manage Roles";
-      managebutton.classList.add("optionbuttons");
-      options.appendChild(managebutton);
-      const removebutton = document.createElement("button");
-      removebutton.textContent = "Remove User";
-      removebutton.style.backgroundColor = "red";
-      removebutton.classList.add("optionbuttons");
-      options.appendChild(removebutton);
-      options.classList.add("rosterbuttonoptions");
-      li.appendChild(options);
-
-      li.classList.add("rosterlistitem");
-      roster.appendChild(li);
-      });
-      const rosteritems = document.getElementsByClassName("rosterbutton");
-      var i;
-
-      for (i = 0; i < rosteritems.length; i++) {
-        rosteritems[i].addEventListener("click", function() {
-          this.classList.toggle("active");
-          var content = this.nextElementSibling;
-          console.log(content);
-          if (content.style.display === "block") {
-            content.style.display = "none";
-          } else {
-            content.style.display = "block";
-          }
-        });
-      }
-    }catch (err) {
             const li = document.createElement("li");
-            li.classList.add("rosterlistitem");
+            const button = document.createElement("button");
+            button.textContent = `${name} — ${roles}`;
+            button.classList.add("rosterbutton");
+            li.appendChild(button);
 
-            const flexContainer = document.createElement("div");
-            flexContainer.style.display = "flex";
-            flexContainer.style.alignItems = "center";
-            flexContainer.style.justifyContent = "flex-start";
-            flexContainer.style.gap = "20px";
-            flexContainer.style.padding = "8px 0";
-
-            // Name + Role Button
-            const nameButton = document.createElement("button");
-            nameButton.textContent = `${name} — ${roles}`;
-            nameButton.classList.add("rosterbutton");
-
-            // Manage Roles Button
+            const options = document.createElement("div");
             const manageButton = document.createElement("button");
             manageButton.textContent = "Manage Roles";
             manageButton.classList.add("optionbuttons");
+            options.appendChild(manageButton);
 
-            // Role Dropdown (hidden initially)
-            const roleDropdown = document.createElement("select");
-            roleDropdown.classList.add("role-dropdown");
-            roleDropdown.style.display = "none";
-
-            ["OWNER", "LEADER", "CONTRIBUTOR", "CUSTOM"].forEach(role => {
-                const option = document.createElement("option");
-                option.value = role;
-                option.textContent = role;
-                roleDropdown.appendChild(option);
-            });
-
-            manageButton.onclick = () => {
-                roleDropdown.style.display = roleDropdown.style.display === "none" ? "block" : "none";
-            };
-
-            // Remove User Button
             const removeButton = document.createElement("button");
             removeButton.textContent = "Remove User";
-            removeButton.classList.add("optionbuttons", "remove");
+            removeButton.style.backgroundColor = "red";
+            removeButton.classList.add("optionbuttons");
+            options.appendChild(removeButton);
 
-            // Assemble the flex container
-            flexContainer.appendChild(nameButton);
-            flexContainer.appendChild(manageButton);
-            flexContainer.appendChild(removeButton);
-            flexContainer.appendChild(roleDropdown);
+            options.classList.add("rosterbuttonoptions");
+            li.appendChild(options);
 
-            // Append to the list item
-            li.appendChild(flexContainer);
+            li.classList.add("rosterlistitem");
             roster.appendChild(li);
         });
 
-    } catch (err) {
-        console.error("Something went wrong:", err);
-        document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";
+        // Handle the toggle for options
+        const rosterItems = document.getElementsByClassName("rosterbutton");
+        for (let i = 0; i < rosterItems.length; i++) {
+            rosterItems[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    }catch (err) {
+        const li = document.createElement("li");
+        li.classList.add("rosterlistitem");
+
+        const flexContainer = document.createElement("div");
+        flexContainer.style.display = "flex";
+        flexContainer.style.alignItems = "center";
+        flexContainer.style.justifyContent = "flex-start";
+        flexContainer.style.gap = "20px";
+        flexContainer.style.padding = "8px 0";
+
+        // Name + Role Button
+        const nameButton = document.createElement("button");
+        nameButton.textContent = `${name} — ${roles}`;
+        nameButton.classList.add("rosterbutton");
+
+        // Manage Roles Button
+        const manageButton = document.createElement("button");
+        manageButton.textContent = "Manage Roles";
+        manageButton.classList.add("optionbuttons");
+
+        // Role Dropdown (hidden initially)
+        const roleDropdown = document.createElement("select");
+        roleDropdown.classList.add("role-dropdown");
+        roleDropdown.style.display = "none";
+
+        ["OWNER", "LEADER", "CONTRIBUTOR", "CUSTOM"].forEach(role => {
+            const option = document.createElement("option");
+            option.value = role;
+            option.textContent = role;
+            roleDropdown.appendChild(option);
+        });
+
+        manageButton.onclick = () => {
+            roleDropdown.style.display = roleDropdown.style.display === "none" ? "block" : "none";
+        };
+
+        // Remove User Button
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove User";
+        removeButton.classList.add("optionbuttons", "remove");
+
+        // Assemble the flex container
+        flexContainer.appendChild(nameButton);
+        flexContainer.appendChild(manageButton);
+        flexContainer.appendChild(removeButton);
+        flexContainer.appendChild(roleDropdown);
+
+        // Append to the list item
+        li.appendChild(flexContainer);
+        roster.appendChild(li);
     }
+
+    // } catch (err) {
+    //     console.error("Something went wrong:", err);
+    //     document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";
+    // }
 });
 
+// Modal Invite Code
 const modal = document.getElementById("invitemodal");
 const modalButton = document.getElementById("invite-button");
 
@@ -131,10 +135,15 @@ modalButton.onclick = function () {
 };
 
 window.onclick = function (event) {
-    if (event.target == modal) {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
-}
+};
+
+// Fix: Ensure the invite form is selected correctly
+const inviteForm = document.getElementById("invite-form");
+const submitButton = document.getElementById("submit");
+const userEmail = document.getElementById("invitee-email");
 
 inviteForm.addEventListener("submit", async (event) => {
     event.preventDefault();
