@@ -35,3 +35,7 @@ button {
 #projectDetails h2 {
     margin-top: 0;
 }
+
+.disable-btn {
+    display: none;
+}
