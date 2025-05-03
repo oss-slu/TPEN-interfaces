@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.projectData = projectData;
 
     const userID = Object.keys(projectData.collaborators).find(id => {
-      return projectData.collaborators[id].profile?.displayName === "sowmya.mutya";//username;
+      return projectData.collaborators[id].profile?.displayName === username;
     });
 
     const user = projectData.collaborators?.[userID];

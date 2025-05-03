@@ -50,7 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           rolemodal.style.display = "block";
           const user = collaborators[managebutton.dataset.userid]
           document.getElementById("roletitle").innerText = "Manage Roles For "+user.profile?.displayName;
-          //update which boxes are checked based on the roles the user currently has
+          //future issue: update which boxes are checked based on the roles the user currently has!
+
+          const checklist = document.getElementById("rolechecklist")
+          const submitrolebutton = document.getElementById("submitroles")
+          submitrolebutton.onclick = function() {
+            console.log("submit button clicked");
+            submitroles(checklist, managebutton.dataset.userid);
+          }
       }
       options.appendChild(managebutton);
 
@@ -103,27 +110,24 @@ window.onclick = function(event) {
     }
 }
 
-const checklist = document.getElementById("rolechecklist")
-const handleConfirm = () => { //this is from tpen code, is called when we submit the role changes
-  // Collect selected roles
+async function submitroles(checklist,userID){
+  console.log("submit roles function called")
   const selectedRoles = Array.from(
   checklist.querySelectorAll("input[type=checkbox]:checked")
   ).map((checkbox) => checkbox.value)
+  console.log(selectedRoles)
+  if (selectedRoles.length > 0) {
+    const response = await TPEN.activeProject.cherryPickRoles(userID, selectedRoles)
+    if (response) {
+        alert("Roles updated successfully.")
+    }
+  }
 }
-async (selectedRoles) => { //move this up???
-            if (selectedRoles.length > 0) {
-                const response = await TPEN.activeProject.cherryPickRoles(memberID, selectedRoles)
-                if (response) {
-                    alert("Roles updated successfully.")
-                }
-            }
-        }
-
 
 const inviteForm = document.getElementById("invite-form")
-const submitButton = document.getElementById("submit")
+const submitButton = document.getElementById("submitinvite")
 const userEmail = document.getElementById("invitee-email")
-inviteForm.addEventListener("submit", async (event) => {
+inviteForm.addEventListener("submitinvite", async (event) => {
     event.preventDefault()
     submitButton.textContent = "test"
     try {
