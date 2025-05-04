@@ -8,16 +8,7 @@
     <script type="module" src="./upload.mjs"></script>
   </head>
   <body>
-    <div class="header">
-      <h1>TPEN Classroom Interface</h1>
-      <div class="hamburger-menu" onclick="toggleMenu()">&#9776</div>
-      <div class="navbar" id="navbar">
-        <ul>
-          <li><a href="../index.html" aria-label="home">Home</a></li>
-        </ul>
-      </div>
-    </div>
-
+    <tpen3-header></tpen3-header>
     <div class="page-container">
       <h2>Upload Assignment</h2>
       <p>Please upload your assignment file below. Accepted formats: PDF, DOCX, TXT.</p>
@@ -29,5 +20,8 @@
         <p id="upload-status" style="margin-top: 1em;"></p>
       </form>
     </div>
+    <tpen3-footer></tpen3-footer>
+    <script src="../partials/header.js"></script>
+    <script src="../partials/footer.js"></script>
   </body>
 </html>

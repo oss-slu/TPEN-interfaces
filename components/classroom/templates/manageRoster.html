@@ -8,16 +8,7 @@
   <script type="module" src="../templates/manageRoster.mjs"></script>
 </head>
 <body>
-  <div class="header">
-    <h1>TPEN Classroom Interface</h1>
-    <div class="hamburger-menu" onclick="toggleMenu()">&#9776;</div>
-    <div class="navbar" id="navbar">
-      <ul>
-        <li><a href="../project.html">Home</a></li>
-      </ul>
-    </div>
-  </div>
-
+  <tpen3-header></tpen3-header>
   <div class="page-container">
     <h2>Manage Project Roster</h2>
     <p>View and remove members in this classroom project.</p>
@@ -39,6 +30,9 @@
       <p id="remove-message" class="message"></p>
     </div>
   </div>
+  <tpen3-footer></tpen3-footer>
+  <script src="../partials/header.js"></script>
+  <script src="../partials/footer.js"></script>
 </body>
 </html>
 

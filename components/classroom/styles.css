@@ -105,37 +105,66 @@ h3 {
     color: #000;
 }
 
-.rosterlistitem{
-    list-style-type: none;
-    padding: 5px;
-}
-
-.rosterbutton{
-    padding: 15px;
-    width: 80%;
-    border: none;
-    background-color: lightgray;
-    color:#516059;
-    font-weight: bold;
-}
 
 .active, .rosterbutton:hover{
     background-color: #516059;
     color:#fff;
 }
 
-.rosterbuttonoptions{
-    padding: 0 18px;
-    display: none;
-    overflow: hidden;
-    background-color: #f1f1f1;
-}
+/* Fix UL bullet point issue */
+#roster {
+    list-style: none;
+    padding-left: 0;
+    margin: 2rem auto;
+    width: 80%;
+    max-width: 800px;
+  }
 
-.optionbuttons{
-    padding: 5px;
-    background-color:gray;
-    margin: 5px;
-}
+  .rosterlistitem {
+    margin-bottom: 1rem;
+    list-style: none; /* remove bullet points */
+    }
+
+    .rosterlistitem div {
+        display: flex;
+        justify-content: flex-start; /* <<< align everything toward the left */
+        align-items: center;
+        gap: 20px; /* <<< more breathing room between Name / Manage Roles / Remove User */
+        padding: 8px 0; /* <<< add a little vertical padding between rows */
+    }
+    
+    .rosterbutton {
+        width: 100%;
+        text-align: left;
+        background-color: #516059;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+  .rosterbuttonoptions {
+    display: none;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding-top: 10px;
+    padding-left: 4px;
+    background-color: #f7f7f7;
+  }
+  
+  .rosterbuttonoptions.show {
+    display: flex;
+  }
+
+  /* Hover and active styling */
+  .rosterbutton:hover,
+  .rosterbutton.active {
+    background-color: #516059;
+    color: white;
+  }
+  
 
 footer {
     padding: 10px;
@@ -166,7 +195,7 @@ button {
     width: 100%;
     height: 100%;
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0,0.3);
+    background-color: rgb(0,0,0,0.4);
 }
 #invite-section-container {
     background-color: #fefefe;
@@ -174,13 +203,6 @@ button {
     padding: 20px;
     margin-top: 10px;
     width: 80%;
-}
-#role-selection-container{
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    margin-top:30vh;
-    width: 50%;
 }
 
 /* Hamburger icon */

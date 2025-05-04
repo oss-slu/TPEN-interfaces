@@ -78,66 +78,100 @@
                     margin-inline: 1rem;
                 }
             }
+
+            .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+            }
+
+            .info-item h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            color: #516059;
+            }
+
+            .info-item p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            }
+
         </style>
     </head>
-    <body>
-        <div id="header-container"></div>
-        <div class="page-container">
-            <h1>Welcome!</h1>
-            <div class="input-container">
-                <div class="label-container">
-                    <form id="projectForm" class="input-form">
-                        <label for="projectId">Project Title or ID:</label>
-                        <input id="projectId" maxlength="24" name="projectId" type="text" required>
-                        <button id ="searchbutton" class="submit-button" type="submit">Submit</button>
-                    </form>
-                    <tpen-projects-list id="clickList"></tpen-projects-list>
-                    <div class="role-based-options">
-                        <div id="managementOptions" style="display: none;">
-                            <!-- Role Management Section -->
-                            <div class="role-management">
-                                <h3>Management Options:</h3>
-                                <label for="roleSelect">Select Role:</label>
-                                <select id="roleSelect">
-                                    <option value="OWNER">OWNER</option>
-                                    <option value="LEADER">LEADER</option>
-                                    <option value="CONTRIBUTOR">CONTRIBUTOR</option>
-                                    <option value="CUSTOM">Create Custom Role</option>
-                                </select>
-                                <div id="customRoleContainer" style="display: none;">
-                                    <label for="customRoleName">Custom Role Name:</label>
-                                    <input type="text" id="customRoleName">
-                                </div>
-                                <h4>Permissions:</h4>
-                                <ul id="permissionsList">
-                                    <!-- Permissions will be dynamically loaded here -->
-                                </ul>
-                                <button id="addPermissionBtn">Add Permission</button>
-                                <button id="saveRoleBtn">Save Role</button>
-                            </div>
-                        </div>
-                        <div id="viewOptions" style="display: none;">
-                            <h3>Contributor Options:</h3>
-                            <ul class="permOptions">
-                                <li><button type="button">Upload Files</button></li>
-                            </ul>
-                        </div>
+    <tpen3-header></tpen3-header>
+
+    <div class="page-container">
+        <h1>Welcome!</h1>
+
+        <!-- 1️⃣ Search bar -->
+        <div class="input-container">
+            <div class="label-container">
+                <form id="projectForm" class="input-form">
+                    <label for="projectId">Project Title or ID:</label>
+                    <input id="projectId" maxlength="24" name="projectId" type="text" required>
+                    <button id="searchbutton" class="submit-button" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <tpen-projects-list id="clickList"></tpen-projects-list>
+
+
+        <!-- 2️⃣ Project Name and User Role SECOND (below search) -->
+        <div class="info-grid">
+            <div class="info-item">
+                <h3>Project Name</h3>
+                <p id="projectName"></p> 
+            </div>
+            <div class="info-item">
+                <h3>User Role</h3>
+                <p id="userRole"></p>
+            </div>
+        </div>
+
+        <!-- 3️⃣ Role based options THIRD -->
+        <div class="role-based-options">
+            <div id="managementOptions" style="display: none;">
+                <div class="role-management">
+                    <h3>Management Options:</h3>
+                    <label for="roleSelect">Select Role:</label>
+                    <select id="roleSelect">
+                        <option value="OWNER">OWNER</option>
+                        <option value="LEADER">LEADER</option>
+                        <option value="CONTRIBUTOR">CONTRIBUTOR</option>
+                        <option value="CUSTOM">Create Custom Role</option>
+                    </select>
+                    <div id="customRoleContainer" style="display: none;">
+                        <label for="customRoleName">Custom Role Name:</label>
+                        <input type="text" id="customRoleName">
                     </div>
-                    <p id="msg"></p>
+                    <h4>Permissions:</h4>
+                    <ul id="permissionsList"></ul>
+                    <button id="addPermissionBtn">Add Permission</button>
+                    <button id="saveRoleBtn">Save Role</button>
                 </div>
             </div>
-            <div id="footer-container"></div>
+
+            <div id="viewOptions" style="display: none;">
+                <h3>Contributor Options:</h3>
+                <ul class="permOptions">
+                    <li><button type="button">Upload Files</button></li>
+                </ul>
+            </div>
         </div>
+
+        <p id="msg"></p>
+
+        <tpen3-footer></tpen3-footer>
+    </div>
+
 
         <!-- Hamburger menu script for mobile devices -->
         <script type="module">
-            import { loadHeader } from './partials/loadHeader.mjs';
-            import { loadFooter } from './partials/loadFooter.mjs';
-            document.addEventListener("DOMContentLoaded", async () => {
-                await loadHeader();
-                await loadFooter();
-            });
-
             const searchbutton = document.getElementById("searchbutton")
             searchbutton.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -150,6 +184,7 @@
                 const list = document.getElementById("clickList");
                 list.project_id(input);
             }
+
 
             document.addEventListener("DOMContentLoaded", async function () {
                 const roleSelect = document.getElementById("roleSelect");
@@ -195,5 +230,7 @@
                 });
             });
         </script>
+        <script src="./partials/header.js"></script>
+        <script src="./partials/footer.js"></script>
     </body>
 </html>

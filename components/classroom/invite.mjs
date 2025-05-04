@@ -2,42 +2,38 @@ import TPEN from "../../api/TPEN.mjs";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const projectId = new URLSearchParams(window.location.search).get("projectID");
-    const roster = document.getElementById("roster")
+    const roster = document.getElementById("roster");
 
     if (!projectId) {
-      document.body.innerHTML = "<p style='color:red;'>Missing project ID in URL.</p>";
-      return;
+        document.body.innerHTML = "<p style='color:red;'>Missing project ID in URL.</p>";
+        return;
     }
-  
+
     try {
-      const token = TPEN.getAuthorization();
-      const response = await fetch(`${TPEN.servicesURL}/project/${projectId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      const projectData = await response.json();
-      const collaborators = projectData.collaborators || {};
-  
-      if (!projectData || !projectData._id) {
-        throw new Error("Invalid or missing project data");
-      }
-  
-      console.log("Project Data:", projectData);
+        const token = TPEN.getAuthorization();
+        const response = await fetch(`${TPEN.servicesURL}/project/${projectId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-      document.getElementById("title").innerText = projectData.title+" Project Roster";
+        const projectData = await response.json();
+        const collaborators = projectData.collaborators || {};
+        console.log(projectData);
 
-      roster.innerHTML = "";
+        // Use innerText or textContent to set the title
+        document.getElementById("title").innerText = projectData.label + " Project Roster";
+        roster.innerHTML = ""; // Clear loading text
 
-      Object.keys(collaborators).forEach(id => {
-      const user = collaborators[id];
-      const name = user.profile?.displayName || "(Unnamed)";
-      const roles = user.roles?.join(", ") || "No roles";
+        // Build the roster dynamically
+        Object.keys(collaborators).forEach(id => {
+            const user = collaborators[id];
+            const name = user.profile?.displayName || "(Unnamed)";
+            const roles = user.roles?.join(", ") || "No roles";
 
-      const li = document.createElement("li");
-      const button = document.createElement("button")
-      button.textContent = `${name} — ${roles}`;
-      button.classList.add("rosterbutton");
-      li.appendChild(button);
+            const li = document.createElement("li");
+            const button = document.createElement("button");
+            button.textContent = `${name} — ${roles}`;
+            button.classList.add("rosterbutton");
+            li.appendChild(button);
 
       const options = document.createElement("div");
       const managebutton = document.createElement("button");
@@ -61,49 +57,54 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       options.appendChild(managebutton);
 
-      const removebutton = document.createElement("button");
-      removebutton.textContent = "Remove User";
-      removebutton.style.backgroundColor = "red";
-      removebutton.classList.add("optionbuttons");
-      removebutton.dataset.user = user;
-      options.appendChild(removebutton);
-      options.classList.add("rosterbuttonoptions");
-      li.appendChild(options);
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove User";
+            removeButton.style.backgroundColor = "red";
+            removeButton.classList.add("optionbuttons");
+            options.appendChild(removeButton);
 
-      li.classList.add("rosterlistitem");
-      roster.appendChild(li);
-      });
-      const rosteritems = document.getElementsByClassName("rosterbutton");
-      var i;
+            options.classList.add("rosterbuttonoptions");
+            li.appendChild(options);
 
-      for (i = 0; i < rosteritems.length; i++) {
-        rosteritems[i].addEventListener("click", function() {
-          this.classList.toggle("active");
-          var content = this.nextElementSibling;
-          console.log(content);
-          if (content.style.display === "block") {
-            content.style.display = "none";
-          } else {
-            content.style.display = "block";
-          }
+            // Add the role dropdown (hidden by default)
+            const roleDropdown = document.createElement("select");
+            roleDropdown.classList.add("role-dropdown");
+            roleDropdown.style.display = "none"; 
+
+            ["OWNER", "LEADER", "CONTRIBUTOR", "CUSTOM"].forEach(role => {
+                const option = document.createElement("option");
+                option.value = role;
+                option.textContent = role;
+                roleDropdown.appendChild(option);
+            });
+
+            options.appendChild(roleDropdown);
+
+            li.classList.add("rosterlistitem");
+            roster.appendChild(li);
+
+            manageButton.addEventListener("click", () => {
+                const isDropdownVisible = roleDropdown.style.display === "block";
+                roleDropdown.style.display = isDropdownVisible ? "none" : "block";
+            });
         });
-      }
-    }catch (err) {
+
+    } catch (err) {
         console.error("Something went wrong:", err);
         document.body.innerHTML = "<p style='color:red;'>Something went wrong. Try again.</p>";
     }
 });
 
-const modal = document.getElementById("invitemodal")
-const modalButton = document.getElementById("invite-button")
+const modal = document.getElementById("invitemodal");
+const modalButton = document.getElementById("invite-button");
 
-modalButton.onclick = function() {
+modalButton.onclick = function () {
     modal.style.display = "block";
-}
+};
 
-window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
+window.onclick = function (event) {
+    if (event.target === modal) {
+        modal.style.display = "none";
     }
     else if (event.target == rolemodal) {
       rolemodal.style.display = "none";
@@ -148,15 +149,15 @@ inviteForm.addEventListener("submitinvite", async (event) => {
     
         // Remove the success message after a 3 seconds delay
         setTimeout(() => {
-            successMessage.remove()
-        }, 3000)
+            successMessage.remove();
+        }, 3000);
+
     } catch (error) {
-        console.log(error)
-        /*setTimeout(() => {
-            errorHTML.remove()
-            }, 3000)
-        errorHTML.innerHTML = error.message
-        submitButton.textContent = "Submit"
-        submitButton.disabled = false*/
+        console.error(error);
+        submitButton.textContent = "Submit";
+        submitButton.disabled = false;
+
+        const errorMessage = document.getElementById("error");
+        errorMessage.textContent = "Failed to send invitation. Try again.";
     }
-})
+});
