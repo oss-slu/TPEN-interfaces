@@ -35,11 +35,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             button.classList.add("rosterbutton");
             li.appendChild(button);
 
-            const options = document.createElement("div");
-            const manageButton = document.createElement("button");
-            manageButton.textContent = "Manage Roles";
-            manageButton.classList.add("optionbuttons");
-            options.appendChild(manageButton);
+      const options = document.createElement("div");
+      const managebutton = document.createElement("button");
+      managebutton.textContent = "Manage Roles";
+      managebutton.classList.add("optionbuttons");
+      managebutton.dataset.userid = id;
+      console.log(managebutton.dataset.user);
+      const rolemodal = document.getElementById("rolemodal")
+      managebutton.onclick = function() {
+          rolemodal.style.display = "block";
+          const user = collaborators[managebutton.dataset.userid]
+          document.getElementById("roletitle").innerText = "Manage Roles For "+user.profile?.displayName;
+          //future issue: update which boxes are checked based on the roles the user currently has!
+
+          const checklist = document.getElementById("rolechecklist")
+          const submitrolebutton = document.getElementById("submitroles")
+          submitrolebutton.onclick = function() {
+            console.log("submit button clicked");
+            submitroles(checklist, managebutton.dataset.userid);
+          }
+      }
+      options.appendChild(managebutton);
 
             const removeButton = document.createElement("button");
             removeButton.textContent = "Remove User";
@@ -90,31 +106,48 @@ window.onclick = function (event) {
     if (event.target === modal) {
         modal.style.display = "none";
     }
-};
+    else if (event.target == rolemodal) {
+      rolemodal.style.display = "none";
+    }
+}
 
-const inviteForm = document.getElementById("invite-form");
-const submitButton = document.getElementById("submit");
-const userEmail = document.getElementById("invitee-email");
+async function submitroles(checklist,userID){
+  console.log("submit roles function called")
+  const selectedRoles = Array.from(
+  checklist.querySelectorAll("input[type=checkbox]:checked")
+  ).map((checkbox) => checkbox.value)
+  console.log(selectedRoles)
+  if (selectedRoles.length > 0) {
+    const response = await TPEN.activeProject.cherryPickRoles(userID, selectedRoles)
+    if (response) {
+        alert("Roles updated successfully.")
+    }
+  }
+}
 
-inviteForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    submitButton.textContent = "Inviting...";
-    submitButton.disabled = true;
-
+const inviteForm = document.getElementById("invite-form")
+const submitButton = document.getElementById("submitinvite")
+const userEmail = document.getElementById("invitee-email")
+inviteForm.addEventListener("submitinvite", async (event) => {
+    event.preventDefault()
+    submitButton.textContent = "test"
     try {
-        const response = await TPEN.activeProject.addMember(userEmail.value);
-        if (!response) throw new Error("Invitation failed");
-
-        submitButton.textContent = "Submit";
-        submitButton.disabled = false;
-        userEmail.value = "";
-
-        const successMessage = document.createElement("p");
-        successMessage.textContent = "Invitation sent successfully!";
-        successMessage.classList.add("success-message");
-        document.getElementById("invite-section-container").appendChild(successMessage);
-
+        submitButton.textContent = "Inviting..."
+        submitButton.disabled = true
+    
+        const response = await TPEN.activeProject.addMember(userEmail.value)
+        if (!response) throw new Error("Invitation failed")
+        submitButton.textContent = "Submit"
+        submitButton.disabled = false
+        userEmail.value = ""
+    
+        // Display a success message
+        const successMessage = document.createElement("p")
+        successMessage.textContent = "Invitation sent successfully!"
+        successMessage.classList.add("success-message")
+        document.getElementById("invite-section-container").appendChild(successMessage)
+    
+        // Remove the success message after a 3 seconds delay
         setTimeout(() => {
             successMessage.remove();
         }, 3000);
