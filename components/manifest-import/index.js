@@ -102,16 +102,18 @@ class ManifestImport extends HTMLElement {
                 }
 
                 const manifestUrl = manifests[currentIndex]
+                console.log(`[ManifestImport] Worker starting: ${manifestUrl}`)
                 try {
                     const project = await this.#importManifest(manifestUrl)
                     results[currentIndex] = project
+                    console.log(`[ManifestImport] Success: ${manifestUrl} → ${project.label || 'Project created'}`)
                 } catch (error) {
-                    console.error(`Failed to import manifest: ${manifestUrl}`, error)
                     results[currentIndex] = {
                         error: true,
                         manifestUrl,
                         message: error.message || 'Failed to create project'
                     }
+                    console.error(`[ManifestImport] Failed: ${manifestUrl}`, error)
                 }
             }
         }
@@ -139,13 +141,20 @@ class ManifestImport extends HTMLElement {
 
         if (!response.ok) {
             let errorMessage = `HTTP ${response.status}`
+            let errorDetails = null
             try {
                 const errorData = await response.json()
                 errorMessage = errorData.message || errorMessage
+                errorDetails = errorData
             } catch {
                 // Response was not JSON - use HTTP status
             }
-            throw new Error(errorMessage)
+            console.error(`[ManifestImport] Failed to import ${manifestUrl}: ${errorMessage}`, errorDetails || '')
+            const error = new Error(errorMessage)
+            error.manifestUrl = manifestUrl
+            error.responseStatus = response.status
+            if (errorDetails) error.errorDetails = errorDetails
+            throw error
         }
 
         return response.json()
@@ -504,11 +513,43 @@ class ManifestImport extends HTMLElement {
                     margin-bottom: 10px;
                 }
 
+                .error-main {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+
+                .error-icon-inline {
+                    color: var(--error-color, #d93025);
+                    font-size: 18px;
+                    flex-shrink: 0;
+                    margin-top: 2px;
+                }
+
+                .error-content {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .error-message {
+                    font-weight: 600;
+                    color: var(--error-color, #d93025);
+                    margin-bottom: 6px;
+                }
+
                 .error-url {
                     font-size: 12px;
                     word-break: break-all;
                     color: var(--text-secondary, #666);
-                    margin: 10px 0 0 0;
+                    margin: 0 0 6px 0;
+                    font-family: monospace;
+                    max-height: 3.6em;
+                    overflow: hidden;
+                }
+
+                .error-status {
+                    font-size: 11px;
+                    color: var(--text-muted, #999);
                     font-family: monospace;
                 }
 
@@ -589,12 +630,22 @@ class ManifestImport extends HTMLElement {
                                     <span class="error-icon">✕</span>
                                     Failed (${failed.length})
                                 </div>
-                                ${failed.map(error => `
+                                ${failed.map(error => {
+                                    const errorMessage = error.message || error.error || 'Unknown error'
+                                    const truncatedUrl = (error.manifestUrl || '').length > 120
+                                        ? (error.manifestUrl || '').slice(0, 117) + '...'
+                                        : error.manifestUrl || ''
+                                    return `
                                     <div class="error-item">
-                                        <strong>${escapeHtml(error.message || '')}</strong>
-                                        <div class="error-url">${escapeHtml(error.manifestUrl || '')}</div>
+                                        <div class="error-main">
+                                            <span class="error-icon-inline">✕</span>
+                                            <div class="error-content">
+                                                <div class="error-message">${escapeHtml(errorMessage)}</div>
+                                                <div class="error-url">${escapeHtml(truncatedUrl)}</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                `).join('')}
+                                `}).join('')}
                             </div>
                         ` : ''}
 
