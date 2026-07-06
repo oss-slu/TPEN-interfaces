@@ -631,7 +631,7 @@ class ManifestImport extends HTMLElement {
                                     Failed (${failed.length})
                                 </div>
                                 ${failed.map(error => {
-                                    const errorMessage = error.message || error.error || 'Unknown error'
+                                    const errorMessage = error.message || 'Unknown error'
                                     const truncatedUrl = (error.manifestUrl || '').length > 120
                                         ? (error.manifestUrl || '').slice(0, 117) + '...'
                                         : error.manifestUrl || ''
